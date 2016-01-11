@@ -5,6 +5,7 @@ var mediaInput = document.getElementsByTagName('input')[0];
 mediaInput.onchange = function() {
   $('.format-section').hide();
   $('.streams-section').hide();
+  $('.tags-section').hide();
   $('.file-info').hide();
   $('.errors').hide();
   readBlob();
