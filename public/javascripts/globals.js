@@ -2,7 +2,7 @@
 
 var mediaInput = document.getElementsByTagName('input')[0];
 
-mediaInput.onchange = function() {
+mediaInput.onchange = function () {
   $('.format-section').hide();
   $('.streams-section').hide();
   $('.tags-section').hide();
@@ -39,21 +39,26 @@ function populateTable(data) {
     formatTableContent += '<td class="col-sm-7"> ' + v + '</td>';
     formatTableContent += '</tr>';
   });
-  
-  // $.each(jsonObj.format.tags, function (k, v) {
-  //   console.log('key: ' + k + ' - value: ' + v); 
-  //   tagTableContent += '<tr>';
-  //   tagTableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
-  //   tagTableContent += '<td class="col-sm-7"> ' + v + '</td>';
-  //   formatTableContent += '</tr>';
-  // });
+
+  // not all formats have a tags key
+  if (jsonObj.format.tags) {
+    $.each(jsonObj.format.tags, function (k, v) {
+      console.log('key: ' + k + ' - value: ' + v);
+      tagTableContent += '<tr>';
+      tagTableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
+      tagTableContent += '<td class="col-sm-7"> ' + v + '</td>';
+      formatTableContent += '</tr>';
+    });
+  }
   
 
   // Inject the content strings into the existing HTML tables
   $('.format-section').show();
   $('#format tbody').html(formatTableContent);
-  $('.tags-section').show();
-  $('#tags tbody').html(tagTableContent);
+  if (jsonObj.format.tags) {      
+    $('.tags-section').show();
+    $('#tags tbody').html(tagTableContent);
+  }
   $('.streams-section').show();
   $('#streams tbody').html(tableContent);
 };
@@ -65,7 +70,7 @@ function readBlob() {
     alert('Please select a file!');
     return;
   }
-  
+
   var file = files[0];
 
   $('.file-name').html(file.name);
@@ -75,7 +80,7 @@ function readBlob() {
   } else {
     $('.file-lastmod').html('at an undetermined time');
   }
-  
+
   $('.file-info').show();
   var reader = new FileReader();
 
@@ -104,7 +109,7 @@ function readBlob() {
             $('.error-message').html(data);
             $('.errors').show();
           } else {
-            populateTable(data); 
+            populateTable(data);
           }
 
         }
