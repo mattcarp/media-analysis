@@ -40,13 +40,13 @@ function populateTable(data) {
     formatTableContent += '</tr>';
   });
   
-  $.each(jsonObj.format.tags, function (k, v) {
-    console.log('key: ' + k + ' - value: ' + v); 
-    tagTableContent += '<tr>';
-    tagTableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
-    tagTableContent += '<td class="col-sm-7"> ' + v + '</td>';
-    formatTableContent += '</tr>';
-  });
+  // $.each(jsonObj.format.tags, function (k, v) {
+  //   console.log('key: ' + k + ' - value: ' + v); 
+  //   tagTableContent += '<tr>';
+  //   tagTableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
+  //   tagTableContent += '<td class="col-sm-7"> ' + v + '</td>';
+  //   formatTableContent += '</tr>';
+  // });
   
 
   // Inject the content strings into the existing HTML tables
