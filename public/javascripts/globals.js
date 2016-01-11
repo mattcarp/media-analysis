@@ -26,12 +26,17 @@ function populateTable(data) {
   var jsonObj = eval('(' + badJSON + ')');
 
   // ffprobe divides metadata into a 'streams' array and a 'format' object
-  $.each(jsonObj.streams[0], function (k, v) {
+  for (var i = 0;  i < jsonObj.streams.length; i++) {
+    $.each(jsonObj.streams[i], function (k, v) {
     tableContent += '<tr>';
     tableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
     tableContent += '<td class="col-sm-7"> ' + v + '</td>';
     tableContent += '</tr>';
-  });
+
+    });
+    tableContent += '<tr><td>==========</td><td>==========</td></tr>';
+  }
+
 
   $.each(jsonObj.format, function (k, v) {
     formatTableContent += '<tr>';
