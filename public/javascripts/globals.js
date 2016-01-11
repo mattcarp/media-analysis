@@ -17,6 +17,7 @@ function populateTable(data) {
 
   var tableContent = '';
   var formatTableContent = '';
+  var tagTableContent = '';
 
   // ffmpeg returns malformed json - keys aren't double-quoted,
   // however we trust it enough to use .eval()
@@ -37,10 +38,21 @@ function populateTable(data) {
     formatTableContent += '<td class="col-sm-7"> ' + v + '</td>';
     formatTableContent += '</tr>';
   });
+  
+  $.each(jsonObj.format.tags, function (k, v) {
+    console.log('key: ' + k + ' - value: ' + v); 
+    tagTableContent += '<tr>';
+    tagTableContent += '<td class="col-sm-5"><b>' + k + '</b></td>';
+    tagTableContent += '<td class="col-sm-7"> ' + v + '</td>';
+    formatTableContent += '</tr>';
+  });
+  
 
   // Inject the content strings into the existing HTML tables
   $('.format-section').show();
   $('#format tbody').html(formatTableContent);
+  $('.tags-section').show();
+  $('#tags tbody').html(tagTableContent);
   $('.streams-section').show();
   $('#streams tbody').html(tableContent);
 };

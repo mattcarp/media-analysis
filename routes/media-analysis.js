@@ -9,7 +9,6 @@ var randomstring = require("randomstring");
 
 var result;
 
-
 router.post('/', function (req, res, next) {
   'use strict';
 

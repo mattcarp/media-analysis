@@ -9,4 +9,11 @@ start express server, from project root:
 angular version (not working yet b/c of http sending too much data) is in /client
 run it with `gulp`
 
-demo hosting on aws `52.0.119.124`
+demo hosting on aws `52.0.119.124:3000`
+
+deployment:
+
+    ssh upload-demo
+    cd media-analysis
+    git pull orgin master
+    DEBUG=media-analysis:* npm start
