@@ -22,7 +22,7 @@ function populateTable(data) {
 
   // ffmpeg returns malformed json - keys aren't double-quoted,
   // however we trust it enough to use .eval()
-  var badJSON = data;
+  var badJSON = data.analysis;
   var jsonObj = eval('(' + badJSON + ')');
 
   // ffprobe divides metadata into a 'streams' array and a 'format' object
@@ -55,12 +55,12 @@ function populateTable(data) {
       formatTableContent += '</tr>';
     });
   }
-  
+
 
   // Inject the content strings into the existing HTML tables
   $('.format-section').show();
   $('#format tbody').html(formatTableContent);
-  if (jsonObj.format.tags) {      
+  if (jsonObj.format.tags) {
     $('.tags-section').show();
     $('#tags tbody').html(tagTableContent);
   }
@@ -92,7 +92,7 @@ function readBlob() {
   // If we use onloadend, we need to check the readyState.
   reader.onloadend = function (evt) {
     if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-        
+
       $.ajax({
         type: "POST",
         url: "/analysis",
@@ -101,13 +101,15 @@ function readBlob() {
         // content type that we are sending
         contentType: 'application/octet-stream',
         // data type that we expect in return
-        // dataType: "", 
+        // dataType: "",
         error: function (err) {
           console.log("you have an error:");
           console.log(err);
         },
-        success: function (data) {          
+        success: function (data) {
           // error handling
+          console.log("this is what i got from ffprobe:");
+          console.log(data);
           if (data === 'undefined' || data === '') {
             console.log('we have a problem, returned from ffprobe:');
             console.log(data);
