@@ -5,8 +5,8 @@
 <input type="file" id="files" name="file" />
 <br><br>
   <div class="file-info" style="display: none">
-    analyzing <strong><span class="file-name"></span></strong>, which is 
-    <strong><span class="file-size"></span></strong> 
+    analyzing <strong><span class="file-name"></span></strong>, which is
+    <strong><span class="file-size"></span></strong>
     bytes long, and was last modified <strong><span class="file-lastmod"></span></strong>
   </div>
 <br>
@@ -15,13 +15,15 @@
   <br>
   <strong><div class="error-message center-block"></div></strong>
   <br>
-  Future improvements: a 'debug mode'
+  Future improvement ideas:
   <br><br>
   <ul>
-    <li>User can choose byte range to analyze</li>
+
+
+    <li>System retries, concats more bytes to the temp file</li>
     <li>The bytes that were read can optionally be displayed in the view</li>
-    <li>System re-tries using incrementally larger byte slices</li>
-    <li>System re-tries with a read from the tail of the file</li>
+    <li>System retries with a read from the tail of the file</li>
+    <li>User can choose byte range to analyze</li>
   </ul>
   <br>
   If you see this message please contact matt.carpenter@asburymedia.com

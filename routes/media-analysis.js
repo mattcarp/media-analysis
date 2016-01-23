@@ -24,7 +24,7 @@ router.post( '/', function( req, res, next ) {
     console.log( req.body );
     console.log( req.body.length );
 
-    var tempName = "/tmp/" + randomstring.generate( 12 );
+    var tempName = "/tmp/" + randomstring.generate(12);
     console.log( "the temp name:" );
     console.log( tempName );
 
@@ -34,7 +34,7 @@ router.post( '/', function( req, res, next ) {
         }
 
         console.log( "attempt to call ffprobe with exec:" );
-        child = exec( `ffprobe -of json -show_streams -show_format ${tempName}`,
+        child = exec( `ffprobe -of json -show_streams -v error -show_format ${tempName}`,
             function( error, stdout, stderr ) {
                 var result = {}
                 console.log( 'STDOUT: ' + stdout );

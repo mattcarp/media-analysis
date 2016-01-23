@@ -20,10 +20,8 @@ function populateTable(data) {
   var formatTableContent = '';
   var tagTableContent = '';
 
-  // ffmpeg returns malformed json - keys aren't double-quoted,
-  // however we trust it enough to use .eval()
-  var badJSON = data.analysis;
-  var jsonObj = eval('(' + badJSON + ')');
+  var jsonObj = JSON.parse(data.analysis);
+  // var jsonObj = eval('(' + badJSON + ')');
 
   // ffprobe divides metadata into a 'streams' array and a 'format' object
   for (var i = 0;  i < jsonObj.streams.length; i++) {
@@ -110,10 +108,10 @@ function readBlob() {
           // error handling
           console.log("this is what i got from ffprobe:");
           console.log(data);
-          if (data === 'undefined' || data === '') {
+          if (data.error) {
             console.log('we have a problem, returned from ffprobe:');
             console.log(data);
-            $('.error-message').html(data);
+            $('.error-message').html(data.error);
             $('.errors').show();
           } else {
             populateTable(data);
