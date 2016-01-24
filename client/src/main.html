@@ -1,0 +1,38 @@
+<h1>Media Analysis</h1>
+
+<h2>please choose a media file</h2>
+<br>
+
+<div class="ma-upload__input">
+  <input type="file" (change)="changeListener($event)" />
+</div>
+<br>
+
+<div class="well alert-danger" *ngIf="ffprobeErr">
+  <h3>Errors</h3>
+  <p>
+    The analyzer return the following error:
+  </p>
+  <p>
+    {{ffprobeErr}}
+  </p>
+</div>
+
+<div class="ma-analysis__format col-xs-6" *ngIf="format">
+
+  <ul class="list-group">
+    <li class="list-group-item">
+      <h4 class="list-group-item-heading">format</h4>
+    </li>
+
+    <li class="list-group-item" *ngFor="#item of format">
+      <span class="col-xs-5"><b>{{item.key}}</b></span>
+      <span>{{item.value}}</span>
+    </li>
+  </ul>
+</div>
+
+<div class="ma-analysis__format col-xs-6">
+  <h4>format tags</h4>
+  <p>we need to expand the tags array</p>
+</div>
