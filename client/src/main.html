@@ -18,7 +18,7 @@
   </p>
 </div>
 
-<div class="ma-analysis__format col-xs-6" *ngIf="format">
+<div class="col-xs-6" *ngIf="format">
 
   <ul class="list-group">
     <li class="list-group-item">
@@ -32,7 +32,30 @@
   </ul>
 </div>
 
-<div class="ma-analysis__format col-xs-6">
-  <h4>format tags</h4>
-  <p>we need to expand the tags array</p>
+<div class="col-xs-6" *ngIf="formatTags">
+  <ul class="list-group">
+    <li class="list-group-item">
+      <h4 class="list-group-item-heading">format tags</h4>
+    </li>
+
+    <li class="list-group-item" *ngFor="#item of formatTags">
+      <span class="col-xs-5"><b>{{item.key}}</b></span>
+      <span>{{item.value}}</span>
+    </li>
+  </ul>
+</div>
+<br>
+
+<div class="col-xs-6" *ngIf="streams">
+  <h3>streams</h3>
+  <ul class="list-group" *ngFor="#stream of streams">
+    <li class="list-group-item">
+      <h4 class="list-group-item-heading">stream</h4>
+    </li>
+
+    <li class="list-group-item" *ngFor="#item of formatTags">
+      <span class="col-xs-5"><b>{{item.key}}</b></span>
+      <span>{{item.value}}</span>
+    </li>
+  </ul>
 </div>

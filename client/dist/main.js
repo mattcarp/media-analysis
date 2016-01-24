@@ -68,12 +68,18 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     console.log(Object.keys(analysisObj).length);
                     if (analysisObj && Object.keys(analysisObj).length !== 0) {
                         var formatObj = analysisObj.format;
-                        this.format = this.processFormat(formatObj);
+                        this.format = this.processObject(formatObj);
                         console.log("array from format object, with no tags object:");
                         console.log(this.format);
+                        console.log("behold the formatObj does it have a tags key?");
+                        console.log(formatObj);
+                        if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
+                            console.log("we have a tags object! let's go to town on its punk-ass");
+                            this.formatTags = this.processObject(formatObj.tags);
+                        }
                     }
                 };
-                AnalysisApp.prototype.processFormat = function (formatObj) {
+                AnalysisApp.prototype.processObject = function (formatObj) {
                     var keysArr = Object.keys(formatObj);
                     return keysArr
                         .filter(function (formatKey) { return formatKey !== "tags"; })
@@ -83,8 +89,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         item.value = formatObj[formatKey];
                         return item;
                     });
-                };
-                AnalysisApp.prototype.processFormatTags = function (formatObj) {
                 };
                 AnalysisApp.prototype.logError = function (err) {
                     console.log("There was an error: ");

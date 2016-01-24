@@ -16,6 +16,7 @@ declare var FileReader: any;
 export class AnalysisApp {
   results: Object;
   format: Object[];
+  formatTags: Object[];
   ffprobeErr: string;
 
   readBlob(target: any) {
@@ -74,11 +75,19 @@ export class AnalysisApp {
     console.log(Object.keys(analysisObj).length);
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
       let formatObj = analysisObj.format;
-      this.format = this.processFormat(formatObj);
+      this.format = this.processObject(formatObj);
       console.log("array from format object, with no tags object:");
       console.log(this.format);
+      console.log("behold the formatObj does it have a tags key?");
+      console.log(formatObj);
+      if (formatObj.tags && Object.keys(formatObj.tags).length !==0) {
+        console.log("we have a tags object! let's go to town on its punk-ass");
+        this.formatTags = this.processObject(formatObj.tags);
+      }
     }
- 
+
+
+
     // let formatKeys: any = Object.keys(analysisObj.format);
     // console.log("format keys");
     // console.log(formatKeys);
@@ -95,8 +104,8 @@ export class AnalysisApp {
 
   // takes an object, removes any keys with array values, and returns
   // an array of objects: {key: value}
-  // this is handy for ffprobe's format object
-  processFormat(formatObj): Object[] {
+  // this is handy for ffprobe's format and tags object
+  processObject(formatObj): Object[] {
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
       // TODO filter if value for key is object or array, rather than not 'tags'
@@ -109,9 +118,7 @@ export class AnalysisApp {
       })
   }
 
-  processFormatTags(formatObj) {
 
-  }
 
   logError(err) {
     console.log("There was an error: ");
