@@ -57,6 +57,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     this.readBlob($event.target);
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
+                    var _this = this;
                     if (data.error) {
                         this.ffprobeErr = data.error;
                     }
@@ -69,14 +70,21 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     if (analysisObj && Object.keys(analysisObj).length !== 0) {
                         var formatObj = analysisObj.format;
                         this.format = this.processObject(formatObj);
-                        console.log("array from format object, with no tags object:");
-                        console.log(this.format);
-                        console.log("behold the formatObj does it have a tags key?");
                         console.log(formatObj);
                         if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
-                            console.log("we have a tags object! let's go to town on its punk-ass");
                             this.formatTags = this.processObject(formatObj.tags);
                         }
+                    }
+                    if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
+                        var collectedStreams = [];
+                        var inputStreams = analysisObj.streams;
+                        inputStreams.forEach(function (currentStream) {
+                            console.log("i am stream");
+                            collectedStreams.push(_this.processObject(currentStream));
+                        });
+                        this.streams = collectedStreams;
+                        console.log("i collected a processed these streams for your viewing pleasure:");
+                        console.log(this.streams);
                     }
                 };
                 AnalysisApp.prototype.processObject = function (formatObj) {

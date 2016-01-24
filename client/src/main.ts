@@ -18,6 +18,7 @@ export class AnalysisApp {
   format: Object[];
   formatTags: Object[];
   ffprobeErr: string;
+  streams: Object[][]; // an array of arrays of stream objects
 
   readBlob(target: any) {
     let self = this;
@@ -76,14 +77,27 @@ export class AnalysisApp {
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
       let formatObj = analysisObj.format;
       this.format = this.processObject(formatObj);
-      console.log("array from format object, with no tags object:");
-      console.log(this.format);
-      console.log("behold the formatObj does it have a tags key?");
       console.log(formatObj);
+
       if (formatObj.tags && Object.keys(formatObj.tags).length !==0) {
-        console.log("we have a tags object! let's go to town on its punk-ass");
         this.formatTags = this.processObject(formatObj.tags);
       }
+
+    }
+    // console.log("do we have streams?");
+    // console.log(formatObj.streams);
+    if (analysisObj.streams && Object.keys(analysisObj.streams).length !==0) {
+      // TODO use array.foreach to process each stream and return an array of arrays
+      let collectedStreams = [];
+      let inputStreams = analysisObj.streams;
+      inputStreams.forEach(currentStream => {
+          console.log("i am stream");
+          collectedStreams.push(this.processObject(currentStream));
+      });
+
+      this.streams = collectedStreams;
+      console.log("i collected a processed these streams for your viewing pleasure:");
+      console.log(this.streams);
     }
 
 
