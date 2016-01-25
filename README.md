@@ -1,6 +1,6 @@
 start express server, from project root:
 
-    DEBUG=media-analysis:* npm start
+    nodemon DEBUG=media-analysis:* npm start
 
  ffprobe on command lne
 

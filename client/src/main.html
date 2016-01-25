@@ -49,10 +49,11 @@
 <div class="clearfix"></div>
 <br><br>
 <div class="col-xs-6" *ngIf="streams">
-  <h3>streams</h3>
+  <h3>{{streams.length}} streams</h3>
   <ul class="list-group" *ngFor="#stream of streams">
     <li class="list-group-item">
-      <h4 class="list-group-item-heading">stream {{stream.index}}</h4>
+      <h1>{{stream | json}}</h1>
+      <h4 class="list-group-item-heading">stream {{stream[0].index}}</h4>
     </li>
 
     <li class="list-group-item" *ngFor="#item of stream">

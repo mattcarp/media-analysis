@@ -83,8 +83,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             collectedStreams.push(_this.processObject(currentStream));
                         });
                         this.streams = collectedStreams;
-                        console.log("i collected a processed these streams for your viewing pleasure:");
-                        console.log(this.streams);
                     }
                 };
                 AnalysisApp.prototype.processObject = function (formatObj) {

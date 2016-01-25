@@ -96,24 +96,8 @@ export class AnalysisApp {
       });
 
       this.streams = collectedStreams;
-      console.log("i collected a processed these streams for your viewing pleasure:");
-      console.log(this.streams);
     }
 
-
-
-    // let formatKeys: any = Object.keys(analysisObj.format);
-    // console.log("format keys");
-    // console.log(formatKeys);
-    // results.formatKeys = formatKeys;
-    // console.log("format_name:", formatKeys.format_name);
-    //
-    // console.log("streams keys");
-    // console.log(Object.keys(analysisObj.streams)); // ["0", "1", "2"]
-    // TODO iterate over streams array
-    // console.log("final results:");
-    // console.dir(results);
-    // this.results = results;
   }
 
   // takes an object, removes any keys with array values, and returns
