@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var analysis = require('./routes/media-analysis');
+var black = require('./routes/black');
 
 var app = express();
 
@@ -21,16 +22,17 @@ app.use(logger('dev'));
 
 app.use(bodyParser.raw(
   {limit: '50mb'}
-  ));
+));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
 app.use('/analysis', analysis);
+app.use('/black', black);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -65,4 +67,3 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
-

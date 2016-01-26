@@ -1,11 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET home page. */
+/* post file slice for black detection. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Media Analysis' });
+  res.send('whe should perform black detection at this point');
 });
-
-
 
 module.exports = router;
