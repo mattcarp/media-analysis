@@ -1,12 +1,3 @@
-var express = require('express');
-var router = express.Router();
-
-/* post file slice for black detection. */
-router.post('/', function(req, res, next) {
-  res.send('whe should perform black detection at this point');
-});
-
-module.exports = router;
 var express = require( 'express' );
 var router = express.Router();
 var ffmpeg = require( 'fluent-ffmpeg' );
@@ -24,7 +15,7 @@ router.post('/', function(req, res, next) {
 
     var bufferStream = new stream.PassThrough();
     bufferStream.end(req.body);
-    console.log("you hit the black detection endpoint with a POST");
+    console.log("you hit the mono detection endpoint with a POST");
     console.log("content type:");
     console.log(req.headers['content-type']);
 

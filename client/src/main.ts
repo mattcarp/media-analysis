@@ -4,7 +4,11 @@ import {bootstrap} from "angular2/platform/browser";
 import "rxjs/add/operator/map";
 import "rxjs/add/operator/retry";
 
+// initial slice for metadata analysis
 const SLICE_SIZE = 100000;
+// incremental amount to be appended to SLICE_SIZE
+const BLACK_SIZE = 5000000;
+// allow for jQuery - necessary for its ajax library
 declare var $: any;
 declare var FileReader: any;
 
@@ -51,6 +55,9 @@ export class AnalysisApp {
             console.log("this is what i got from ffprobe:");
             console.log(data);
             self.renderResult(data);
+            // TODO pass large slice of file
+            self.detectBlack();
+            self.detectMono();
           }
         });
       }
@@ -62,6 +69,37 @@ export class AnalysisApp {
 
   changeListener($event): void {
     this.readBlob($event.target);
+  }
+
+  detectBlack() {
+    let stub: string = "";
+    console.log("hiya from black detection");
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:3000/black",
+      data: stub,
+      // don't massage binary to JSON
+      processData: false,
+      // content type that we are sending
+      contentType: 'application/octet-stream',
+      // data type that we expect in return
+      // dataType: "",
+      error: function(err) {
+        console.log("you have an error on the black detection ajax request:");
+        console.log(err);
+      },
+      success: function(data) {
+        // error handling
+        console.log("this is what i got from ffprobe:");
+        console.log(data);
+        // self.renderResult(data);
+        console.log("i'm inside the black detection ajax success method");
+      }
+    });
+  }
+
+  detectMono() {
+    console.log("hiya from dual mono detection")
   }
 
   renderResult(data) {

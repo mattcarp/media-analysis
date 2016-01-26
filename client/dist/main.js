@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, browser_1;
-    var SLICE_SIZE, AnalysisApp;
+    var SLICE_SIZE, BLACK_SIZE, AnalysisApp;
     return {
         setters:[
             function (core_1_1) {
@@ -22,6 +22,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_2) {}],
         execute: function() {
             SLICE_SIZE = 100000;
+            BLACK_SIZE = 5000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
                 }
@@ -46,6 +47,8 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log("this is what i got from ffprobe:");
                                     console.log(data);
                                     self.renderResult(data);
+                                    self.detectBlack();
+                                    self.detectMono();
                                 }
                             });
                         }
@@ -55,6 +58,29 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.readBlob($event.target);
+                };
+                AnalysisApp.prototype.detectBlack = function () {
+                    var stub = "";
+                    console.log("hiya from black detection");
+                    $.ajax({
+                        type: "POST",
+                        url: "http://localhost:3000/black",
+                        data: stub,
+                        processData: false,
+                        contentType: 'application/octet-stream',
+                        error: function (err) {
+                            console.log("you have an error on the black detection ajax request:");
+                            console.log(err);
+                        },
+                        success: function (data) {
+                            console.log("this is what i got from ffprobe:");
+                            console.log(data);
+                            console.log("i'm inside the black detection ajax success method");
+                        }
+                    });
+                };
+                AnalysisApp.prototype.detectMono = function () {
+                    console.log("hiya from dual mono detection");
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
                     var _this = this;

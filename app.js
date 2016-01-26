@@ -9,6 +9,7 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var analysis = require('./routes/media-analysis');
 var black = require('./routes/black');
+var mono = require('./routes/mono');
 
 var app = express();
 
@@ -21,7 +22,7 @@ app.set('view engine', 'hbs');
 app.use(logger('dev'));
 
 app.use(bodyParser.raw(
-  {limit: '50mb'}
+{limit: '50mb'}
 ));
 
 app.use(bodyParser.json());
@@ -33,6 +34,7 @@ app.use('/', routes);
 app.use('/users', users);
 app.use('/analysis', analysis);
 app.use('/black', black);
+app.use('/mono', black);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
