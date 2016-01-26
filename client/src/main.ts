@@ -18,11 +18,17 @@ declare var FileReader: any;
   templateUrl: "src/main.html"
 })
 export class AnalysisApp {
+  endpoint: string;
   results: Object;
   format: Object[];
   formatTags: Object[];
   ffprobeErr: string;
   streams: Object[][]; // an array of arrays of stream objects
+
+
+  constructor() {
+    this.endpoint = this.setEndpoint();
+  }
 
   readBlob(target: any) {
     let self = this;
@@ -38,7 +44,7 @@ export class AnalysisApp {
         // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
         $.ajax({
           type: "POST",
-          url: "http://localhost:3000/analysis",
+          url: this.endpoint + "analysis",
           data: blob,
           // don't massage binary to JSON
           processData: false,
@@ -76,7 +82,7 @@ export class AnalysisApp {
     console.log("hiya from black detection");
     $.ajax({
       type: "POST",
-      url: "http://localhost:3000/black",
+      url: this.endpoint + "black",
       data: stub,
       // don't massage binary to JSON
       processData: false,
@@ -154,7 +160,15 @@ export class AnalysisApp {
       })
   }
 
+  setEndpoint() {
+    console.log("location hostname:", window.location.hostname);
+    if (window.location.hostname === "localhost") {
+      return "http://localhost:3000/";
+    } else {
+      return "http://52.0.119.124:3000/";
+    }
 
+  }
 
   logError(err) {
     console.log("There was an error: ");

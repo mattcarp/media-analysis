@@ -25,8 +25,10 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             BLACK_SIZE = 5000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
+                    this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.readBlob = function (target) {
+                    var _this = this;
                     var self = this;
                     var files = target.files;
                     var file = files[0];
@@ -35,7 +37,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         if (evt.target.readyState == FileReader.DONE) {
                             $.ajax({
                                 type: "POST",
-                                url: "http://localhost:3000/analysis",
+                                url: _this.endpoint + "analysis",
                                 data: blob,
                                 processData: false,
                                 contentType: 'application/octet-stream',
@@ -64,7 +66,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     console.log("hiya from black detection");
                     $.ajax({
                         type: "POST",
-                        url: "http://localhost:3000/black",
+                        url: this.endpoint + "black",
                         data: stub,
                         processData: false,
                         contentType: 'application/octet-stream',
@@ -121,6 +123,15 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         item.value = formatObj[formatKey];
                         return item;
                     });
+                };
+                AnalysisApp.prototype.setEndpoint = function () {
+                    console.log("location hostname:", window.location.hostname);
+                    if (window.location.hostname === "localhost") {
+                        return "http://localhost:3000/";
+                    }
+                    else {
+                        return "http://52.0.119.124:3000/";
+                    }
                 };
                 AnalysisApp.prototype.logError = function (err) {
                     console.log("There was an error: ");
