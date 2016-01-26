@@ -47,15 +47,6 @@ router.post( '/', function( req, res, next ) {
                 res.json(result);
             } );
 
-        // ffmpeg.ffprobe( tempName, function( err, metadata ) {
-        //     console.log( "attempt to process bufferstream:" );
-        //     result = require( 'util' ).inspect( metadata, false, null );
-        //     console.log( "behold:" )
-        //     console.log( result );
-        //     res.json( result );
-        //     // res.send();
-        // } );
-
         console.log( "the temp file was saved" );
     } ); // writeFile
 } );
