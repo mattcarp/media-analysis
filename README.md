@@ -2,7 +2,17 @@ start express server, from project root:
 
     nodemon DEBUG=media-analysis:* npm start
 
- ffprobe on command lne
+### Bash: Open Chrome and ignore CORS errors
+
+    open -a Google\ Chrome --args --disable-web-security
+
+start ui server from media-analysis/client
+
+    gulp
+
+then hit the ui on localhost:9000
+
+ffprobe on command line
 
     ffprobe -of json -show_streams -show_format /path/to/file
 

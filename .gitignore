@@ -10,6 +10,5 @@ pids
 *.pid
 *.seed
 
-
 # Debug log from npm
 npm-debug.log
