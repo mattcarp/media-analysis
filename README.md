@@ -32,7 +32,7 @@ you'll need to manually restart the server to see the new endpoint
 angular version (not working yet b/c of http sending too much data) is in /client
 run it with `gulp`
 
-demo hosting on aws `52.0.119.124:3000`
+demo hosting on aws `52.0.119.124:3000` (API is on :9000)
 
 deployment:
 
