@@ -68,7 +68,7 @@ app.use(function(err, req, res, next) {
   res.render('error', {
     message: err.message,
     // mc hack: error should be an empty object
-    error: error
+    error: err
   });
 });
 
