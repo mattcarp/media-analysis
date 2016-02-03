@@ -22,7 +22,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_2) {}],
         execute: function() {
             SLICE_SIZE = 25000000;
-            BLACK_SIZE = 50000000;
+            BLACK_SIZE = 25000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
                     this.endpoint = this.setEndpoint();
@@ -49,6 +49,8 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log("this is what i got from ffprobe:");
                                     console.log(data);
                                     self.renderResult(data);
+                                    var format = data.analysis.format;
+                                    console.log("format key", format);
                                     self.detectBlack(blob);
                                     self.detectMono();
                                 }
@@ -95,7 +97,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     console.log("these are my top-level keys");
                     console.log(Object.keys(data));
                     var analysisObj = JSON.parse(data.analysis);
-                    console.log("analysis object, and length:");
+                    console.log("analysis object, and number of keys:");
                     console.log(analysisObj);
                     console.log(Object.keys(analysisObj).length);
                     if (analysisObj && Object.keys(analysisObj).length !== 0) {

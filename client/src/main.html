@@ -19,11 +19,12 @@
 </div>
 
 <div class="" >
-  <h3 *ngIf="blackDetectStarted">black detection started</h3>
+  <h4 *ngIf="blackDetectStarted">black detection started...</h4>
   <div class="" *ngIf="blackDetection">
+
     <ul>
       <li *ngFor="#item of blackDetection">
-        {{item.tag}} | {{item.value}}
+        {{item.tag}}: {{item.value}} seconds
       </li>
     </ul>
   </div>

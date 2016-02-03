@@ -7,8 +7,9 @@ import "rxjs/add/operator/retry";
 // initial slice for metadata analysis
 const SLICE_SIZE = 25000000;
 // incremental amount to be appended to SLICE_SIZE
-// TODOmc you're still using slice_size for blackdetect
-const BLACK_SIZE = 50000000;
+// TODOmc you're still using slice_size for blackdetect,
+// and this should also be calculated via = 3 seconds * bit_rate
+const BLACK_SIZE = 25000000;
 // allow for jQuery - necessary for its ajax library
 declare var $: any;
 declare var FileReader: any;
@@ -66,6 +67,11 @@ export class AnalysisApp {
             console.log(data);
             self.renderResult(data);
             // TODO pass ~3 secs of file, based on bitrate
+            // TODO the value for the analysis key is one huge string -
+            // need to eval() it
+            let format = data.analysis.format;
+            console.log("format key", format);
+            // TODO don't use blob
             self.detectBlack(blob);
             self.detectMono();
           }
@@ -121,7 +127,7 @@ export class AnalysisApp {
     console.log("these are my top-level keys");
     console.log(Object.keys(data));
     let analysisObj = JSON.parse(data.analysis);
-    console.log("analysis object, and length:");
+    console.log("analysis object, and number of keys:");
     console.log(analysisObj);
     console.log(Object.keys(analysisObj).length);
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
