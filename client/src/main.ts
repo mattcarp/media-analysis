@@ -5,7 +5,7 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/retry";
 
 // initial slice for metadata analysis
-const SLICE_SIZE = 100000;
+const SLICE_SIZE = 15000000;
 // incremental amount to be appended to SLICE_SIZE
 const BLACK_SIZE = 5000000;
 // allow for jQuery - necessary for its ajax library
@@ -61,8 +61,8 @@ export class AnalysisApp {
             console.log("this is what i got from ffprobe:");
             console.log(data);
             self.renderResult(data);
-            // TODO pass large slice of file
-            self.detectBlack();
+            // TODO pass ~3 secs of file, based on bitrate
+            self.detectBlack(blob);
             self.detectMono();
           }
         });
@@ -70,6 +70,7 @@ export class AnalysisApp {
     };
 
     var blob = file.slice(0, SLICE_SIZE);
+    let blackBlob = file.slice(0, BLACK_SIZE);
     reader.readAsBinaryString(blob);
   }
 
@@ -77,13 +78,13 @@ export class AnalysisApp {
     this.readBlob($event.target);
   }
 
-  detectBlack() {
+  detectBlack(slice) {
     let stub: string = "";
     console.log("hiya from black detection");
     $.ajax({
       type: "POST",
       url: this.endpoint + "black",
-      data: stub,
+      data: slice,
       // don't massage binary to JSON
       processData: false,
       // content type that we are sending
@@ -96,10 +97,12 @@ export class AnalysisApp {
       },
       success: function(data) {
         // error handling
-        console.log("this is what i got from ffprobe:");
-        console.log(data);
+        console.log("this is what i got from ffprobe black detect:");
+        console.dir(data.analysis.split("\n"));
         // self.renderResult(data);
         console.log("i'm inside the black detection ajax success method");
+        const blackArr = data.analysis.split("\n");
+
       }
     });
   }

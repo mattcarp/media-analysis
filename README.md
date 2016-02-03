@@ -32,6 +32,8 @@ you'll need to manually restart the server to see the new endpoint
 angular version (not working yet b/c of http sending too much data) is in /client
 run it with `gulp`
 
+
+
 demo hosting on aws `52.0.119.124:3000` (API is on :9000)
 
 deployment:
@@ -41,10 +43,19 @@ deployment:
     git pull origin master
     nodemon DEBUG=media-analysis:* npm start
 
-## black detection
+## ffmpeg
+
+### black detection
 try
 
-    ffmpeg -i inputfile.mp4 -vf blackdetect=d=0.1:pix_th=.1 -f rawvideo -y /dev/null
+    ffprobe -f lavfi -i "movie=MVD_000000326734_001.26.mpg,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration-of default=nw=1 -v quiet
 
 where d=0.1 expresses the minimum length of black to detect in seconds. Lower this if you want single frames.
 pix_th=.1 is the level of black to detect between 0 and 1. a setting of one will flag all frames, a setting of .01 should only grab black. tweak as needed.
+
+### mono detection
+
+### media metadata
+a good ffprobe line showing all metadata and suppressing header (single line):
+
+      ffprobe -v quiet -sexagesimal -of json -show_format -show_streams -show_chapters -show_programs -show_private_data -i MVD_000000326734_001.26.mpg

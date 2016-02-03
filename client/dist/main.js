@@ -21,7 +21,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_1) {},
             function (_2) {}],
         execute: function() {
-            SLICE_SIZE = 100000;
+            SLICE_SIZE = 15000000;
             BLACK_SIZE = 5000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
@@ -49,25 +49,26 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log("this is what i got from ffprobe:");
                                     console.log(data);
                                     self.renderResult(data);
-                                    self.detectBlack();
+                                    self.detectBlack(blob);
                                     self.detectMono();
                                 }
                             });
                         }
                     };
                     var blob = file.slice(0, SLICE_SIZE);
+                    var blackBlob = file.slice(0, BLACK_SIZE);
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.readBlob($event.target);
                 };
-                AnalysisApp.prototype.detectBlack = function () {
+                AnalysisApp.prototype.detectBlack = function (slice) {
                     var stub = "";
                     console.log("hiya from black detection");
                     $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
-                        data: stub,
+                        data: slice,
                         processData: false,
                         contentType: 'application/octet-stream',
                         error: function (err) {
@@ -75,9 +76,10 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("this is what i got from ffprobe:");
-                            console.log(data);
+                            console.log("this is what i got from ffprobe black detect:");
+                            console.dir(data.analysis.split("\n"));
                             console.log("i'm inside the black detection ajax success method");
+                            var blackArr = data.analysis.split("\n");
                         }
                     });
                 };

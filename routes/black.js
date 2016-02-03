@@ -41,15 +41,25 @@ router.post('/', function(req, res, next) {
             return console.log( err );
         }
 
-        console.log("call ffprobe with exec:");
-        child = exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
-            function( error, stdout, stderr ) {
+        console.log("call ffprobe black detection:");
+        let ffprobeCmd = `ffprobe -f lavfi -i "movie=${tempName},blackdetect[out0]"` + `
+          -show_entries tags=lavfi.black_start,lavfi.black_end -of default=nw=1 -v quiet`
+
+        child = exec(ffprobeCmd,
+            function(error, stdout, stderr) {
                 var result = {}
                 console.log("STDOUT: " + stdout );
                 console.log("STDERR: " + stderr );
                 if ( error !== null ) {
                   console.log("here is the exec error from ffprobe: " + error );
                 }
+                let analysisArr = stdout.split("\n");
+                console.log("my analysis array:");
+                console.log(analysisArr)
+                // let blackIndex = analysisArr.indexOf("[blackdetect");
+                // console.log("black index:", blackIndex);
+                // console.log("show me the money: ", analysisArr[50]);
+                // console.log(analysisArr);
                 result.error = stderr;
                 result.analysis = stdout;
                 res.json(result);
