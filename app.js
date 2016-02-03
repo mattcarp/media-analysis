@@ -1,5 +1,7 @@
+#!/usr/bin/env node
+
 var express = require('express');
-var http = require('http'); 
+var http = require('http');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -65,7 +67,8 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,
-    error: {}
+    // mc hack: error should be an empty object
+    error: error
   });
 });
 
