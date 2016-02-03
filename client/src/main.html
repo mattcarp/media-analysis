@@ -18,6 +18,17 @@
   </p>
 </div>
 
+<div class="" >
+  <h3 *ngIf="blackDetectStarted">black detection started</h3>
+  <div class="" *ngIf="blackDetection">
+    <ul>
+      <li *ngFor="#item of blackDetection">
+        {{item.tag}} | {{item.value}}
+      </li>
+    </ul>
+  </div>
+</div>
+
 <div class="col-xs-6" *ngIf="format">
   <ul class="list-group">
     <li class="list-group-item">

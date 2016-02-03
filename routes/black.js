@@ -2,9 +2,9 @@ var express = require('express');
 var router = express.Router();
 
 /* post file slice for black detection. */
-router.post('/', function(req, res, next) {
-  res.send('whe should perform black detection at this point');
-});
+// router.post('/', function(req, res, next) {
+//   res.send('whe should perform black detection at this point');
+// });
 
 module.exports = router;
 var express = require( 'express' );
@@ -42,26 +42,40 @@ router.post('/', function(req, res, next) {
         }
 
         console.log("call ffprobe black detection:");
-        let ffprobeCmd = `ffprobe -f lavfi -i "movie=${tempName},blackdetect[out0]"` + `
-          -show_entries tags=lavfi.black_start,lavfi.black_end -of default=nw=1 -v quiet`
+        let ffprobeCmd = `ffprobe -f lavfi -i "movie=${tempName},blackdetect[out0]"` +
+        ` -show_entries tags=lavfi.black_start,lavfi.black_end -of default=nw=1 -v quiet`
 
         child = exec(ffprobeCmd,
             function(error, stdout, stderr) {
-                var result = {}
+
+                let result = {}
                 console.log("STDOUT: " + stdout );
                 console.log("STDERR: " + stderr );
                 if ( error !== null ) {
                   console.log("here is the exec error from ffprobe: " + error );
                 }
-                let analysisArr = stdout.split("\n");
-                console.log("my analysis array:");
-                console.log(analysisArr)
-                // let blackIndex = analysisArr.indexOf("[blackdetect");
-                // console.log("black index:", blackIndex);
-                // console.log("show me the money: ", analysisArr[50]);
-                // console.log(analysisArr);
+                // TODOmc filter empty elements
+                let analysisArr = stdout.split("\n").filter(item => item !== "");
+                console.log("my analysisArr");
+                console.log(analysisArr);
+
+                let blackObjs = analysisArr.map(item => {
+                  let temp = {};
+                  if (item.indexOf("black_start") > -1) {
+                    temp.tag = "blackStart";
+                  }
+                  if (item.indexOf("black_end") > -1 ) {
+                    temp.tag = "blackEnd";
+                  }
+                  temp.value = item.substr(item.indexOf("=") + 1);
+                  return temp;
+                });
+                // TODOmc take blackObjs array and transfomr to 'blackIntervals'
+                // arr, with start, end, and duration
+                console.log("my black objs:");
+                console.log(blackObjs);
                 result.error = stderr;
-                result.analysis = stdout;
+                result.blackDetect = blackObjs;
                 res.json(result);
             } );
 

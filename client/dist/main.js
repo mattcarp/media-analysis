@@ -21,8 +21,8 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_1) {},
             function (_2) {}],
         execute: function() {
-            SLICE_SIZE = 15000000;
-            BLACK_SIZE = 5000000;
+            SLICE_SIZE = 25000000;
+            BLACK_SIZE = 50000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
                     this.endpoint = this.setEndpoint();
@@ -63,8 +63,9 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     this.readBlob($event.target);
                 };
                 AnalysisApp.prototype.detectBlack = function (slice) {
+                    var self = this;
                     var stub = "";
-                    console.log("hiya from black detection");
+                    self.blackDetectStarted = true;
                     $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
@@ -77,9 +78,9 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         },
                         success: function (data) {
                             console.log("this is what i got from ffprobe black detect:");
-                            console.dir(data.analysis.split("\n"));
-                            console.log("i'm inside the black detection ajax success method");
-                            var blackArr = data.analysis.split("\n");
+                            console.dir(data.blackDetect);
+                            self.blackDetection = data.blackDetect;
+                            self.blackDetectStarted = false;
                         }
                     });
                 };

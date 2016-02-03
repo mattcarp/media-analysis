@@ -5,9 +5,10 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/retry";
 
 // initial slice for metadata analysis
-const SLICE_SIZE = 15000000;
+const SLICE_SIZE = 25000000;
 // incremental amount to be appended to SLICE_SIZE
-const BLACK_SIZE = 5000000;
+// TODOmc you're still using slice_size for blackdetect
+const BLACK_SIZE = 50000000;
 // allow for jQuery - necessary for its ajax library
 declare var $: any;
 declare var FileReader: any;
@@ -23,6 +24,9 @@ export class AnalysisApp {
   format: Object[];
   formatTags: Object[];
   ffprobeErr: string;
+  blackDetectStarted: boolean;
+  blackDetection: Object[];
+
   streams: Object[][]; // an array of arrays of stream objects
 
 
@@ -69,7 +73,7 @@ export class AnalysisApp {
       }
     };
 
-    var blob = file.slice(0, SLICE_SIZE);
+    let blob = file.slice(0, SLICE_SIZE);
     let blackBlob = file.slice(0, BLACK_SIZE);
     reader.readAsBinaryString(blob);
   }
@@ -79,8 +83,10 @@ export class AnalysisApp {
   }
 
   detectBlack(slice) {
+    let self = this;
     let stub: string = "";
-    console.log("hiya from black detection");
+    self.blackDetectStarted = true;
+
     $.ajax({
       type: "POST",
       url: this.endpoint + "black",
@@ -96,13 +102,10 @@ export class AnalysisApp {
         console.log(err);
       },
       success: function(data) {
-        // error handling
         console.log("this is what i got from ffprobe black detect:");
-        console.dir(data.analysis.split("\n"));
-        // self.renderResult(data);
-        console.log("i'm inside the black detection ajax success method");
-        const blackArr = data.analysis.split("\n");
-
+        console.dir(data.blackDetect);
+        self.blackDetection = data.blackDetect;
+        self.blackDetectStarted = false;
       }
     });
   }
@@ -131,8 +134,7 @@ export class AnalysisApp {
       }
 
     }
-    // console.log("do we have streams?");
-    // console.log(formatObj.streams);
+
     if (analysisObj.streams && Object.keys(analysisObj.streams).length !==0) {
       // TODO use array.foreach to process each stream and return an array of arrays
       let collectedStreams = [];
