@@ -39,6 +39,9 @@ deployment:
     ssh upload-demo
     cd media-analysis
     git pull origin master
+    forever -f npm start
+
+debug forever failing on prod server
     nodemon DEBUG=media-analysis:* npm start
 
 ## ffmpeg
