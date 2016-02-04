@@ -19,11 +19,11 @@
 </div>
 
 <div class="" >
-  <h4 *ngIf="blackDetectStarted">black detection started...</h4>
-  <div class="" *ngIf="blackDetection">
-
+  <p *ngIf="headBlackStarted">video black detection started on head. this is the super-slow version...</p>
+  <div class="" *ngIf="headBlackDetection">
+    <h4>file head</h4>
     <ul>
-      <li *ngFor="#item of blackDetection">
+      <li *ngFor="#item of headBlackDetection">
         {{item.tag}}: {{item.value}} seconds
       </li>
     </ul>

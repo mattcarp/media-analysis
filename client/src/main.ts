@@ -5,11 +5,11 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/retry";
 
 // initial slice for metadata analysis
-const SLICE_SIZE = 25000000;
+const SLICE_SIZE = 100000;
 // incremental amount to be appended to SLICE_SIZE
 // TODOmc you're still using slice_size for blackdetect,
 // and this should also be calculated via = 3 seconds * bit_rate
-const BLACK_SIZE = 25000000;
+const BLACK_SECONDS = 3.1;
 // allow for jQuery - necessary for its ajax library
 declare var $: any;
 declare var FileReader: any;
@@ -25,17 +25,19 @@ export class AnalysisApp {
   format: Object[];
   formatTags: Object[];
   ffprobeErr: string;
-  blackDetectStarted: boolean;
-  blackDetection: Object[];
+  headBlackStarted: boolean;
+  tailBlackStarted: boolean
+  headBlackDetection: Object[];
+  blackBlob: any;
+  mediaFile: File;
 
   streams: Object[][]; // an array of arrays of stream objects
-
 
   constructor() {
     this.endpoint = this.setEndpoint();
   }
 
-  readBlob(target: any) {
+  getMetadata(target: any) {
     let self = this;
     let files = target.files;
     let file = files[0];
@@ -61,37 +63,46 @@ export class AnalysisApp {
             console.log("you have an error on the ajax requst:");
             console.log(err);
           },
-          success: function(data) {
+          success: data => {
+            let me = this;
             // error handling
-            console.log("this is what i got from ffprobe:");
+            console.log("this is what i got from ffprobe metadata:");
             console.log(data);
             self.renderResult(data);
-            // TODO pass ~3 secs of file, based on bitrate
-            // TODO the value for the analysis key is one huge string -
-            // need to eval() it
-            let format = data.analysis.format;
-            console.log("format key", format);
-            // TODO don't use blob
-            self.detectBlack(blob);
+
+            let analyisObj = JSON.parse(data.analysis);
+            let bitrate = analyisObj.format.bit_rate;
+            console.log("bitrate", bitrate);
+            console.log("bitrate * 3.1", bitrate * 3.1);
+            //
+
+            // TODO -bitrates in metatadata are unreliable -
+            // send ~100 meg, then request more bytes and concat if
+            // blackDetect shows a blac_start but no black_end
+            // self.blackBlob = self.mediaFile.slice(0, bitrate * BLACK_SECONDS);
+            self.blackBlob = self.mediaFile.slice(0, 200000000);
+            // console.log("this is my black blob:");
+            console.log(self.blackBlob);
+            self.detectBlack(self.blackBlob);
             self.detectMono();
           }
         });
       }
     };
 
-    let blob = file.slice(0, SLICE_SIZE);
-    let blackBlob = file.slice(0, BLACK_SIZE);
+    this.mediaFile = file;
+    let blob = this.mediaFile.slice(0, SLICE_SIZE);
     reader.readAsBinaryString(blob);
   }
 
   changeListener($event): void {
-    this.readBlob($event.target);
+    this.getMetadata($event.target);
   }
 
   detectBlack(slice) {
     let self = this;
     let stub: string = "";
-    self.blackDetectStarted = true;
+    self.headBlackStarted = true;
 
     $.ajax({
       type: "POST",
@@ -108,10 +119,11 @@ export class AnalysisApp {
         console.log(err);
       },
       success: function(data) {
-        console.log("this is what i got from ffprobe black detect:");
+        console.log("this is what i got from ffprobe black detect, for the head:");
         console.dir(data.blackDetect);
-        self.blackDetection = data.blackDetect;
-        self.blackDetectStarted = false;
+        self.headBlackDetection = data.blackDetect;
+        self.headBlackStarted = false;
+        console.log("time to do detection on the tail, hoss")
       }
     });
   }

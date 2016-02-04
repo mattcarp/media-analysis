@@ -14,6 +14,13 @@ var analysis = require('./routes/media-analysis');
 var black = require('./routes/black');
 const mono = require('./routes/mono');
 
+var log = require('winston');
+
+log.log('info', 'Hello distributed log files!');
+log.info('Hello again distributed logs');
+log.level = 'debug';
+log.log('debug', 'Now my debug messages are written to console!');
+
 const app = express();
 
 // view engine setup
@@ -32,7 +39,7 @@ app.use(function(req, res, next) {
 });
 
 app.use(bodyParser.raw({
-  limit: "50mb"
+  limit: "500mb"
 }));
 
 app.use(bodyParser.json());
@@ -49,7 +56,7 @@ app.use('/black', black);
 app.use('/mono', black);
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   var err = new Error("Not Found");
   err.status = 404;
   next(err);
@@ -59,10 +66,12 @@ app.use(function (req, res, next) {
 
 // development error handler
 // will print stacktrace
-if(app.get('env') === 'development') {
+if (app.get("env") === "development") {
   app.use(function (err, req, res, next) {
+    log.error("this is my error");
+    log.error(err);
     res.status(err.status || 500);
-    res.render('error', {
+    res.render("error", {
       message: err.message,
       error: err
     });
@@ -72,6 +81,8 @@ if(app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
+  log.error("this is my error");
+  log.error(err);
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

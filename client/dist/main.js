@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, browser_1;
-    var SLICE_SIZE, BLACK_SIZE, AnalysisApp;
+    var SLICE_SIZE, BLACK_SECONDS, AnalysisApp;
     return {
         setters:[
             function (core_1_1) {
@@ -21,13 +21,13 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_1) {},
             function (_2) {}],
         execute: function() {
-            SLICE_SIZE = 25000000;
-            BLACK_SIZE = 25000000;
+            SLICE_SIZE = 100000;
+            BLACK_SECONDS = 3.1;
             AnalysisApp = (function () {
                 function AnalysisApp() {
                     this.endpoint = this.setEndpoint();
                 }
-                AnalysisApp.prototype.readBlob = function (target) {
+                AnalysisApp.prototype.getMetadata = function (target) {
                     var _this = this;
                     var self = this;
                     var files = target.files;
@@ -46,28 +46,33 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log(err);
                                 },
                                 success: function (data) {
-                                    console.log("this is what i got from ffprobe:");
+                                    var me = _this;
+                                    console.log("this is what i got from ffprobe metadata:");
                                     console.log(data);
                                     self.renderResult(data);
-                                    var format = data.analysis.format;
-                                    console.log("format key", format);
-                                    self.detectBlack(blob);
+                                    var analyisObj = JSON.parse(data.analysis);
+                                    var bitrate = analyisObj.format.bit_rate;
+                                    console.log("bitrate", bitrate);
+                                    console.log("bitrate * 3.1", bitrate * 3.1);
+                                    self.blackBlob = self.mediaFile.slice(0, 200000000);
+                                    console.log(self.blackBlob);
+                                    self.detectBlack(self.blackBlob);
                                     self.detectMono();
                                 }
                             });
                         }
                     };
-                    var blob = file.slice(0, SLICE_SIZE);
-                    var blackBlob = file.slice(0, BLACK_SIZE);
+                    this.mediaFile = file;
+                    var blob = this.mediaFile.slice(0, SLICE_SIZE);
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
-                    this.readBlob($event.target);
+                    this.getMetadata($event.target);
                 };
                 AnalysisApp.prototype.detectBlack = function (slice) {
                     var self = this;
                     var stub = "";
-                    self.blackDetectStarted = true;
+                    self.headBlackStarted = true;
                     $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
@@ -79,10 +84,11 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("this is what i got from ffprobe black detect:");
+                            console.log("this is what i got from ffprobe black detect, for the head:");
                             console.dir(data.blackDetect);
-                            self.blackDetection = data.blackDetect;
-                            self.blackDetectStarted = false;
+                            self.headBlackDetection = data.blackDetect;
+                            self.headBlackStarted = false;
+                            console.log("time to do detection on the tail, hoss");
                         }
                     });
                 };

@@ -35,6 +35,7 @@ run it with `gulp`
 demo hosting on aws `52.0.119.124:3000` (API is on :9000)
 
 deployment:
+    push to github
 
     ssh upload-demo
     cd media-analysis

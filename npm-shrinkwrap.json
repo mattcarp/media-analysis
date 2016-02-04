@@ -172,6 +172,11 @@
       "from": "concat-map@0.0.1",
       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"
     },
+    "concat-stream": {
+      "version": "1.5.1",
+      "from": "concat-stream@>=1.4.7 <2.0.0",
+      "resolved": "https://registry.npmjs.org/concat-stream/-/concat-stream-1.5.1.tgz"
+    },
     "configurable": {
       "version": "0.0.1",
       "from": "configurable@0.0.1",
@@ -983,6 +988,18 @@
         }
       }
     },
+    "glob": {
+      "version": "3.2.11",
+      "from": "glob@>=3.1.13 <4.0.0",
+      "resolved": "https://registry.npmjs.org/glob/-/glob-3.2.11.tgz",
+      "dependencies": {
+        "minimatch": {
+          "version": "0.3.0",
+          "from": "minimatch@>=0.3.0 <0.4.0",
+          "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-0.3.0.tgz"
+        }
+      }
+    },
     "glob-base": {
       "version": "0.3.0",
       "from": "glob-base@>=0.3.0 <0.4.0",
@@ -1017,6 +1034,11 @@
       "version": "3.1.1",
       "from": "hbs@>=3.1.0 <3.2.0",
       "resolved": "https://registry.npmjs.org/hbs/-/hbs-3.1.1.tgz"
+    },
+    "html": {
+      "version": "0.0.10",
+      "from": "html@latest",
+      "resolved": "https://registry.npmjs.org/html/-/html-0.0.10.tgz"
     },
     "http": {
       "version": "0.0.0",
@@ -1122,6 +1144,11 @@
       "version": "1.0.11",
       "from": "lazy@>=1.0.11 <1.1.0",
       "resolved": "https://registry.npmjs.org/lazy/-/lazy-1.0.11.tgz"
+    },
+    "lru-cache": {
+      "version": "2.7.3",
+      "from": "lru-cache@>=2.0.0 <3.0.0",
+      "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-2.7.3.tgz"
     },
     "media-typer": {
       "version": "0.3.0",
@@ -1423,6 +1450,11 @@
       "from": "shelljs@0.5.3",
       "resolved": "https://registry.npmjs.org/shelljs/-/shelljs-0.5.3.tgz"
     },
+    "sigmund": {
+      "version": "1.0.1",
+      "from": "sigmund@>=1.0.0 <1.1.0",
+      "resolved": "https://registry.npmjs.org/sigmund/-/sigmund-1.0.1.tgz"
+    },
     "source-map": {
       "version": "0.1.43",
       "from": "source-map@>=0.1.40 <0.2.0",
@@ -1467,6 +1499,11 @@
       "version": "1.6.10",
       "from": "type-is@>=1.6.6 <1.7.0",
       "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.6.10.tgz"
+    },
+    "typedarray": {
+      "version": "0.0.6",
+      "from": "typedarray@>=0.0.5 <0.1.0",
+      "resolved": "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
     },
     "uglify-js": {
       "version": "2.3.6",
