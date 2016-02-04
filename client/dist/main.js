@@ -141,7 +141,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         return "http://localhost:3000/";
                     }
                     else {
-                        return "http://52.0.119.124:3000/";
+                        return "http://localhost:3000/";
                     }
                 };
                 AnalysisApp.prototype.logError = function (err) {
