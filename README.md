@@ -57,6 +57,14 @@ pix_th=.1 is the level of black to detect between 0 and 1. a setting of one will
 
 ### mono detection
 
+first, demux to wav with ffmpeg
+
+    ffmpeg -i my_video.mp4 output_audio.wav
+
+SoX mono detect: If Pk lev dB shows as -inf, channels 1 and 2 are identical
+
+    sox output_audio.wav -n remix 1,2i stats
+
 ### media metadata
 a good ffprobe line showing all metadata and suppressing header (single line):
 
