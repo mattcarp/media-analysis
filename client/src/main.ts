@@ -36,7 +36,7 @@ export class AnalysisApp {
   streams: Object[][]; // an array of arrays of stream objects
 
   constructor() {
-    this.endpoint = "http://localhost:3000/";
+    this.endpoint = this.setEndpoint();
   }
 
   getMetadata(target: any) {
@@ -142,7 +142,7 @@ export class AnalysisApp {
   }
 
   detectMono() {
-    console.log("hiya from dual mono detection")
+    console.log("hiya from the client call to dual mono detection")
   }
 
   renderResult(data) {
@@ -177,6 +177,15 @@ export class AnalysisApp {
       this.streams = collectedStreams;
     }
 
+  }
+
+  setEndpoint() {
+    console.log("location hostname:", window.location.hostname);
+    if (window.location.hostname === "localhost") {
+      return "http://localhost:3000/";
+    } else {
+      return "http://52.0.119.124:3000/";
+    }
   }
 
   // takes an object, removes any keys with array values, and returns

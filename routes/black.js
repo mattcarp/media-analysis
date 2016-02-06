@@ -1,4 +1,5 @@
 /* eslint no-console: 0 */
+/* eslint arrow-body-style: [2, "always"]*/
 
 const express = require("express");
 const router = express.Router();
@@ -56,31 +57,14 @@ router.post("/", (req, res) => {
         console.log(blackIntervals);
 
         const blackObjs = blackIntervals.map(item => {
-          // const temp = {};
-
-          // if (item.indexOf("black_start") > -1) {
-          //   temp.tag = "blackStart";
-          // }
-          // if (item.indexOf("black_end") > -1) {
-          //   temp.tag = "blackEnd";
-          // }
-          // if (item.indexOf("black_duration") > -1) {
-          //   temp.tag = "blackDuration";
-          // }
-          // temp.value = item.substr(item.indexOf("=") + 1);
-          // return temp;
           return {
             start: item.substring(item.lastIndexOf("start:") + 6,
-              item.indexOf("black_end") -1),
+              item.indexOf("black_end") - 1),
             end: item.substring(item.lastIndexOf("end:") + 4,
-              item.indexOf("black_duration") -1),
+              item.indexOf("black_duration") - 1),
             duration: item.substr(item.indexOf("black_duration:") + 15),
           };
         });
-        // TODOmc take blackObjs array and transform to 'blackIntervals'
-        // arr, with start, end, and duration
-        console.log("my black objs:");
-        console.log(blackObjs);
         result.error = stderr;
         result.blackDetect = blackObjs;
         res.json(result);

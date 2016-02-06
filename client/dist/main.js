@@ -25,7 +25,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             BLACK_CHUNK_SIZE = 200000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
-                    this.endpoint = "http://localhost:3000/";
+                    this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
                     var _this = this;
@@ -105,7 +105,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     });
                 };
                 AnalysisApp.prototype.detectMono = function () {
-                    console.log("hiya from dual mono detection");
+                    console.log("hiya from the client call to dual mono detection");
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
                     var _this = this;
@@ -134,6 +134,15 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             collectedStreams.push(_this.processObject(currentStream));
                         });
                         this.streams = collectedStreams;
+                    }
+                };
+                AnalysisApp.prototype.setEndpoint = function () {
+                    console.log("location hostname:", window.location.hostname);
+                    if (window.location.hostname === "localhost") {
+                        return "http://localhost:3000/";
+                    }
+                    else {
+                        return "http://52.0.119.124:3000/";
                     }
                 };
                 AnalysisApp.prototype.processObject = function (formatObj) {
