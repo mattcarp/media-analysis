@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, browser_1;
-    var SLICE_SIZE, BLACK_SECONDS, AnalysisApp;
+    var SLICE_SIZE, BLACK_CHUNK_SIZE, AnalysisApp;
     return {
         setters:[
             function (core_1_1) {
@@ -21,11 +21,11 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_1) {},
             function (_2) {}],
         execute: function() {
-            SLICE_SIZE = 100000;
-            BLACK_SECONDS = 3.1;
+            SLICE_SIZE = 150000;
+            BLACK_CHUNK_SIZE = 200000000;
             AnalysisApp = (function () {
                 function AnalysisApp() {
-                    this.endpoint = this.setEndpoint();
+                    this.endpoint = "http://localhost:3000/";
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
                     var _this = this;
@@ -54,9 +54,15 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     var bitrate = analyisObj.format.bit_rate;
                                     console.log("bitrate", bitrate);
                                     console.log("bitrate * 3.1", bitrate * 3.1);
-                                    self.blackBlob = self.mediaFile.slice(0, 200000000);
-                                    console.log(self.blackBlob);
-                                    self.detectBlack(self.blackBlob);
+                                    self.headBlob = self.mediaFile.slice(0, BLACK_CHUNK_SIZE);
+                                    self.headBlackStarted = true;
+                                    self.detectBlack(self.headBlob, "head");
+                                    var fileLength = self.mediaFile.size;
+                                    self.tailBlob = self.mediaFile.slice(fileLength -
+                                        BLACK_CHUNK_SIZE, fileLength);
+                                    self.tailBlackStarted = true;
+                                    self.detectBlack(self.tailBlob, "tail");
+                                    console.log("the file length", self.mediaFile.size);
                                     self.detectMono();
                                 }
                             });
@@ -69,10 +75,9 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.getMetadata($event.target);
                 };
-                AnalysisApp.prototype.detectBlack = function (slice) {
+                AnalysisApp.prototype.detectBlack = function (slice, position) {
                     var self = this;
                     var stub = "";
-                    self.headBlackStarted = true;
                     $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
@@ -84,11 +89,18 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("this is what i got from ffprobe black detect, for the head:");
-                            console.dir(data.blackDetect);
-                            self.headBlackDetection = data.blackDetect;
-                            self.headBlackStarted = false;
-                            console.log("time to do detection on the tail, hoss");
+                            if (position === "head") {
+                                console.log("this is what i got from lack detect, for the head:");
+                                console.dir(data.blackDetect);
+                                self.headBlackDetection = data.blackDetect;
+                                self.headBlackStarted = false;
+                            }
+                            if (position === "tail") {
+                                console.log("this is what i got for black at tail:");
+                                console.dir(data.blackDetect);
+                                self.tailBlackDetection = data.blackDetect;
+                                self.tailBlackStarted = false;
+                            }
                         }
                     });
                 };
@@ -134,15 +146,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         item.value = formatObj[formatKey];
                         return item;
                     });
-                };
-                AnalysisApp.prototype.setEndpoint = function () {
-                    console.log("location hostname:", window.location.hostname);
-                    if (window.location.hostname === "localhost") {
-                        return "http://localhost:3000/";
-                    }
-                    else {
-                        return "http://localhost:3000/";
-                    }
                 };
                 AnalysisApp.prototype.logError = function (err) {
                     console.log("There was an error: ");

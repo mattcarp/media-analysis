@@ -18,12 +18,21 @@
   </p>
 </div>
 
-<div class="" >
+<div>
   <p *ngIf="headBlackStarted">video black detection started on head. this is the super-slow version...</p>
   <div class="" *ngIf="headBlackDetection">
     <h4>file head</h4>
     <ul>
       <li *ngFor="#item of headBlackDetection">
+        {{item.tag}}: {{item.value}} seconds
+      </li>
+    </ul>
+  </div>
+  <p *ngIf="tailBlackStarted">video black detection started on tail. this is the super-slow version...</p>
+  <div class="" *ngIf="tailBlackDetection">
+    <h4>file head</h4>
+    <ul>
+      <li *ngFor="#item of tailBlackDetection">
         {{item.tag}}: {{item.value}} seconds
       </li>
     </ul>

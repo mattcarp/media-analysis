@@ -5,11 +5,11 @@ import "rxjs/add/operator/map";
 import "rxjs/add/operator/retry";
 
 // initial slice for metadata analysis
-const SLICE_SIZE = 100000;
-// incremental amount to be appended to SLICE_SIZE
-// TODOmc you're still using slice_size for blackdetect,
-// and this should also be calculated via = 3 seconds * bit_rate
-const BLACK_SECONDS = 3.1;
+const SLICE_SIZE = 150000;
+
+// bit rates from ffmpeg are unreliable, so we have to take a fixed chunk
+// TODO send a smaller chunk then send more if we dont have a black_end
+const BLACK_CHUNK_SIZE = 200000000;
 // allow for jQuery - necessary for its ajax library
 declare var $: any;
 declare var FileReader: any;
@@ -28,13 +28,15 @@ export class AnalysisApp {
   headBlackStarted: boolean;
   tailBlackStarted: boolean
   headBlackDetection: Object[];
-  blackBlob: any;
+  tailBlackDetection: Object[];
+  headBlob: any;
+  tailBlob: any;
   mediaFile: File;
 
   streams: Object[][]; // an array of arrays of stream objects
 
   constructor() {
-    this.endpoint = this.setEndpoint();
+    this.endpoint = "http://localhost:3000/";
   }
 
   getMetadata(target: any) {
@@ -74,16 +76,21 @@ export class AnalysisApp {
             let bitrate = analyisObj.format.bit_rate;
             console.log("bitrate", bitrate);
             console.log("bitrate * 3.1", bitrate * 3.1);
-            //
 
             // TODO -bitrates in metatadata are unreliable -
-            // send ~100 meg, then request more bytes and concat if
-            // blackDetect shows a blac_start but no black_end
-            // self.blackBlob = self.mediaFile.slice(0, bitrate * BLACK_SECONDS);
-            self.blackBlob = self.mediaFile.slice(0, 200000000);
-            // console.log("this is my black blob:");
-            console.log(self.blackBlob);
-            self.detectBlack(self.blackBlob);
+            // send fixed chunk, then request more bytes and concat if
+            // blackDetect shows a black_start but no black_end
+            self.headBlob = self.mediaFile.slice(0, BLACK_CHUNK_SIZE);
+
+            self.headBlackStarted = true;
+            self.detectBlack(self.headBlob, "head");
+            const fileLength = self.mediaFile.size;
+            self.tailBlob = self.mediaFile.slice(fileLength -
+              BLACK_CHUNK_SIZE, fileLength);
+            self.tailBlackStarted = true;
+            self.detectBlack(self.tailBlob, "tail");
+            console.log("the file length", self.mediaFile.size);
+
             self.detectMono();
           }
         });
@@ -99,10 +106,9 @@ export class AnalysisApp {
     this.getMetadata($event.target);
   }
 
-  detectBlack(slice) {
+  detectBlack(slice: any, position: string) {
     let self = this;
     let stub: string = "";
-    self.headBlackStarted = true;
 
     $.ajax({
       type: "POST",
@@ -119,11 +125,18 @@ export class AnalysisApp {
         console.log(err);
       },
       success: function(data) {
-        console.log("this is what i got from ffprobe black detect, for the head:");
-        console.dir(data.blackDetect);
-        self.headBlackDetection = data.blackDetect;
-        self.headBlackStarted = false;
-        console.log("time to do detection on the tail, hoss")
+        if (position === "head") {
+          console.log("this is what i got from lack detect, for the head:");
+          console.dir(data.blackDetect);
+          self.headBlackDetection = data.blackDetect;
+          self.headBlackStarted = false;
+        }
+        if (position === "tail") {
+          console.log("this is what i got for black at tail:");
+          console.dir(data.blackDetect);
+          self.tailBlackDetection = data.blackDetect;
+          self.tailBlackStarted = false;
+        }
       }
     });
   }
@@ -147,19 +160,18 @@ export class AnalysisApp {
       this.format = this.processObject(formatObj);
       console.log(formatObj);
 
-      if (formatObj.tags && Object.keys(formatObj.tags).length !==0) {
+      if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
         this.formatTags = this.processObject(formatObj.tags);
       }
 
     }
 
-    if (analysisObj.streams && Object.keys(analysisObj.streams).length !==0) {
-      // TODO use array.foreach to process each stream and return an array of arrays
+    if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
       let collectedStreams = [];
       let inputStreams = analysisObj.streams;
       inputStreams.forEach(currentStream => {
-          console.log("i am stream");
-          collectedStreams.push(this.processObject(currentStream));
+        console.log("i am stream");
+        collectedStreams.push(this.processObject(currentStream));
       });
 
       this.streams = collectedStreams;
@@ -173,25 +185,16 @@ export class AnalysisApp {
   processObject(formatObj): Object[] {
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
-      // TODO filter if value for key is object or array, rather than not 'tags'
+    // TODO filter if value for key is object or array, rather than not 'tags'
       .filter(formatKey => formatKey !== "tags")
       .map(formatKey => {
-        let item: any = {};
-        item.key = formatKey;
-        item.value = formatObj[formatKey];
-        return item;
-      })
+      let item: any = {};
+      item.key = formatKey;
+      item.value = formatObj[formatKey];
+      return item;
+    })
   }
 
-  setEndpoint() {
-    console.log("location hostname:", window.location.hostname);
-    if (window.location.hostname === "localhost") {
-      return "http://localhost:3000/";
-    } else {
-      return "http://localhost:3000/";
-    }
-
-  }
 
   logError(err) {
     console.log("There was an error: ");
