@@ -48,9 +48,9 @@ debug forever failing on prod server
 ## ffmpeg
 
 ### black detection
-try
+this will give you black_duration, but you'll have more text to filter out:
 
-    ffprobe -f lavfi -i "movie=MVD_000000326734_001.26.mpg,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration-of default=nw=1 -v quiet
+    ffprobe -f lavfi -i "movie=MVD_000000326734_001.26.mpg,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1
 
 where d=0.1 expresses the minimum length of black to detect in seconds. Lower this if you want single frames.
 pix_th=.1 is the level of black to detect between 0 and 1. a setting of one will flag all frames, a setting of .01 should only grab black. tweak as needed.

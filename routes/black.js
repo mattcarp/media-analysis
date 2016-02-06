@@ -33,7 +33,8 @@ router.post("/", (req, res) => {
 
     console.log("call ffprobe black detection:");
     const ffprobeCmd = `ffprobe -f lavfi -i "movie=${tempName},blackdetect[out0]"` +
-      ` -show_entries tags=lavfi.black_start,lavfi.black_end -of default=nw=1 -v quiet`;
+      ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
+
 
     exec(ffprobeCmd,
       (error, stdout, stderr) => {
@@ -43,23 +44,40 @@ router.post("/", (req, res) => {
         if (error !== null) {
           console.log("here is the exec error from ffprobe: ", error);
         }
-        // TODOmc filter empty elements
-        const analysisArr = stdout.split("\n").filter(item => item !== "");
-        console.log("my analysisArr");
+        // becuase we're sending slices, the info will be within stderr
+        const analysisArr = stderr.split("\n");
+        console.log("this is the analysis array that we should filter:");
         console.log(analysisArr);
-
-        const blackObjs = analysisArr.map(item => {
-          const temp = {};
-          if (item.indexOf("black_start") > -1) {
-            temp.tag = "blackStart";
-          }
-          if (item.indexOf("black_end") > -1) {
-            temp.tag = "blackEnd";
-          }
-          temp.value = item.substr(item.indexOf("=") + 1);
-          return temp;
+        const blackIntervals = analysisArr.filter(item => {
+          return item.indexOf("black_duration") > -1;
         });
-        // TODOmc take blackObjs array and transfomr to 'blackIntervals'
+
+        console.log("my black intervals");
+        console.log(blackIntervals);
+
+        const blackObjs = blackIntervals.map(item => {
+          // const temp = {};
+
+          // if (item.indexOf("black_start") > -1) {
+          //   temp.tag = "blackStart";
+          // }
+          // if (item.indexOf("black_end") > -1) {
+          //   temp.tag = "blackEnd";
+          // }
+          // if (item.indexOf("black_duration") > -1) {
+          //   temp.tag = "blackDuration";
+          // }
+          // temp.value = item.substr(item.indexOf("=") + 1);
+          // return temp;
+          return {
+            start: item.substring(item.lastIndexOf("start:") + 6,
+              item.indexOf("black_end") -1),
+            end: item.substring(item.lastIndexOf("end:") + 4,
+              item.indexOf("black_duration") -1),
+            duration: item.substr(item.indexOf("black_duration:") + 15),
+          };
+        });
+        // TODOmc take blackObjs array and transform to 'blackIntervals'
         // arr, with start, end, and duration
         console.log("my black objs:");
         console.log(blackObjs);
@@ -68,7 +86,7 @@ router.post("/", (req, res) => {
         res.json(result);
       });
 
-    console.log("the temp file was saved");
+    console.log("the temp file, for black detection, was saved");
   }); // writeFile
 });
 
