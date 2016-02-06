@@ -57,12 +57,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     self.headBlob = self.mediaFile.slice(0, BLACK_CHUNK_SIZE);
                                     self.headBlackStarted = true;
                                     self.detectBlack(self.headBlob, "head");
-                                    var fileLength = self.mediaFile.size;
-                                    self.tailBlob = self.mediaFile.slice(fileLength -
-                                        BLACK_CHUNK_SIZE, fileLength);
-                                    self.tailBlackStarted = true;
-                                    self.detectBlack(self.tailBlob, "tail");
-                                    console.log("the file length", self.mediaFile.size);
                                     self.detectMono();
                                 }
                             });
@@ -90,17 +84,38 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         },
                         success: function (data) {
                             if (position === "head") {
-                                console.log("this is what i got from lack detect, for the head:");
+                                console.log("this is what i got from black detect, for the head:");
                                 console.dir(data.blackDetect);
                                 self.headBlackDetection = data.blackDetect;
                                 self.headBlackStarted = false;
+                                var fileLength = self.mediaFile.size;
+                                console.log("the file length", fileLength);
+                                self.tailBlob = self.mediaFile.slice(fileLength -
+                                    BLACK_CHUNK_SIZE, fileLength);
+                                self.tailBlackStarted = true;
+                                self.detectTailBlack(self.tailBlob, "tail");
                             }
-                            if (position === "tail") {
-                                console.log("this is what i got for black at tail:");
-                                console.dir(data.blackDetect);
-                                self.tailBlackDetection = data.blackDetect;
-                                self.tailBlackStarted = false;
-                            }
+                        }
+                    });
+                };
+                AnalysisApp.prototype.detectTailBlack = function (slice, position) {
+                    var self = this;
+                    var stub = "";
+                    $.ajax({
+                        type: "POST",
+                        url: this.endpoint + "black",
+                        data: slice,
+                        processData: false,
+                        contentType: 'application/octet-stream',
+                        error: function (err) {
+                            console.log("you have an error on the black detection ajax request:");
+                            console.log(err);
+                        },
+                        success: function (data) {
+                            console.log("this is what i got from black detect, for the tail:");
+                            console.dir(data.blackDetect);
+                            self.tailBlackDetection = data.blackDetect;
+                            self.tailBlackStarted = false;
                         }
                     });
                 };

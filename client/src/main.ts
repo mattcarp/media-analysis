@@ -84,12 +84,6 @@ export class AnalysisApp {
 
             self.headBlackStarted = true;
             self.detectBlack(self.headBlob, "head");
-            const fileLength = self.mediaFile.size;
-            self.tailBlob = self.mediaFile.slice(fileLength -
-              BLACK_CHUNK_SIZE, fileLength);
-            self.tailBlackStarted = true;
-            self.detectBlack(self.tailBlob, "tail");
-            console.log("the file length", self.mediaFile.size);
 
             self.detectMono();
           }
@@ -126,17 +120,48 @@ export class AnalysisApp {
       },
       success: function(data) {
         if (position === "head") {
-          console.log("this is what i got from lack detect, for the head:");
+          console.log("this is what i got from black detect, for the head:");
           console.dir(data.blackDetect);
           self.headBlackDetection = data.blackDetect;
           self.headBlackStarted = false;
+          const fileLength = self.mediaFile.size;
+          console.log("the file length", fileLength);
+          // only process the tail after the head is done
+          self.tailBlob = self.mediaFile.slice(fileLength -
+            BLACK_CHUNK_SIZE, fileLength);
+          self.tailBlackStarted = true;
+          self.detectTailBlack(self.tailBlob, "tail");
+
+
+
         }
-        if (position === "tail") {
-          console.log("this is what i got for black at tail:");
+      }
+    });
+  }
+
+  detectTailBlack(slice: any, position: string) {
+    let self = this;
+    let stub: string = "";
+
+    $.ajax({
+      type: "POST",
+      url: this.endpoint + "black",
+      data: slice,
+      // don't massage binary to JSON
+      processData: false,
+      // content type that we are sending
+      contentType: 'application/octet-stream',
+      // data type that we expect in return
+      // dataType: "",
+      error: function(err) {
+        console.log("you have an error on the black detection ajax request:");
+        console.log(err);
+      },
+      success: function(data) {
+          console.log("this is what i got from black detect, for the tail:");
           console.dir(data.blackDetect);
           self.tailBlackDetection = data.blackDetect;
           self.tailBlackStarted = false;
-        }
       }
     });
   }
@@ -190,7 +215,7 @@ export class AnalysisApp {
 
   // takes an object, removes any keys with array values, and returns
   // an array of objects: {key: value}
-  // this is handy for ffprobe's format and tags object
+  // this is handy for ffprobe's format and tags objects
   processObject(formatObj): Object[] {
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
