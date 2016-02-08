@@ -1,40 +1,39 @@
 #!/usr/bin/env node
 
-const express = require('express');
-var http = require('http');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require("express");
+const http = require("http");
+const path = require("path");
+// const favicon = require("serve-favicon");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var analysis = require('./routes/media-analysis');
-var black = require('./routes/black');
-const mono = require('./routes/mono');
+const routes = require("./routes/index");
+const users = require("./routes/users");
+const analysis = require("./routes/media-analysis");
+const black = require("./routes/black");
+const mono = require("./routes/mono");
 
-var log = require('winston');
+// TODO use bunyon instead of winston
 
-log.log('info', 'Hello distributed log files!');
-log.info('Hello again distributed logs');
-log.level = 'debug';
-log.log('debug', 'Now my debug messages are written to console!');
 
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'client'));
-// app.set('view engine', 'hbs');
-app.set('view engine', 'html');
+app.set("views", path.join(__dirname, "client"));
+// app.set("view engine", "hbs");
+app.set("view engine", "html");
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+// app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+app.use(logger("dev"));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, " +
+    "xa-file-to-concat, xa-black-position");
+
   next();
 });
 
@@ -49,11 +48,11 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use('/', routes);
-app.use('/users', users);
-app.use('/analysis', analysis);
-app.use('/black', black);
-app.use('/mono', black);
+app.use("/", routes);
+app.use("/users", users);
+app.use("/analysis", analysis);
+app.use("/black", black);
+app.use("/mono", mono);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -66,7 +65,7 @@ app.use((req, res, next) => {
 
 // development error handler
 // will print stacktrace
-if (app.get("env") === "development") {
+if(app.get("env") === "development") {
   app.use(function (err, req, res, next) {
     log.error("this is my error");
     log.error(err);
@@ -84,7 +83,7 @@ app.use(function (err, req, res, next) {
   log.error("this is my error");
   log.error(err);
   res.status(err.status || 500);
-  res.render('error', {
+  res.render("error", {
     message: err.message,
     // mc hack: error should be an empty object
     error: err

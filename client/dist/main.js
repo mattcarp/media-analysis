@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, browser_1;
-    var SLICE_SIZE, BLACK_CHUNK_SIZE, AnalysisApp;
+    var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
             function (core_1_1) {
@@ -22,9 +22,12 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             function (_2) {}],
         execute: function() {
             SLICE_SIZE = 150000;
-            BLACK_CHUNK_SIZE = 200000000;
+            BLACK_CHUNK_SIZE = 10000000;
+            MIN_BLACK_TIME = 4;
             AnalysisApp = (function () {
                 function AnalysisApp() {
+                    this.blackTryCount = 0;
+                    this.blackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
                     this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
@@ -46,17 +49,13 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log(err);
                                 },
                                 success: function (data) {
-                                    var me = _this;
                                     console.log("this is what i got from ffprobe metadata:");
                                     console.log(data);
                                     self.renderResult(data);
                                     var analyisObj = JSON.parse(data.analysis);
                                     var bitrate = analyisObj.format.bit_rate;
-                                    console.log("bitrate", bitrate);
-                                    console.log("bitrate * 3.1", bitrate * 3.1);
-                                    self.headBlob = self.mediaFile.slice(0, BLACK_CHUNK_SIZE);
                                     self.headBlackStarted = true;
-                                    self.detectBlack(self.headBlob, "head");
+                                    self.recursiveBlackDetect(_this.mediaFile, "head");
                                     self.detectMono();
                                 }
                             });
@@ -69,12 +68,70 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.getMetadata($event.target);
                 };
-                AnalysisApp.prototype.detectBlack = function (slice, position) {
-                    var self = this;
-                    var stub = "";
-                    $.ajax({
+                AnalysisApp.prototype.recursiveBlackDetect = function (mediaFile, position, filename) {
+                    var _this = this;
+                    if (filename === void 0) { filename = this.blackFilename; }
+                    var MAX_TRIES = 10;
+                    if (this.blackTryCount >= MAX_TRIES) {
+                        console.log("max retries exceeded for black detection in file", position);
+                        this.headBlackStarted = false;
+                        return;
+                    }
+                    var BLACK_CHUNK_SIZE = 10000000;
+                    var MIN_BLACK_TIME = 4;
+                    var sliceStart = (BLACK_CHUNK_SIZE * this.blackTryCount) + this.blackTryCount;
+                    var sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+                    console.log("try count:", this.blackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
+                    console.log(this.blackFilename);
+                    var slice = mediaFile.slice(sliceStart, sliceEnd);
+                    if (position === "head") {
+                        this.blackProgressHead = this.blackTryCount / MAX_TRIES;
+                    }
+                    $.when(this.requestBlack(slice, position, filename))
+                        .then(function (data, textStatus, jqXHR) {
+                        var duration = parseFloat(data.blackDetect[0].duration);
+                        console.log("this is my black duration, returned from fancy new requestBlack:");
+                        console.log(duration);
+                        if (duration >= MIN_BLACK_TIME) {
+                            console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
+                            console.log("so we can stop recursing");
+                            _this.headBlackStarted = false;
+                            _this.headBlackDetection = data.blackDetect;
+                            return;
+                        }
+                        _this.blackTryCount++;
+                        _this.recursiveBlackDetect(mediaFile, position);
+                    });
+                };
+                AnalysisApp.prototype.requestBlack = function (slice, position, filename) {
+                    return $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
+                        data: slice,
+                        processData: false,
+                        contentType: 'application/octet-stream',
+                        beforeSend: function (request) {
+                            request.setRequestHeader("xa-file-to-concat", filename);
+                            request.setRequestHeader("xa-black-position", position);
+                        },
+                        error: function (err) {
+                            console.log("error on the black detection ajax request:");
+                            console.log(err);
+                        },
+                        success: function (data) {
+                            console.log("from my fancy new requestBlack, for the", position);
+                            console.dir(data.blackDetect);
+                        }
+                    });
+                };
+                AnalysisApp.prototype.detectHeadBlack = function (slice, position) {
+                    var _this = this;
+                    var self = this;
+                    var stub = "";
+                    var url = this.endpoint + "black";
+                    $.ajax({
+                        type: "POST",
+                        url: url,
                         data: slice,
                         processData: false,
                         contentType: 'application/octet-stream',
@@ -83,18 +140,39 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.log(err);
                         },
                         success: function (data) {
-                            if (position === "head") {
-                                console.log("this is what i got from black detect, for the head:");
-                                console.dir(data.blackDetect);
-                                self.headBlackDetection = data.blackDetect;
-                                self.headBlackStarted = false;
-                                var fileLength = self.mediaFile.size;
-                                console.log("the file length", fileLength);
-                                self.tailBlob = self.mediaFile.slice(fileLength -
-                                    BLACK_CHUNK_SIZE, fileLength);
-                                self.tailBlackStarted = true;
-                                self.detectTailBlack(self.tailBlob, "tail");
+                            var self = _this;
+                            var increment = 0;
+                            var offset = BLACK_CHUNK_SIZE + 1;
+                            console.log("this is what i got from black detection, for the head:");
+                            console.dir(data.blackDetect);
+                            var blackDur = parseFloat(data.blackDetect[0].duration);
+                            console.log("black duration:", blackDur);
+                            _this.headBlackDetection = data.blackDetect;
+                            _this.headBlackStarted = false;
+                            if (blackDur < MIN_BLACK_TIME) {
+                                console.log("the detected black duration of", blackDur, "was less than the min black time of", MIN_BLACK_TIME, "So send more money, ma!");
+                                var incrementalSlice = self.mediaFile.slice(offset, offset + BLACK_CHUNK_SIZE);
+                                $.ajax({
+                                    type: "POST",
+                                    url: url,
+                                    beforeSend: function (request) {
+                                        request.setRequestHeader("xa-file-to-concat", data.blackDetect[0].tempFile);
+                                    },
+                                    data: incrementalSlice,
+                                    processData: false,
+                                    contentType: 'application/octet-stream',
+                                    success: function (data) {
+                                        console.log("apparently, the second request was successful: data:");
+                                        console.log(data);
+                                    }
+                                });
                             }
+                            var fileLength = self.mediaFile.size;
+                            console.log("the file length", fileLength);
+                            self.tailBlob = self.mediaFile.slice(fileLength -
+                                BLACK_CHUNK_SIZE, fileLength);
+                            self.tailBlackStarted = true;
+                            self.detectTailBlack(self.tailBlob, "tail");
                         }
                     });
                 };
@@ -136,6 +214,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     if (analysisObj && Object.keys(analysisObj).length !== 0) {
                         var formatObj = analysisObj.format;
                         this.format = this.processObject(formatObj);
+                        console.log("format object, from which we can filter extraneous keys:");
                         console.log(formatObj);
                         if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
                             this.formatTags = this.processObject(formatObj.tags);
@@ -145,7 +224,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         var collectedStreams = [];
                         var inputStreams = analysisObj.streams;
                         inputStreams.forEach(function (currentStream) {
-                            console.log("i am stream");
+                            console.log("i am a stream");
                             collectedStreams.push(_this.processObject(currentStream));
                         });
                         this.streams = collectedStreams;

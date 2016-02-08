@@ -19,12 +19,18 @@
 </div>
 
 <div>
-  <p *ngIf="headBlackStarted">video black detection started on head. this is the super-slow version...</p>
+  <div class=""  *ngIf="headBlackStarted">
+    <p>video black detection started on head. this is the super-slow version...</p>
+    <h1>progress {{blackProgressHead}}</h1>
+    <progress class="progress" value="{{blackProgressHead}}" max="1">0%</progress>
+  </div>
+
   <div class="" *ngIf="headBlackDetection">
     <h4>black detected in file head</h4>
     <ul>
       <li *ngFor="#item of headBlackDetection">
-       Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
+
+        Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
       </li>
     </ul>
   </div>
@@ -66,7 +72,8 @@
 </div>
 
 <div class="clearfix"></div>
-<br><br>
+<br>
+<br>
 <div class="col-xs-6" *ngIf="streams">
   <h3>{{streams.length}} streams</h3>
   <ul class="list-group" *ngFor="#stream of streams">
