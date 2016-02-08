@@ -33,10 +33,13 @@ export class AnalysisApp {
   headBlob: any;
   tailBlob: any;
   mediaFile: File;
-  blackTryCount: number = 0;
+  headBlackTryCount: number = 0;
+  tailBlackTryCount: number = 0;
   // progress will be a float = MAX_TRIES / tryCount
   blackProgressHead: number;
-  blackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+  blackProgressTail: number;
+  headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+  tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -79,16 +82,15 @@ export class AnalysisApp {
             let analyisObj = JSON.parse(data.analysis);
             let bitrate = analyisObj.format.bit_rate;
 
-
-            // TODO -bitrates in metatadata are unreliable -
             // send fixed chunk, then request more bytes and concat if
             // blackDetect shows a black_start but no black_end
             self.headBlackStarted = true;
             self.recursiveBlackDetect(this.mediaFile, "head");
-            // TODO tail black detect
 
-            // self.headBlob = self.mediaFile.slice(0, BLACK_CHUNK_SIZE);
-            // self.detectHeadBlack(self.headBlob, "head");
+            // TODO this will prolly fail miserable b/c blackTryCount is same
+            self.tailBlackStarted = true;
+            self.recursiveBlackDetect(this.mediaFile, "tail");
+
 
             self.detectMono();
           }
@@ -106,13 +108,19 @@ export class AnalysisApp {
   }
 
   // is called separately for "head" and "tail" (position string)
-  recursiveBlackDetect(mediaFile: File, position: string, filename = this.blackFilename) {
+  recursiveBlackDetect(mediaFile: File, position: string, filename = this.headBlackFilename) {
     const MAX_TRIES = 10;
     // initial stop condition:
-    if (this.blackTryCount >= MAX_TRIES) {
+    if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
       console.log("max retries exceeded for black detection in file", position);
       // TODO add alert to DOM
       this.headBlackStarted = false;
+      return;
+    }
+    if (position === "tail" && this.tailBlackTryCount >= MAX_TRIES) {
+      console.log("max retries exceeded for black detection in file", position);
+      // TODO add alert to DOM
+      this.tailBlackStarted = false;
       return;
     }
 
@@ -120,19 +128,35 @@ export class AnalysisApp {
     const BLACK_CHUNK_SIZE = 10000000;
     // minimum time, in seconds, for black at head and tail
     const MIN_BLACK_TIME = 4;
-    let sliceStart = (BLACK_CHUNK_SIZE * this.blackTryCount) + this.blackTryCount;
-    let sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-    console.log("try count:", this.blackTryCount,
-      "slice start:", sliceStart, "slice end:", sliceEnd);
-    console.log(this.blackFilename);
+    let sliceStart;
+    let sliceEnd;
+    if (position === "head") {
+      sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
+        this.headBlackTryCount;
+        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+        console.log("head try count:", this.headBlackTryCount,
+          "slice start:", sliceStart, "slice end:", sliceEnd);
+    }
+    if (position === "tail") {
+      sliceStart = (BLACK_CHUNK_SIZE * this.tailBlackTryCount) +
+        this.tailBlackTryCount;
+        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+        console.log("tail try count:", this.headBlackTryCount,
+          "slice start:", sliceStart, "slice end:", sliceEnd);
+    }
+
     let slice = mediaFile.slice(sliceStart, sliceEnd);
     if (position === "head") {
-      this.blackProgressHead = this.blackTryCount / MAX_TRIES;
+      this.blackProgressHead = this.headBlackTryCount / MAX_TRIES;
+    }
+    if (position === "tail") {
+      console.log("ok, i have a tail here, but why does the tail condition not fire on the .when fn?");
+      this.blackProgressTail = this.tailBlackTryCount / MAX_TRIES;
     }
 
     $.when(this.requestBlack(slice, position, filename))
     .then((data, textStatus, jqXHR) => {
-
+      console.log("is my position, insde the where fn, ever tail?");
       let duration = parseFloat(data.blackDetect[0].duration);
       console.log("this is my black duration, returned from fancy new requestBlack:");
       console.log(duration);
@@ -141,19 +165,34 @@ export class AnalysisApp {
         console.log("the detected black duration of", duration,
           "is greater or equal to the min black time of", MIN_BLACK_TIME);
         console.log("so we can stop recursing");
-        // TODO set dom values
-        this.headBlackStarted = false;
-        this.headBlackDetection = data.blackDetect;
+        // TODO set tail dom values
+        if (position === "head") {
+          console.log("yo, talking out my head here");
+          this.headBlackStarted = false;
+          this.headBlackDetection = data.blackDetect;
+        }
+        if (position === "tail") {
+          // TODO position is never 'tail'
+          console.log("again, the ass-end here, we should have two asses");
+          this.tailBlackStarted = false;
+          this.tailBlackDetection = data.blackDetect;
+        }
         return;
       }
 
       // TODO any additional stop conditions?
+      if (position === "head") {
+        this.headBlackTryCount++;
+      }
+      if (position === "tail") {
+        console.log("we are working on the ass-end, and try count is",
+          this.tailBlackTryCount)
+        this.tailBlackTryCount++;
+      }
 
-      this.blackTryCount++;
       // recurse
       this.recursiveBlackDetect(mediaFile, position);
     });
-
   }
 
   requestBlack(slice: any, position: string, filename: string) {
@@ -176,109 +215,8 @@ export class AnalysisApp {
         console.log(err);
       },
       success: (data) => {
-        console.log("from my fancy new requestBlack, for the", position);
+        console.log("from requestBlack, for the", position);
         console.dir(data.blackDetect);
-        // return data.blackDetect;
-        // this.tailBlackDetection = data.blackDetect;
-        // this.tailBlackStarted = false;
-
-      }
-    });
-  }
-
-  detectHeadBlack(slice: any, position: string) {
-    let self = this;
-    let stub: string = "";
-    let url = this.endpoint + "black";
-
-    $.ajax({
-      type: "POST",
-      url: url,
-      data: slice,
-      // don't massage binary to JSON
-      processData: false,
-      // content type that we are sending
-      contentType: 'application/octet-stream',
-      // data type that we expect in return
-      // dataType: "",
-      error: function(err) {
-        console.log("you have an error on the black detection ajax request:");
-        console.log(err);
-      },
-      success: (data) => {
-        let self = this;
-        let increment = 0;
-        let offset = BLACK_CHUNK_SIZE + 1;
-        console.log("this is what i got from black detection, for the head:");
-        console.dir(data.blackDetect);
-        let blackDur: number = parseFloat(data.blackDetect[0].duration);
-        console.log("black duration:", blackDur);
-        this.headBlackDetection = data.blackDetect;
-        this.headBlackStarted = false;
-        if (blackDur < MIN_BLACK_TIME) {
-
-          console.log("the detected black duration of", blackDur,
-            "was less than the min black time of", MIN_BLACK_TIME,
-            "So send more money, ma!")
-
-
-          // TODO calculate next increment
-          // TODO send another chunk, along with the file name to concat it to
-          // put filename in custom header field
-          let incrementalSlice = self.mediaFile.slice(offset,
-            offset + BLACK_CHUNK_SIZE);
-          $.ajax({
-            type: "POST",
-            url: url,
-            beforeSend: function(request) {
-              request.setRequestHeader("xa-file-to-concat",
-                data.blackDetect[0].tempFile);
-            },
-            data: incrementalSlice,
-            processData: false,
-            contentType: 'application/octet-stream',
-            success: (data) => {
-              console.log("apparently, the second request was successful: data:");
-              console.log(data)
-            }
-          });
-        }
-
-        // todo mediaFile is undefined
-        const fileLength = self.mediaFile.size;
-        console.log("the file length", fileLength);
-        // only process the tail after the head is done
-        self.tailBlob = self.mediaFile.slice(fileLength -
-          BLACK_CHUNK_SIZE, fileLength);
-        self.tailBlackStarted = true;
-        self.detectTailBlack(self.tailBlob, "tail");
-      }
-    });
-  }
-
-  detectTailBlack(slice: any, position: string) {
-    let self = this;
-    let stub: string = "";
-
-    $.ajax({
-      type: "POST",
-      url: this.endpoint + "black",
-      data: slice,
-      // don't massage binary to JSON
-      processData: false,
-      // content type that we are sending
-      contentType: 'application/octet-stream',
-      // data type that we expect in return
-      // dataType: "",
-      error: function(err) {
-        console.log("you have an error on the black detection ajax request:");
-        console.log(err);
-      },
-      success: function(data) {
-        console.log("this is what i got from black detect, for the tail:");
-        console.dir(data.blackDetect);
-        self.tailBlackDetection = data.blackDetect;
-        self.tailBlackStarted = false;
       }
     });
   }

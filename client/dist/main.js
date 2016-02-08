@@ -26,8 +26,10 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             MIN_BLACK_TIME = 4;
             AnalysisApp = (function () {
                 function AnalysisApp() {
-                    this.blackTryCount = 0;
-                    this.blackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+                    this.headBlackTryCount = 0;
+                    this.tailBlackTryCount = 0;
+                    this.headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+                    this.tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
                     this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
@@ -56,6 +58,8 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     var bitrate = analyisObj.format.bit_rate;
                                     self.headBlackStarted = true;
                                     self.recursiveBlackDetect(_this.mediaFile, "head");
+                                    self.tailBlackStarted = true;
+                                    self.recursiveBlackDetect(_this.mediaFile, "tail");
                                     self.detectMono();
                                 }
                             });
@@ -70,36 +74,70 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                 };
                 AnalysisApp.prototype.recursiveBlackDetect = function (mediaFile, position, filename) {
                     var _this = this;
-                    if (filename === void 0) { filename = this.blackFilename; }
+                    if (filename === void 0) { filename = this.headBlackFilename; }
                     var MAX_TRIES = 10;
-                    if (this.blackTryCount >= MAX_TRIES) {
+                    if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
                         console.log("max retries exceeded for black detection in file", position);
                         this.headBlackStarted = false;
                         return;
                     }
+                    if (position === "tail" && this.tailBlackTryCount >= MAX_TRIES) {
+                        console.log("max retries exceeded for black detection in file", position);
+                        this.tailBlackStarted = false;
+                        return;
+                    }
                     var BLACK_CHUNK_SIZE = 10000000;
                     var MIN_BLACK_TIME = 4;
-                    var sliceStart = (BLACK_CHUNK_SIZE * this.blackTryCount) + this.blackTryCount;
-                    var sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-                    console.log("try count:", this.blackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
-                    console.log(this.blackFilename);
+                    var sliceStart;
+                    var sliceEnd;
+                    if (position === "head") {
+                        sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
+                            this.headBlackTryCount;
+                        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+                        console.log("head try count:", this.headBlackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
+                    }
+                    if (position === "tail") {
+                        sliceStart = (BLACK_CHUNK_SIZE * this.tailBlackTryCount) +
+                            this.tailBlackTryCount;
+                        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+                        console.log("tail try count:", this.headBlackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
+                    }
                     var slice = mediaFile.slice(sliceStart, sliceEnd);
                     if (position === "head") {
-                        this.blackProgressHead = this.blackTryCount / MAX_TRIES;
+                        this.blackProgressHead = this.headBlackTryCount / MAX_TRIES;
+                    }
+                    if (position === "tail") {
+                        console.log("ok, i have a tail here, but why does the tail condition not fire on the .when fn?");
+                        this.blackProgressTail = this.tailBlackTryCount / MAX_TRIES;
                     }
                     $.when(this.requestBlack(slice, position, filename))
                         .then(function (data, textStatus, jqXHR) {
+                        console.log("is my position, insde the where fn, ever tail?");
                         var duration = parseFloat(data.blackDetect[0].duration);
                         console.log("this is my black duration, returned from fancy new requestBlack:");
                         console.log(duration);
                         if (duration >= MIN_BLACK_TIME) {
                             console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
                             console.log("so we can stop recursing");
-                            _this.headBlackStarted = false;
-                            _this.headBlackDetection = data.blackDetect;
+                            if (position === "head") {
+                                console.log("yo, talking out my head here");
+                                _this.headBlackStarted = false;
+                                _this.headBlackDetection = data.blackDetect;
+                            }
+                            if (position === "tail") {
+                                console.log("again, the ass-end here, we should have two asses");
+                                _this.tailBlackStarted = false;
+                                _this.tailBlackDetection = data.blackDetect;
+                            }
                             return;
                         }
-                        _this.blackTryCount++;
+                        if (position === "head") {
+                            _this.headBlackTryCount++;
+                        }
+                        if (position === "tail") {
+                            console.log("we are working on the ass-end, and try count is", _this.tailBlackTryCount);
+                            _this.tailBlackTryCount++;
+                        }
                         _this.recursiveBlackDetect(mediaFile, position);
                     });
                 };
@@ -119,81 +157,8 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("from my fancy new requestBlack, for the", position);
+                            console.log("from requestBlack, for the", position);
                             console.dir(data.blackDetect);
-                        }
-                    });
-                };
-                AnalysisApp.prototype.detectHeadBlack = function (slice, position) {
-                    var _this = this;
-                    var self = this;
-                    var stub = "";
-                    var url = this.endpoint + "black";
-                    $.ajax({
-                        type: "POST",
-                        url: url,
-                        data: slice,
-                        processData: false,
-                        contentType: 'application/octet-stream',
-                        error: function (err) {
-                            console.log("you have an error on the black detection ajax request:");
-                            console.log(err);
-                        },
-                        success: function (data) {
-                            var self = _this;
-                            var increment = 0;
-                            var offset = BLACK_CHUNK_SIZE + 1;
-                            console.log("this is what i got from black detection, for the head:");
-                            console.dir(data.blackDetect);
-                            var blackDur = parseFloat(data.blackDetect[0].duration);
-                            console.log("black duration:", blackDur);
-                            _this.headBlackDetection = data.blackDetect;
-                            _this.headBlackStarted = false;
-                            if (blackDur < MIN_BLACK_TIME) {
-                                console.log("the detected black duration of", blackDur, "was less than the min black time of", MIN_BLACK_TIME, "So send more money, ma!");
-                                var incrementalSlice = self.mediaFile.slice(offset, offset + BLACK_CHUNK_SIZE);
-                                $.ajax({
-                                    type: "POST",
-                                    url: url,
-                                    beforeSend: function (request) {
-                                        request.setRequestHeader("xa-file-to-concat", data.blackDetect[0].tempFile);
-                                    },
-                                    data: incrementalSlice,
-                                    processData: false,
-                                    contentType: 'application/octet-stream',
-                                    success: function (data) {
-                                        console.log("apparently, the second request was successful: data:");
-                                        console.log(data);
-                                    }
-                                });
-                            }
-                            var fileLength = self.mediaFile.size;
-                            console.log("the file length", fileLength);
-                            self.tailBlob = self.mediaFile.slice(fileLength -
-                                BLACK_CHUNK_SIZE, fileLength);
-                            self.tailBlackStarted = true;
-                            self.detectTailBlack(self.tailBlob, "tail");
-                        }
-                    });
-                };
-                AnalysisApp.prototype.detectTailBlack = function (slice, position) {
-                    var self = this;
-                    var stub = "";
-                    $.ajax({
-                        type: "POST",
-                        url: this.endpoint + "black",
-                        data: slice,
-                        processData: false,
-                        contentType: 'application/octet-stream',
-                        error: function (err) {
-                            console.log("you have an error on the black detection ajax request:");
-                            console.log(err);
-                        },
-                        success: function (data) {
-                            console.log("this is what i got from black detect, for the tail:");
-                            console.dir(data.blackDetect);
-                            self.tailBlackDetection = data.blackDetect;
-                            self.tailBlackStarted = false;
                         }
                     });
                 };
