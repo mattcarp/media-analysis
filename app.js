@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+/* eslint no-console: 0 */
+/* eslint arrow-body-style: [2, "always"]*/
 
 const express = require("express");
 const http = require("http");
@@ -65,10 +67,10 @@ app.use((req, res, next) => {
 
 // development error handler
 // will print stacktrace
-if(app.get("env") === "development") {
+if (app.get("env") === "development") {
   app.use(function (err, req, res, next) {
-    log.error("this is my error");
-    log.error(err);
+    console.log("this is my error from dev env:");
+    console.log(err);
     res.status(err.status || 500);
     res.render("error", {
       message: err.message,
@@ -80,8 +82,8 @@ if(app.get("env") === "development") {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
-  log.error("this is my error");
-  log.error(err);
+  console.log("this is my error prod env:");
+  console.log(err);
   res.status(err.status || 500);
   res.render("error", {
     message: err.message,

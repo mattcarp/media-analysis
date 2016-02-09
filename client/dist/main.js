@@ -56,11 +56,12 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     self.renderResult(data);
                                     var analyisObj = JSON.parse(data.analysis);
                                     var bitrate = analyisObj.format.bit_rate;
-                                    self.headBlackStarted = true;
-                                    self.recursiveBlackDetect(_this.mediaFile, "head");
-                                    self.tailBlackStarted = true;
-                                    self.recursiveBlackDetect(_this.mediaFile, "tail");
-                                    self.detectMono();
+                                    var analysisObj = JSON.parse(data.analysis);
+                                    var type = analysisObj.streams[0].codec_type;
+                                    console.log("are you my type?", type);
+                                    if (type === "video") {
+                                        _this.processvideo(_this.mediaFile);
+                                    }
                                 }
                             });
                         }
@@ -69,13 +70,22 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     var blob = this.mediaFile.slice(0, SLICE_SIZE);
                     reader.readAsBinaryString(blob);
                 };
+                AnalysisApp.prototype.processvideo = function (mediaFile) {
+                    this.headBlackStarted = true;
+                    this.recursiveBlackDetect(this.mediaFile, "head");
+                    this.detectMono();
+                };
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.getMetadata($event.target);
                 };
                 AnalysisApp.prototype.recursiveBlackDetect = function (mediaFile, position, filename) {
                     var _this = this;
                     if (filename === void 0) { filename = this.headBlackFilename; }
-                    var MAX_TRIES = 10;
+                    var MAX_TRIES = 20;
+                    var BLACK_CHUNK_SIZE = 1000000;
+                    var MIN_BLACK_TIME = 4;
+                    var sliceStart;
+                    var sliceEnd;
                     if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
                         console.log("max retries exceeded for black detection in file", position);
                         this.headBlackStarted = false;
@@ -86,10 +96,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         this.tailBlackStarted = false;
                         return;
                     }
-                    var BLACK_CHUNK_SIZE = 10000000;
-                    var MIN_BLACK_TIME = 4;
-                    var sliceStart;
-                    var sliceEnd;
                     if (position === "head") {
                         sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
                             this.headBlackTryCount;
@@ -100,7 +106,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         sliceStart = (BLACK_CHUNK_SIZE * this.tailBlackTryCount) +
                             this.tailBlackTryCount;
                         sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-                        console.log("tail try count:", this.headBlackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
+                        console.log("tail try count:", this.tailBlackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
                     }
                     var slice = mediaFile.slice(sliceStart, sliceEnd);
                     if (position === "head") {
@@ -113,29 +119,34 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     $.when(this.requestBlack(slice, position, filename))
                         .then(function (data, textStatus, jqXHR) {
                         console.log("is my position, insde the where fn, ever tail?");
-                        var duration = parseFloat(data.blackDetect[0].duration);
-                        console.log("this is my black duration, returned from fancy new requestBlack:");
-                        console.log(duration);
-                        if (duration >= MIN_BLACK_TIME) {
-                            console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
-                            console.log("so we can stop recursing");
-                            if (position === "head") {
-                                console.log("yo, talking out my head here");
-                                _this.headBlackStarted = false;
-                                _this.headBlackDetection = data.blackDetect;
+                        if (data.blackDetect[0]) {
+                            var duration = parseFloat(data.blackDetect[0].duration);
+                            console.log("this is my black duration, returned from fancy new requestBlack:");
+                            console.log(duration);
+                            if (duration >= MIN_BLACK_TIME) {
+                                console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
+                                console.log("so we can stop recursing");
+                                if (position === "head") {
+                                    console.log("yo, talking out my head here");
+                                    _this.headBlackStarted = false;
+                                    _this.headBlackDetection = data.blackDetect;
+                                }
+                                if (position === "tail") {
+                                    console.log("again, the ass-end here, we should have two asses");
+                                    _this.tailBlackStarted = false;
+                                    _this.tailBlackDetection = data.blackDetect;
+                                }
+                                return;
                             }
-                            if (position === "tail") {
-                                console.log("again, the ass-end here, we should have two asses");
-                                _this.tailBlackStarted = false;
-                                _this.tailBlackDetection = data.blackDetect;
-                            }
-                            return;
+                        }
+                        else {
+                            console.log("this sucks because i have no blackdetect object on the returned array");
                         }
                         if (position === "head") {
                             _this.headBlackTryCount++;
                         }
                         if (position === "tail") {
-                            console.log("we are working on the ass-end, and try count is", _this.tailBlackTryCount);
+                            console.log("tailBlackTryCount:", _this.tailBlackTryCount);
                             _this.tailBlackTryCount++;
                         }
                         _this.recursiveBlackDetect(mediaFile, position);

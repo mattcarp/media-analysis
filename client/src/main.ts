@@ -82,17 +82,13 @@ export class AnalysisApp {
             let analyisObj = JSON.parse(data.analysis);
             let bitrate = analyisObj.format.bit_rate;
 
-            // send fixed chunk, then request more bytes and concat if
-            // blackDetect shows a black_start but no black_end
-            self.headBlackStarted = true;
-            self.recursiveBlackDetect(this.mediaFile, "head");
+            let analysisObj = JSON.parse(data.analysis);
+            let type = analysisObj.streams[0].codec_type;
+            console.log("are you my type?", type);
+            if (type === "video") {
+              this.processvideo(this.mediaFile);
+            }
 
-            // TODO this will prolly fail miserable b/c blackTryCount is same
-            self.tailBlackStarted = true;
-            self.recursiveBlackDetect(this.mediaFile, "tail");
-
-
-            self.detectMono();
           }
         });
       }
@@ -103,13 +99,35 @@ export class AnalysisApp {
     reader.readAsBinaryString(blob);
   }
 
+  processvideo(mediaFile: File) {
+    // send fixed chunk, then request more bytes and concat if
+    // blackDetect shows a black_start but no black_end
+
+    this.headBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "head");
+
+    // TODO this will prolly fail miserable b/c blackTryCount is same
+    // TODO temp: uncomment the folowing two lines
+    // this.tailBlackStarted = true;
+    // this.recursiveBlackDetect(this.mediaFile, "tail");
+
+
+    this.detectMono();
+  }
+
   changeListener($event): void {
     this.getMetadata($event.target);
   }
 
   // is called separately for "head" and "tail" (position string)
   recursiveBlackDetect(mediaFile: File, position: string, filename = this.headBlackFilename) {
-    const MAX_TRIES = 10;
+    const MAX_TRIES = 20;
+    // use a fixed size chunk as bitrates from ffmpeg are unreliable
+    const BLACK_CHUNK_SIZE = 1000000;
+    // minimum time, in seconds, for black at head and tail
+    const MIN_BLACK_TIME = 4;
+    let sliceStart;
+    let sliceEnd;
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
       console.log("max retries exceeded for black detection in file", position);
@@ -124,12 +142,7 @@ export class AnalysisApp {
       return;
     }
 
-    // use a fixed size chunk as bitrates from ffmpeg are unreliable
-    const BLACK_CHUNK_SIZE = 10000000;
-    // minimum time, in seconds, for black at head and tail
-    const MIN_BLACK_TIME = 4;
-    let sliceStart;
-    let sliceEnd;
+
     if (position === "head") {
       sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
         this.headBlackTryCount;
@@ -141,7 +154,7 @@ export class AnalysisApp {
       sliceStart = (BLACK_CHUNK_SIZE * this.tailBlackTryCount) +
         this.tailBlackTryCount;
         sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-        console.log("tail try count:", this.headBlackTryCount,
+        console.log("tail try count:", this.tailBlackTryCount,
           "slice start:", sliceStart, "slice end:", sliceEnd);
     }
 
@@ -157,35 +170,43 @@ export class AnalysisApp {
     $.when(this.requestBlack(slice, position, filename))
     .then((data, textStatus, jqXHR) => {
       console.log("is my position, insde the where fn, ever tail?");
-      let duration = parseFloat(data.blackDetect[0].duration);
-      console.log("this is my black duration, returned from fancy new requestBlack:");
-      console.log(duration);
-      // stop condition
-      if (duration >= MIN_BLACK_TIME) {
-        console.log("the detected black duration of", duration,
-          "is greater or equal to the min black time of", MIN_BLACK_TIME);
-        console.log("so we can stop recursing");
-        // TODO set tail dom values
-        if (position === "head") {
-          console.log("yo, talking out my head here");
-          this.headBlackStarted = false;
-          this.headBlackDetection = data.blackDetect;
+
+      if (data.blackDetect[0]) {
+        let duration = parseFloat(data.blackDetect[0].duration);
+        console.log("this is my black duration, returned from fancy new requestBlack:");
+        console.log(duration);
+
+        // stop condition
+        if (duration >= MIN_BLACK_TIME) {
+          console.log("the detected black duration of", duration,
+            "is greater or equal to the min black time of", MIN_BLACK_TIME);
+          console.log("so we can stop recursing");
+          // TODO set tail dom values
+          if (position === "head") {
+            console.log("yo, talking out my head here");
+            this.headBlackStarted = false;
+            this.headBlackDetection = data.blackDetect;
+          }
+          if (position === "tail") {
+            // TODO position is never 'tail'
+            console.log("again, the ass-end here, we should have two asses");
+            this.tailBlackStarted = false;
+            this.tailBlackDetection = data.blackDetect;
+          }
+          return;
         }
-        if (position === "tail") {
-          // TODO position is never 'tail'
-          console.log("again, the ass-end here, we should have two asses");
-          this.tailBlackStarted = false;
-          this.tailBlackDetection = data.blackDetect;
-        }
-        return;
+      } else {
+        console.log("this sucks because i have no blackdetect object on the returned array");
       }
+
+
 
       // TODO any additional stop conditions?
       if (position === "head") {
         this.headBlackTryCount++;
       }
       if (position === "tail") {
-        console.log("we are working on the ass-end, and try count is",
+        console.log("tailBlackTryCount:",
           this.tailBlackTryCount)
         this.tailBlackTryCount++;
       }
