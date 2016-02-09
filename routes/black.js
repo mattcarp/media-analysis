@@ -13,11 +13,11 @@ function processBlack(fileToProcess, callback) {
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
   console.log("call ffprobe black detection:");
-  const ffprobeCmd2 = `ffprobe -f lavfi -i "-f prores movie=${fileToProcess},blackdetect[out0]"` +
-    ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
+  // const ffprobeCmd2 = `ffprobe -f lavfi -i "-f prores movie=${fileToProcess},blackdetect[out0]"` +
+  //   ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
   console.log("call ffprobe black detection:");
 
-  exec(ffprobeCmd2,
+  exec(ffprobeCmd,
     (error, stdout, stderr) => {
       const result = {};
       console.log("STDOUT:", stdout);
@@ -66,7 +66,7 @@ router.post("/", (req, res) => {
   console.log(req.body.length);
 
   if (position === "head") {
-    fs.appendFile(fileToConcat, req.body, 'utf8', err => {
+    fs.appendFile(fileToConcat, req.body, err => {
       if (err) {
         console.log("error while appending", err);
       }

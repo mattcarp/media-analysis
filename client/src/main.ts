@@ -40,6 +40,7 @@ export class AnalysisApp {
   blackProgressTail: number;
   headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+  originalExtension: string;
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -79,12 +80,9 @@ export class AnalysisApp {
             console.log(data);
             self.renderResult(data);
 
-            let analyisObj = JSON.parse(data.analysis);
-            let bitrate = analyisObj.format.bit_rate;
-
             let analysisObj = JSON.parse(data.analysis);
             let type = analysisObj.streams[0].codec_type;
-            console.log("are you my type?", type);
+
             if (type === "video") {
               this.processvideo(this.mediaFile);
             }
@@ -94,7 +92,10 @@ export class AnalysisApp {
       }
     };
 
+
     this.mediaFile = file;
+    this.originalExtension = this.mediaFile.name.split(".").pop();
+    console.log("original file extension:", this.originalExtension);
     let blob = this.mediaFile.slice(0, SLICE_SIZE);
     reader.readAsBinaryString(blob);
   }
@@ -103,14 +104,12 @@ export class AnalysisApp {
     // send fixed chunk, then request more bytes and concat if
     // blackDetect shows a black_start but no black_end
 
+    // we detect tail black when head black is done, to avoid shared state issue
     this.headBlackStarted = true;
     this.recursiveBlackDetect(this.mediaFile, "head");
 
-    // TODO this will prolly fail miserable b/c blackTryCount is same
-    // TODO temp: uncomment the folowing two lines
-    // this.tailBlackStarted = true;
-    // this.recursiveBlackDetect(this.mediaFile, "tail");
-
+    this.tailBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "tail");
 
     this.detectMono();
   }
@@ -120,14 +119,16 @@ export class AnalysisApp {
   }
 
   // is called separately for "head" and "tail" (position string)
-  recursiveBlackDetect(mediaFile: File, position: string, filename = this.headBlackFilename) {
+  recursiveBlackDetect(mediaFile: File, position: string, headFilename = this.headBlackFilename) {
     const MAX_TRIES = 20;
     // use a fixed size chunk as bitrates from ffmpeg are unreliable
     const BLACK_CHUNK_SIZE = 1000000;
     // minimum time, in seconds, for black at head and tail
-    const MIN_BLACK_TIME = 4;
+    const MIN_BLACK_TIME = 3;
     let sliceStart;
     let sliceEnd;
+    let tailSliceStart;
+    let tailSliceEnd;
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
       console.log("max retries exceeded for black detection in file", position);
@@ -142,7 +143,6 @@ export class AnalysisApp {
       return;
     }
 
-
     if (position === "head") {
       sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
         this.headBlackTryCount;
@@ -151,25 +151,42 @@ export class AnalysisApp {
           "slice start:", sliceStart, "slice end:", sliceEnd);
     }
     if (position === "tail") {
-      sliceStart = (BLACK_CHUNK_SIZE * this.tailBlackTryCount) +
-        this.tailBlackTryCount;
-        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
+      tailSliceEnd = this.mediaFile.size -
+       (BLACK_CHUNK_SIZE * this.tailBlackTryCount) - this.tailBlackTryCount;
+      tailSliceStart = tailSliceEnd - BLACK_CHUNK_SIZE;
+        // sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
         console.log("tail try count:", this.tailBlackTryCount,
-          "slice start:", sliceStart, "slice end:", sliceEnd);
+          "tail slice start:", tailSliceStart, "tail slice end:", tailSliceEnd);
     }
 
-    let slice = mediaFile.slice(sliceStart, sliceEnd);
+    let sliceToUse;
+    if (position === "head") {
+      sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
+    }
+    if (position === "tail") {
+      sliceToUse = mediaFile.slice(tailSliceStart, tailSliceEnd);
+    }
+
+
     if (position === "head") {
       this.blackProgressHead = this.headBlackTryCount / MAX_TRIES;
     }
     if (position === "tail") {
-      console.log("ok, i have a tail here, but why does the tail condition not fire on the .when fn?");
       this.blackProgressTail = this.tailBlackTryCount / MAX_TRIES;
     }
 
-    $.when(this.requestBlack(slice, position, filename))
-    .then((data, textStatus, jqXHR) => {
-      console.log("is my position, insde the where fn, ever tail?");
+    let fileToUse;
+    if (position === "head") {
+      fileToUse = this.headBlackFilename + "." + this.originalExtension;
+    }
+
+    if (position === "tail") {
+      fileToUse = this.tailBlackFilename + "." + this.originalExtension;
+    }
+
+
+    $.when(this.requestBlack(sliceToUse, position, fileToUse))
+      .then((data, textStatus, jqXHR) => {
 
       if (data.blackDetect[0]) {
         let duration = parseFloat(data.blackDetect[0].duration);
@@ -183,13 +200,15 @@ export class AnalysisApp {
           console.log("so we can stop recursing");
           // TODO set tail dom values
           if (position === "head") {
-            console.log("yo, talking out my head here");
             this.headBlackStarted = false;
             this.headBlackDetection = data.blackDetect;
+            // TODO currently we wait for head to finish, because of shared state
+            // we should try to do them concurrently, in processVideo()
+            // this.tailBlackStarted = true;
+            // this.recursiveBlackDetect(this.mediaFile, "tail");
+
           }
           if (position === "tail") {
-            // TODO position is never 'tail'
-            console.log("again, the ass-end here, we should have two asses");
             this.tailBlackStarted = false;
             this.tailBlackDetection = data.blackDetect;
           }
