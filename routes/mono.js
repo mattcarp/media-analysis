@@ -1,53 +1,120 @@
-var express = require( 'express' );
-var router = express.Router();
-var ffmpeg = require( 'fluent-ffmpeg' );
-var fs = require( 'fs' );
-var binary = require( 'binary' );
-var bodyParser = require('body-parser');
-var stream = require( 'stream' );
-var randomstring = require("randomstring");
-var exec = require( 'child_process' ).exec,
-    child;
-var result;
+/* eslint no-console: 0 */
+/* eslint arrow-body-style: [2, "always"]*/
 
-router.post('/', function(req, res, next) {
-    "use strict";
+const express = require("express");
+const router = express.Router();
+const fs = require("fs");
+const randomstring = require("randomstring");
+const exec = require("child_process").exec;
 
-    var bufferStream = new stream.PassThrough();
-    bufferStream.end(req.body);
-    console.log("you hit the mono detection endpoint with a POST");
-    console.log("content type:");
-    console.log(req.headers['content-type']);
+module.exports = router;
 
-    console.log("req.body and length:");
-    console.log(req.body);
-    console.log(req.body.length);
+function demux(fileToProcess, callback) {
+  const demuxCmd = `ffmpeg -i ${fileToProcess} /tmp/output_audio.wav`;
+  console.log("call ffprobe black detection:");
 
-    var tempName = "/tmp/" + randomstring.generate(12);
-    console.log("the temp name:");
-    console.log(tempName);
+  console.log("call ffmpeg demux:");
 
-    fs.writeFile( tempName, req.body, function( err ) {
-        if ( err ) {
-            return console.log( err );
-        }
+  exec(demuxCmd,
+    (error, stdout, stderr) => {
+      const result = {};
+      console.log("STDOUT:", stdout);
+      console.log("STDERR:", stderr);
+      if (error !== null) {
+        console.log("demux: exec error from ffmpeg: ", error);
+      }
+      // becuase we're sending slices, the info will be within stderr
+      // TODO is the above true even if we force the format?
+      const analysisArr = stderr.split("\n");
+      // const analysisArr = stdout==.split("\n");
 
-        console.log("call ffprobe with exec:");
-        child = exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
-            function( error, stdout, stderr ) {
-                var result = {}
-                console.log("STDOUT: " + stdout );
-                console.log("STDERR: " + stderr );
-                if ( error !== null ) {
-                  console.log("here is the exec error from ffprobe: " + error );
-                }
-                result.error = stderr;
-                result.analysis = stdout;
-                res.json(result);
-            } );
+      const blackIntervals = analysisArr.filter(item => {
+        return item.indexOf("black_duration") > -1;
+      });
 
-        console.log("the temp file was saved");
-    } ); // writeFile
-} );
+      const blackObjs = blackIntervals.map(item => {
+        return {
+          tempFile: fileToProcess,
+          start: item.substring(item.lastIndexOf("start:") + 6,
+            item.indexOf("black_end") - 1),
+          end: item.substring(item.lastIndexOf("end:") + 4,
+            item.indexOf("black_duration") - 1),
+          duration: item.substr(item.indexOf("black_duration:") + 15),
+        };
+      });
+      result.wavFile =
+      result.error = stderr;
+      result.blackDetect = blackObjs;
+      callback(result);
+    }); // exec
+}
+
+function monoDetect(wavFile) {
+  console.log("you passed this to monodetect as the wav file path", wavFile);
+  const wavFile2 = "/tmp/dual_mono_from_video.wav";
+  const soxCmd = `sox ${wavFile2} -n remix 1,2i stats`;
+  // var isMono;
+  exec(soxCmd,
+    (error, stdout, stderr) => {
+      const result = {};
+      console.log("monoDetect STDOUT:", stdout);
+      console.log("monoDetect STDERR:", stderr);
+      if (error !== null) {
+        console.log("demux: exec error from ffmpeg: ", error);
+      }
+
+      const soxArr = stderr.split("\n");
+      console.log("soxArr");
+      console.log(soxArr);
+      const peakRms = soxArr.filter((line) => {
+        console.log("mono line:", line);
+        return line.indexOf("RMS Pk dB") > -1;
+      });
+
+      const peakVal = peakRms[0].substr(peakRms[0].length - 4);
+      console.log("peak rms value:", peakVal);
+      if (peakVal === "-inf") {
+        result.isMono = true;
+      } else {
+        result.isMono = false;
+      }
+      result.error = stderr;
+
+      return result;
+      // callback(result);
+    }); // exec
+}
+
+router.post("/", (req, res) => {
+  const headers = req.headers;
+  const prefix = "/tmp/";
+  const tempFile = prefix + randomstring.generate(12);
+  console.log("mono detect: me headers are");
+  console.log(headers);
+
+  // const bufferStream = new stream.PassThrough();
+  // bufferStream.end(req.body);
+
+  req.on("end", () => {
+    fs.appendFile(tempFile, req.body, () => {
+      res.end();
+    });
+  });
+
+  console.log("mono req.body and length:");
+  console.log(req.body);
+  console.log(req.body.length);
+
+  demux(tempFile, (result) => {
+    // callback after demux is finished
+    console.log("this is the result from demus:", JSON.stringify(result, null, 2));
+    // console.log(result);
+    var bar = monoDetect(result.wavFile);
+    console.log("this is what i got back from monoDetect", bar);
+    res.json(monoDetect(result.wavFile));
+    // res.json(result);
+  });
+}); // router.post
+
 
 module.exports = router;

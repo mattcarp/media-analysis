@@ -81,17 +81,18 @@ export class AnalysisApp {
             self.renderResult(data);
 
             let analysisObj = JSON.parse(data.analysis);
+
+            let videoBitrate = analysisObj.streams[0].bit_rate;
+
             let type = analysisObj.streams[0].codec_type;
 
             if (type === "video") {
-              this.processvideo(this.mediaFile);
+              this.processVideo(this.mediaFile, analysisObj);
             }
-
           }
         });
       }
     };
-
 
     this.mediaFile = file;
     this.originalExtension = this.mediaFile.name.split(".").pop();
@@ -100,18 +101,68 @@ export class AnalysisApp {
     reader.readAsBinaryString(blob);
   }
 
-  processvideo(mediaFile: File) {
+  detectMono(mediaFile: File, bitrate: number) {
+    console.log("hiya from the client call to dual mono detection");
+    // if bitrate is undefined, assume 25mbps
+    let videoBitrate = bitrate | 25000000;
+    // video bitrate is a bit smaller than overall bitrate
+    const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
+    console.log("mono chunk size", MONO_CHUNK_SIZE);
+
+    // TODO create three slices
+    let length = mediaFile.size;
+    let frontSliceStart = Math.floor(length/3);
+    let frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
+    let frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
+    console.log("in detect mono, my source file is this long:", mediaFile.size);
+    console.log("and the front slice is this long:", frontSlice.size);
+    console.log("which is based on the video bitrate of", videoBitrate);
+
+    // TODO ajax call
+    $.when(this.requestMono(frontSlice, "front"))
+      .then((data, textStatus, jqXHR) => {
+        console.log("i think your first mono detect call is complete, now do the middle:")
+        console.log(data);
+      });
+  }
+
+  requestMono(slice: Blob, chunkPosition: string) {
+    return $.ajax({
+      type: "POST",
+      url: this.endpoint + "mono",
+      data: slice,
+      // don't massage binary to JSON
+      processData: false,
+      // content type that we are sending
+      contentType: 'application/octet-stream',
+      // add any custom headers
+      beforeSend: function(request) {
+        request.setRequestHeader("xa-chunk-position",
+          chunkPosition);
+      },
+      error: (err) => {
+        console.log("error on the mono detection ajax request for chunk", chunkPosition);
+        console.log(err);
+      },
+      success: (data) => {
+        console.log("from requestMono, for the chunk position", chunkPosition);
+        console.dir(data.blackDetect);
+      }
+    });
+  }
+
+  processVideo(mediaFile: File, bitrate: number) {
     // send fixed chunk, then request more bytes and concat if
     // blackDetect shows a black_start but no black_end
 
     // we detect tail black when head black is done, to avoid shared state issue
-    this.headBlackStarted = true;
-    this.recursiveBlackDetect(this.mediaFile, "head");
+    // this.headBlackStarted = true;
+    // this.recursiveBlackDetect(this.mediaFile, "head");
+    //
+    // this.tailBlackStarted = true;
+    // this.recursiveBlackDetect(this.mediaFile, "tail");
 
-    this.tailBlackStarted = true;
-    this.recursiveBlackDetect(this.mediaFile, "tail");
-
-    this.detectMono();
+    this.detectMono(this.mediaFile, bitrate);
   }
 
   changeListener($event): void {
@@ -119,7 +170,8 @@ export class AnalysisApp {
   }
 
   // is called separately for "head" and "tail" (position string)
-  recursiveBlackDetect(mediaFile: File, position: string, headFilename = this.headBlackFilename) {
+  recursiveBlackDetect(mediaFile: File, position: string,
+    headFilename = this.headBlackFilename) {
     const MAX_TRIES = 20;
     // use a fixed size chunk as bitrates from ffmpeg are unreliable
     const BLACK_CHUNK_SIZE = 1000000;
@@ -202,10 +254,6 @@ export class AnalysisApp {
           if (position === "head") {
             this.headBlackStarted = false;
             this.headBlackDetection = data.blackDetect;
-            // TODO currently we wait for head to finish, because of shared state
-            // we should try to do them concurrently, in processVideo()
-            // this.tailBlackStarted = true;
-            // this.recursiveBlackDetect(this.mediaFile, "tail");
 
           }
           if (position === "tail") {
@@ -215,10 +263,8 @@ export class AnalysisApp {
           return;
         }
       } else {
-        console.log("this sucks because i have no blackdetect object on the returned array");
+        console.log("no blackdetect object on the returned array");
       }
-
-
 
       // TODO any additional stop conditions?
       if (position === "head") {
@@ -259,10 +305,6 @@ export class AnalysisApp {
         console.dir(data.blackDetect);
       }
     });
-  }
-
-  detectMono() {
-    console.log("hiya from the client call to dual mono detection")
   }
 
   renderResult(data) {

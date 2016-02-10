@@ -55,9 +55,10 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                                     console.log(data);
                                     self.renderResult(data);
                                     var analysisObj = JSON.parse(data.analysis);
+                                    var videoBitrate = analysisObj.streams[0].bit_rate;
                                     var type = analysisObj.streams[0].codec_type;
                                     if (type === "video") {
-                                        _this.processvideo(_this.mediaFile);
+                                        _this.processVideo(_this.mediaFile, analysisObj);
                                     }
                                 }
                             });
@@ -69,12 +70,46 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     var blob = this.mediaFile.slice(0, SLICE_SIZE);
                     reader.readAsBinaryString(blob);
                 };
-                AnalysisApp.prototype.processvideo = function (mediaFile) {
-                    this.headBlackStarted = true;
-                    this.recursiveBlackDetect(this.mediaFile, "head");
-                    this.tailBlackStarted = true;
-                    this.recursiveBlackDetect(this.mediaFile, "tail");
-                    this.detectMono();
+                AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
+                    console.log("hiya from the client call to dual mono detection");
+                    var videoBitrate = bitrate | 25000000;
+                    var MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
+                    console.log("mono chunk size", MONO_CHUNK_SIZE);
+                    var length = mediaFile.size;
+                    var frontSliceStart = Math.floor(length / 3);
+                    var frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
+                    var frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
+                    console.log("in detect mono, my source file is this long:", mediaFile.size);
+                    console.log("and the front slice is this long:", frontSlice.size);
+                    console.log("which is based on the video bitrate of", videoBitrate);
+                    $.when(this.requestMono(frontSlice, "front"))
+                        .then(function (data, textStatus, jqXHR) {
+                        console.log("i think your first mono detect call is complete, now do the middle:");
+                        console.log(data);
+                    });
+                };
+                AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
+                    return $.ajax({
+                        type: "POST",
+                        url: this.endpoint + "mono",
+                        data: slice,
+                        processData: false,
+                        contentType: 'application/octet-stream',
+                        beforeSend: function (request) {
+                            request.setRequestHeader("xa-chunk-position", chunkPosition);
+                        },
+                        error: function (err) {
+                            console.log("error on the mono detection ajax request for chunk", chunkPosition);
+                            console.log(err);
+                        },
+                        success: function (data) {
+                            console.log("from requestMono, for the chunk position", chunkPosition);
+                            console.dir(data.blackDetect);
+                        }
+                    });
+                };
+                AnalysisApp.prototype.processVideo = function (mediaFile, bitrate) {
+                    this.detectMono(this.mediaFile, bitrate);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.getMetadata($event.target);
@@ -152,7 +187,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             }
                         }
                         else {
-                            console.log("this sucks because i have no blackdetect object on the returned array");
+                            console.log("no blackdetect object on the returned array");
                         }
                         if (position === "head") {
                             _this.headBlackTryCount++;
@@ -184,9 +219,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.dir(data.blackDetect);
                         }
                     });
-                };
-                AnalysisApp.prototype.detectMono = function () {
-                    console.log("hiya from the client call to dual mono detection");
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
                     var _this = this;

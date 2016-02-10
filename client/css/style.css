@@ -1,0 +1,147 @@
+body {
+  font-family: proxima_nova, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #48637c;
+}
+
+h1, h2, h3 {
+  font-weight: 100;
+  color: #4F87BB;
+}
+
+
+/*
+ * Header
+ */
+
+.masthead {
+  margin-bottom: 2rem;
+}
+
+.masthead-brand {
+  margin-bottom: 0;
+}
+
+.nav-masthead .nav-link {
+  padding: .25rem 0;
+  font-weight: bold;
+  color: rgba(79, 135, 187, .5);
+
+  background-color: transparent;
+  border-bottom: .15rem solid transparent;
+}
+
+.nav-masthead .nav-link:hover, .nav-masthead .nav-link:focus {
+  border-bottom-color: rgba(79, 135, 187, .25);
+}
+
+.vs-panel_container {
+  margin-left: -40px;
+}
+
+.nav-masthead .nav-link + .nav-link {
+  margin-left: 1rem;
+}
+
+.nav-masthead .active {
+  color: #4F87BB;
+  border-bottom-color: #4F87BB;
+}
+
+li.nav-item {
+  margin-bottom: 10px;
+}
+
+@media (min-width: 48em) {
+  .masthead-brand {
+    float: left;
+  }
+  /*.nav-masthead {
+    float: right;
+  }*/
+}
+
+.vs-video-loading {
+  margin-top: 500px;
+}
+
+.sony-logo {
+  height: 40px;
+  margin-top: 35px;
+  margin-left: 100px;
+}
+
+#Group {
+  fill: red;
+  stroke: blue;
+  background-color: orange;
+}
+#Fill-4 {
+  fill: red;
+  stroke: blue;
+  background-color: orange;
+}
+
+.vs-card__subhead {
+  font-weight: 200;
+}
+
+.playlist {
+  margin-top: 10px;
+  width: 55%;
+}
+
+.vs-playlist__item {
+  text-align: center;
+  font-size: 15px;
+  background-color: #D9DBE3;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+}
+
+li.nav-item {
+  font-weight: 200;
+}
+
+svg:hover path {
+    fill: red;
+}
+
+.vs-download__item {
+  color: #4F87BB;
+}
+
+.item-left {
+  border-right: 5px solid white;
+}
+
+.header-title {
+  padding-top: 35px;
+  padding-left: 100px;
+}
+
+.video-header {
+  margin-bottom: 15px;
+}
+
+.container {
+  margin-top: 5px;
+}
+
+#player {
+  display-block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  height: 344px;
+}
+
+.templates {
+  margin-top: -25px;
+}
+
+.template-title {
+  font-size: 20px;
+  font-weight: 200;
+  color: #4F87BB;
+}
