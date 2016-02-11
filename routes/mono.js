@@ -10,7 +10,11 @@ const exec = require("child_process").exec;
 module.exports = router;
 
 function demux(fileToProcess, callback) {
-  const demuxCmd = `ffmpeg -i ${fileToProcess} /tmp/output_audio.wav`;
+  const wavOutPath = "/tmp/" + randomstring.generate(12) + ".wav";
+  // TODO uniquely name the wav output file
+  // TODO fileToProcess is not found
+  console.log("in demux, this is the file to process:", fileToProcess);
+  const demuxCmd = `ffmpeg -i ${fileToProcess} ${wavOutPath}`;
   console.log("call ffprobe black detection:");
 
   console.log("call ffmpeg demux:");
@@ -23,37 +27,17 @@ function demux(fileToProcess, callback) {
       if (error !== null) {
         console.log("demux: exec error from ffmpeg: ", error);
       }
-      // becuase we're sending slices, the info will be within stderr
-      // TODO is the above true even if we force the format?
-      const analysisArr = stderr.split("\n");
-      // const analysisArr = stdout==.split("\n");
-
-      const blackIntervals = analysisArr.filter(item => {
-        return item.indexOf("black_duration") > -1;
-      });
-
-      const blackObjs = blackIntervals.map(item => {
-        return {
-          tempFile: fileToProcess,
-          start: item.substring(item.lastIndexOf("start:") + 6,
-            item.indexOf("black_end") - 1),
-          end: item.substring(item.lastIndexOf("end:") + 4,
-            item.indexOf("black_duration") - 1),
-          duration: item.substr(item.indexOf("black_duration:") + 15),
-        };
-      });
-      result.wavFile =
+      result.wavPath = wavOutPath;
       result.error = stderr;
-      result.blackDetect = blackObjs;
       callback(result);
     }); // exec
 }
 
-function monoDetect(wavFile) {
+function monoDetect(wavFile, callback) {
   console.log("you passed this to monodetect as the wav file path", wavFile);
-  const wavFile2 = "/tmp/dual_mono_from_video.wav";
-  const soxCmd = `sox ${wavFile2} -n remix 1,2i stats`;
-  // var isMono;
+  // const wavFile2 = "/tmp/dual_mono_from_video.wav";
+  const soxCmd = `sox ${wavFile} -n remix 1,2i stats`;
+
   exec(soxCmd,
     (error, stdout, stderr) => {
       const result = {};
@@ -76,11 +60,14 @@ function monoDetect(wavFile) {
       if (peakVal === "-inf") {
         result.isMono = true;
       } else {
+        console.log("hello sister, you kuhnow this ain't mono, yeah?");
         result.isMono = false;
       }
+      console.log("i'll bet you i'm fucked right here. result is: ", result);
       result.error = stderr;
-
-      return result;
+      console.log("apparently, not so fucked. gonna return:", result);
+      callback(result);
+      // return result;
       // callback(result);
     }); // exec
 }
@@ -89,29 +76,38 @@ router.post("/", (req, res) => {
   const headers = req.headers;
   const prefix = "/tmp/";
   const tempFile = prefix + randomstring.generate(12);
+  console.log("the incoming ip:", req.socket.remoteAddress);
   console.log("mono detect: me headers are");
   console.log(headers);
 
   // const bufferStream = new stream.PassThrough();
   // bufferStream.end(req.body);
-
-  req.on("end", () => {
-    fs.appendFile(tempFile, req.body, () => {
-      res.end();
+  console.log("the plan is to write this file path:", tempFile);
+  // req.on("end", () => {
+    fs.writeFile(tempFile, req.body, (err) => {
+      // res.end();
+      console.log("was there an error on mono writeFile?");
+      console.log(err);
     });
-  });
+  // });
 
-  console.log("mono req.body and length:");
+  console.log("mono req.body and body.length:");
   console.log(req.body);
   console.log(req.body.length);
 
   demux(tempFile, (result) => {
     // callback after demux is finished
-    console.log("this is the result from demus:", JSON.stringify(result, null, 2));
+    console.log("this is the result from demux, which should be a wav file name:");
+    console.dir(result.wavPath);
     // console.log(result);
-    var bar = monoDetect(result.wavFile);
-    console.log("this is what i got back from monoDetect", bar);
-    res.json(monoDetect(result.wavFile));
+    var isMono = monoDetect(result.wavPath, (detectResult) => {
+      console.log("this is my pretend callback, inside of demux, which is called after monodetect is done its bidness");
+      console.log("inside the callback, this is what i got back from monoDetect", detectResult);
+    });
+    // TODO monodetect needs a callback- mono detect result is undefined,
+    // but monoDetect is working fine in isolation
+    // console.log("this is what i got back from monoDetect", isMono);
+    // res.json(monoDetect(result.wavFile));
     // res.json(result);
   });
 }); // router.post

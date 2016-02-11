@@ -6,7 +6,7 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 // const favicon = require("serve-favicon");
-const logger = require("morgan");
+
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
@@ -16,7 +16,7 @@ const analysis = require("./routes/media-analysis");
 const black = require("./routes/black");
 const mono = require("./routes/mono");
 
-// TODO use bunyon instead of winston
+// TODO use bunyon instead of morgan
 
 
 const app = express();
@@ -28,7 +28,7 @@ app.set("view engine", "html");
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
-app.use(logger("dev"));
+
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

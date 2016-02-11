@@ -89,7 +89,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
-                    return $.ajax({
+                    var promise = $.ajax({
                         type: "POST",
                         url: this.endpoint + "mono",
                         data: slice,
@@ -107,6 +107,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                             console.dir(data.blackDetect);
                         }
                     });
+                    return promise;
                 };
                 AnalysisApp.prototype.processVideo = function (mediaFile, bitrate) {
                     this.detectMono(this.mediaFile, bitrate);
@@ -251,7 +252,6 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     }
                 };
                 AnalysisApp.prototype.setEndpoint = function () {
-                    console.log("location hostname:", window.location.hostname);
                     if (window.location.hostname === "localhost") {
                         return "http://localhost:3000/";
                     }

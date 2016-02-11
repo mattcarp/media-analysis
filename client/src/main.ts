@@ -1,4 +1,8 @@
 import {Component, Pipe, PipeTransform} from "angular2/core";
+// import {Observable} from 'rxjs';
+// import {Observable} from 'rxjs/Observable';
+import {Observable} from 'rxjs/Rx';
+// import {Subject, BehaviorSubject} from 'rxjs';
 import {bootstrap} from "angular2/platform/browser";
 
 import "rxjs/add/operator/map";
@@ -118,16 +122,24 @@ export class AnalysisApp {
     console.log("and the front slice is this long:", frontSlice.size);
     console.log("which is based on the video bitrate of", videoBitrate);
 
-    // TODO ajax call
+    // TODO use rxjs observable
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
         console.log("i think your first mono detect call is complete, now do the middle:")
         console.log(data);
       });
+
+    // this.requestMono(frontSlice, "front")
+    //   .subscribe((res) => {
+    //     console.log("did this shit actually work?");
+    //     console.log(res);
+    //     // this.data = res.json();
+    //     // this.loading = false;
+    // });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
-    return $.ajax({
+    let promise =  $.ajax({
       type: "POST",
       url: this.endpoint + "mono",
       data: slice,
@@ -149,6 +161,9 @@ export class AnalysisApp {
         console.dir(data.blackDetect);
       }
     });
+
+    return promise;
+    // return Observable.fromPromise(promise);
   }
 
   processVideo(mediaFile: File, bitrate: number) {
@@ -343,7 +358,6 @@ export class AnalysisApp {
   }
 
   setEndpoint() {
-    console.log("location hostname:", window.location.hostname);
     if (window.location.hostname === "localhost") {
       return "http://localhost:3000/";
     } else {
@@ -357,7 +371,7 @@ export class AnalysisApp {
   processObject(formatObj): Object[] {
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
-    // TODO filter if value for key is object or array, rather than not 'tags'
+      // TODO filter if value for key is object or array, rather than not 'tags'
       .filter(formatKey => formatKey !== "tags")
       .map(formatKey => {
       let item: any = {};
