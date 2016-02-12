@@ -51,6 +51,7 @@ export class AnalysisApp {
   monoDetectFront: Object;
   showFormat: boolean = false;
   monoDetections: Object[] = [];
+  displayMonoDetails: boolean[] = [];
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -162,8 +163,8 @@ export class AnalysisApp {
         console.log(err);
       },
       success: (data) => {
-        console.log("this, from requestMono, for the chunk position", chunkPosition);
-        console.log(this);
+        console.log("from requestMono, for the chunk position", chunkPosition);
+        console.log(data);
         this.monoDetections.push(data);
         console.dir(data.blackDetect);
       }
@@ -364,6 +365,10 @@ export class AnalysisApp {
       this.streams = collectedStreams;
     }
 
+  }
+
+  showMonoDetails(index: number) {
+    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
   }
 
   setEndpoint() {

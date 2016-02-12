@@ -55,12 +55,17 @@
     <!-- <progress class="progress" value="{{blackProgressTail}}" max="1">0%</progress> -->
   </div>
 
-  <div class="">
-    i am here god
-    <h2>detections arrray: {{monoDetections}}</h2>
+  <div class="" [hidden]="!monoDetections">
+    <h3>mono detections</h3>
     <ul>
       <li *ngFor="#item of monoDetections; #index = index">
         <h3>segment {{index}} mono: {{item.isMono}}</h3>
+        <h4 (click)="showMonoDetails(index)">show segment analysis</h4>
+        <span [hidden]="!displayMonoDetails[index]">
+          <div *ngFor="#item of item.data">
+            {{item}}
+          </div>
+        </span>
       </li>
     </ul>
   </div>

@@ -38,6 +38,7 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     this.tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
                     this.showFormat = false;
                     this.monoDetections = [];
+                    this.displayMonoDetails = [];
                     this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
@@ -135,8 +136,8 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("this, from requestMono, for the chunk position", chunkPosition);
-                            console.log(_this);
+                            console.log("from requestMono, for the chunk position", chunkPosition);
+                            console.log(data);
                             _this.monoDetections.push(data);
                             console.dir(data.blackDetect);
                         }
@@ -308,6 +309,9 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                         });
                         this.streams = collectedStreams;
                     }
+                };
+                AnalysisApp.prototype.showMonoDetails = function (index) {
+                    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
                 };
                 AnalysisApp.prototype.setEndpoint = function () {
                     if (window.location.hostname === "localhost") {
