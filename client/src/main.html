@@ -49,17 +49,18 @@
     </ul>
   </div>
 
-  <div class=""  [hidden]="!monoFrontStarted">
-    <p>black detection started on video tail...</p>
-    <h1>progress {{blackProgressTail}}</h1>
-    <progress class="progress" value="{{blackProgressTail}}" max="1">0%</progress>
+  <div class=""  [hidden]="!monoDetectStarted">
+    <p>mono detection started on thee audio segments...</p>
+    <!-- <h1>progress {{blackProgressTail}}</h1> -->
+    <!-- <progress class="progress" value="{{blackProgressTail}}" max="1">0%</progress> -->
   </div>
 
-  <div class="" [hidden]="!monoFrontDetection">
-    <h4>black detected in file tail</h4>
+  <div class="">
+    i am here god
+    <h2>detections arrray: {{monoDetections}}</h2>
     <ul>
-      <li *ngFor="#item of tailBlackDetection">
-        Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
+      <li *ngFor="#item of monoDetections; #index = index">
+        <h3>segment {{index}} mono: {{item.isMono}}</h3>
       </li>
     </ul>
   </div>

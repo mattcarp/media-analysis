@@ -37,6 +37,7 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     this.headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
                     this.tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
                     this.showFormat = false;
+                    this.monoDetections = [];
                     this.endpoint = this.setEndpoint();
                 }
                 AnalysisApp.prototype.getMetadata = function (target) {
@@ -87,7 +88,6 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
-                    var _this = this;
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate | 25000000;
                     // video bitrate is a bit smaller than overall bitrate
@@ -109,17 +109,15 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                         .then(function (data, textStatus, jqXHR) {
                         console.log("first mono detect call is complete:");
                         console.log(data);
-                        _this.monoDetectFront = data;
+                        // this.detectMonoStarted = false;
+                        // self.monoDetections.push("bing");
+                        // console.log("my detections array", self.monoDetections);
+                        // self.monoDetectFront = data;
                     });
-                    // this.requestMono(frontSlice, "front")
-                    //   .subscribe((res) => {
-                    //     console.log("did this shit actually work?");
-                    //     console.log(res);
-                    //     // this.data = res.json();
-                    //     // this.loading = false;
-                    // });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
+                    var _this = this;
+                    var self = this;
                     var promise = $.ajax({
                         type: "POST",
                         url: this.endpoint + "mono",
@@ -137,7 +135,9 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("from requestMono, for the chunk position", chunkPosition);
+                            console.log("this, from requestMono, for the chunk position", chunkPosition);
+                            console.log(_this);
+                            _this.monoDetections.push(data);
                             console.dir(data.blackDetect);
                         }
                     });
@@ -148,11 +148,11 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     // send fixed chunk, then request more bytes and concat if
                     // blackDetect shows a black_start but no black_end
                     // we detect tail black when head black is done, to avoid shared state issue
-                    // this.headBlackStarted = true;
-                    // this.recursiveBlackDetect(this.mediaFile, "head");
-                    //
-                    // this.tailBlackStarted = true;
-                    // this.recursiveBlackDetect(this.mediaFile, "tail");
+                    this.headBlackStarted = true;
+                    this.recursiveBlackDetect(this.mediaFile, "head");
+                    this.tailBlackStarted = true;
+                    this.recursiveBlackDetect(this.mediaFile, "tail");
+                    this.monoDetectStarted = true;
                     this.detectMono(this.mediaFile, bitrate);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {

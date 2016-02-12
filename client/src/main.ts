@@ -1,7 +1,7 @@
 
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
 
-import {Component} from "angular2/core";
+import {Component, Pipe, PipeTransform} from "angular2/core";
 // import {Observable} from 'rxjs/Rx';
 import {bootstrap} from "angular2/platform/browser";
 // import {NgIf} from 'angular2/common';
@@ -47,8 +47,10 @@ export class AnalysisApp {
   headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   originalExtension: string;
+  monoDetectStarted: boolean;
   monoDetectFront: Object;
   showFormat: boolean = false;
+  monoDetections: Object[] = [];
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -126,25 +128,22 @@ export class AnalysisApp {
     console.log("and the front slice is this long:", frontSlice.size);
     // console.log("middle slice:", midSlice);
     console.log("which is based on the video bitrate of", videoBitrate);
-
     // TODO use rxjs observable
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
+
         console.log("first mono detect call is complete:")
         console.log(data);
-        this.monoDetectFront = data;
+        // this.detectMonoStarted = false;
+        // self.monoDetections.push("bing");
+        // console.log("my detections array", self.monoDetections);
+        // self.monoDetectFront = data;
       });
 
-    // this.requestMono(frontSlice, "front")
-    //   .subscribe((res) => {
-    //     console.log("did this shit actually work?");
-    //     console.log(res);
-    //     // this.data = res.json();
-    //     // this.loading = false;
-    // });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
+    let self = this;
     let promise =  $.ajax({
       type: "POST",
       url: this.endpoint + "mono",
@@ -163,7 +162,9 @@ export class AnalysisApp {
         console.log(err);
       },
       success: (data) => {
-        console.log("from requestMono, for the chunk position", chunkPosition);
+        console.log("this, from requestMono, for the chunk position", chunkPosition);
+        console.log(this);
+        this.monoDetections.push(data);
         console.dir(data.blackDetect);
       }
     });
@@ -177,12 +178,13 @@ export class AnalysisApp {
     // blackDetect shows a black_start but no black_end
 
     // we detect tail black when head black is done, to avoid shared state issue
-    // this.headBlackStarted = true;
-    // this.recursiveBlackDetect(this.mediaFile, "head");
-    //
-    // this.tailBlackStarted = true;
-    // this.recursiveBlackDetect(this.mediaFile, "tail");
+    this.headBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "head");
 
+    this.tailBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "tail");
+
+    this.monoDetectStarted = true;
     this.detectMono(this.mediaFile, bitrate);
   }
 
@@ -349,7 +351,6 @@ export class AnalysisApp {
       if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
         this.formatTags = this.processObject(formatObj.tags);
       }
-
     }
 
     if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
