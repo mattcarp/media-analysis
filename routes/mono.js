@@ -12,10 +12,8 @@ module.exports = router;
 function demux(fileToProcess, callback) {
   const wavOutPath = "/tmp/" + randomstring.generate(12) + ".wav";
   // TODO uniquely name the wav output file
-  // TODO fileToProcess is not found
   console.log("in demux, this is the file to process:", fileToProcess);
   const demuxCmd = `ffmpeg -i ${fileToProcess} ${wavOutPath}`;
-  console.log("call ffprobe black detection:");
 
   console.log("call ffmpeg demux:");
 
@@ -60,15 +58,13 @@ function monoDetect(wavFile, callback) {
       if (peakVal === "-inf") {
         result.isMono = true;
       } else {
-        console.log("hello sister, you kuhnow this ain't mono, yeah?");
+        console.log("this audio is not mono");
         result.isMono = false;
       }
-      console.log("i'll bet you i'm fucked right here. result is: ", result);
-      result.error = stderr;
-      console.log("apparently, not so fucked. gonna return:", result);
+
+      result.data = soxArr;
+      console.log("from within monoDetect gonna return:", result);
       callback(result);
-      // return result;
-      // callback(result);
     }); // exec
 }
 
@@ -84,11 +80,11 @@ router.post("/", (req, res) => {
   // bufferStream.end(req.body);
   console.log("the plan is to write this file path:", tempFile);
   // req.on("end", () => {
-    fs.writeFile(tempFile, req.body, (err) => {
-      // res.end();
-      console.log("was there an error on mono writeFile?");
-      console.log(err);
-    });
+  fs.writeFile(tempFile, req.body, (err) => {
+    // res.end();
+    console.log("was there an error on mono writeFile?");
+    console.log(err);
+  });
   // });
 
   console.log("mono req.body and body.length:");
@@ -100,15 +96,11 @@ router.post("/", (req, res) => {
     console.log("this is the result from demux, which should be a wav file name:");
     console.dir(result.wavPath);
     // console.log(result);
-    var isMono = monoDetect(result.wavPath, (detectResult) => {
-      console.log("this is my pretend callback, inside of demux, which is called after monodetect is done its bidness");
+    monoDetect(result.wavPath, (detectResult) => {
+      // callback after monoDetect is done
       console.log("inside the callback, this is what i got back from monoDetect", detectResult);
+      res.json(detectResult);
     });
-    // TODO monodetect needs a callback- mono detect result is undefined,
-    // but monoDetect is working fine in isolation
-    // console.log("this is what i got back from monoDetect", isMono);
-    // res.json(monoDetect(result.wavFile));
-    // res.json(result);
   });
 }); // router.post
 

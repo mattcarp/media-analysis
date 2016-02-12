@@ -45,6 +45,8 @@ deployment:
 debug forever failing on prod server
     nodemon DEBUG=media-analysis:* npm start
 
+
+
 ## ffmpeg
 
 ### black detection
@@ -69,4 +71,12 @@ There's a file in /Volumes/Transcend/media_test_files/wav as below:
 ### media metadata
 a good ffprobe line showing all metadata and suppressing header (single line):
 
-      ffprobe -v quiet -sexagesimal -of json -show_format -show_streams -show_chapters -show_programs -show_private_data -i MVD_000000326734_001.26.mpg
+    ffprobe -v quiet -sexagesimal -of json -show_format -show_streams -show_chapters -show_programs -show_private_data -i MVD_000000326734_001.26.mpg
+
+bash extract header from file
+
+    head -c 150000 my_file.mov > header.txt
+
+and concat the header onto a binary slice
+
+    cat header.txt > out.mov

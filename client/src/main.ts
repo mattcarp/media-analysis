@@ -1,12 +1,12 @@
+
+///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
+
 import {Component, Pipe, PipeTransform} from "angular2/core";
-// import {Observable} from 'rxjs';
-// import {Observable} from 'rxjs/Observable';
-import {Observable} from 'rxjs/Rx';
-// import {Subject, BehaviorSubject} from 'rxjs';
+// import {Observable} from 'rxjs/Rx';
 import {bootstrap} from "angular2/platform/browser";
 
-import "rxjs/add/operator/map";
-import "rxjs/add/operator/retry";
+// import "rxjs/add/operator/map";
+// import "rxjs/add/operator/retry";
 
 // initial slice for metadata analysis
 const SLICE_SIZE = 150000;
@@ -45,6 +45,7 @@ export class AnalysisApp {
   headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   originalExtension: string;
+  monoDetectFront: Object;
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -106,27 +107,31 @@ export class AnalysisApp {
   }
 
   detectMono(mediaFile: File, bitrate: number) {
-    console.log("hiya from the client call to dual mono detection");
     // if bitrate is undefined, assume 25mbps
     let videoBitrate = bitrate | 25000000;
     // video bitrate is a bit smaller than overall bitrate
     const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
     console.log("mono chunk size", MONO_CHUNK_SIZE);
 
-    // TODO create three slices
-    let length = mediaFile.size;
-    let frontSliceStart = Math.floor(length/3);
-    let frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
-    let frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
+
+    const length = mediaFile.size;
+    const frontSliceStart = Math.floor(length / 3);
+    const frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
+    const frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
+    // TODO calculate middle and end slices
+    const endSliceStart = frontSliceStart * 2;
+    // const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
     console.log("in detect mono, my source file is this long:", mediaFile.size);
     console.log("and the front slice is this long:", frontSlice.size);
+    // console.log("middle slice:", midSlice);
     console.log("which is based on the video bitrate of", videoBitrate);
 
     // TODO use rxjs observable
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
-        console.log("i think your first mono detect call is complete, now do the middle:")
+        console.log("first mono detect call is complete:")
         console.log(data);
+        this.monoDetectFront = data;
       });
 
     // this.requestMono(frontSlice, "front")
@@ -257,7 +262,7 @@ export class AnalysisApp {
 
       if (data.blackDetect[0]) {
         let duration = parseFloat(data.blackDetect[0].duration);
-        console.log("this is my black duration, returned from fancy new requestBlack:");
+        console.log("this is my black duration, returned from requestBlack:");
         console.log(duration);
 
         // stop condition

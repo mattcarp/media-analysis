@@ -1,4 +1,4 @@
-System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operator/map", "rxjs/add/operator/retry"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,9 +17,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
             },
             function (browser_1_1) {
                 browser_1 = browser_1_1;
-            },
-            function (_1) {},
-            function (_2) {}],
+            }],
         execute: function() {
             SLICE_SIZE = 150000;
             BLACK_CHUNK_SIZE = 10000000;
@@ -71,7 +69,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
-                    console.log("hiya from the client call to dual mono detection");
+                    var _this = this;
                     var videoBitrate = bitrate | 25000000;
                     var MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
                     console.log("mono chunk size", MONO_CHUNK_SIZE);
@@ -79,13 +77,15 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                     var frontSliceStart = Math.floor(length / 3);
                     var frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
                     var frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
+                    var endSliceStart = frontSliceStart * 2;
                     console.log("in detect mono, my source file is this long:", mediaFile.size);
                     console.log("and the front slice is this long:", frontSlice.size);
                     console.log("which is based on the video bitrate of", videoBitrate);
                     $.when(this.requestMono(frontSlice, "front"))
                         .then(function (data, textStatus, jqXHR) {
-                        console.log("i think your first mono detect call is complete, now do the middle:");
+                        console.log("first mono detect call is complete:");
                         console.log(data);
+                        _this.monoDetectFront = data;
                     });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
@@ -171,7 +171,7 @@ System.register(["angular2/core", "angular2/platform/browser", "rxjs/add/operato
                         .then(function (data, textStatus, jqXHR) {
                         if (data.blackDetect[0]) {
                             var duration = parseFloat(data.blackDetect[0].duration);
-                            console.log("this is my black duration, returned from fancy new requestBlack:");
+                            console.log("this is my black duration, returned from requestBlack:");
                             console.log(duration);
                             if (duration >= MIN_BLACK_TIME) {
                                 console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
