@@ -1,9 +1,10 @@
 
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
 
-import {Component, Pipe, PipeTransform} from "angular2/core";
+import {Component} from "angular2/core";
 // import {Observable} from 'rxjs/Rx';
 import {bootstrap} from "angular2/platform/browser";
+// import {NgIf} from 'angular2/common';
 
 // import "rxjs/add/operator/map";
 // import "rxjs/add/operator/retry";
@@ -22,7 +23,8 @@ declare var FileReader: any;
 
 @Component({
   selector: "analysis-app",
-  templateUrl: "src/main.html"
+  templateUrl: "src/main.html",
+  // directives: [NgIf]
 })
 export class AnalysisApp {
   endpoint: string;
@@ -46,6 +48,7 @@ export class AnalysisApp {
   tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   originalExtension: string;
   monoDetectFront: Object;
+  showFormat: boolean = false;
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -76,7 +79,7 @@ export class AnalysisApp {
           // data type that we expect in return
           // dataType: "",
           error: function(err) {
-            console.log("you have an error on the ajax requst:");
+            console.log("you have an error on the ajax request:");
             console.log(err);
           },
           success: data => {
@@ -86,9 +89,7 @@ export class AnalysisApp {
             self.renderResult(data);
 
             let analysisObj = JSON.parse(data.analysis);
-
             let videoBitrate = analysisObj.streams[0].bit_rate;
-
             let type = analysisObj.streams[0].codec_type;
 
             if (type === "video") {
@@ -339,9 +340,11 @@ export class AnalysisApp {
     console.log(Object.keys(analysisObj).length);
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
       let formatObj = analysisObj.format;
+      // zone.run(() => { this.showFormat = true});
+      this.showFormat = true;
       this.format = this.processObject(formatObj);
       console.log("format object, from which we can filter extraneous keys:")
-      console.log(formatObj);
+      console.log(this.format);
 
       if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
         this.formatTags = this.processObject(formatObj.tags);
