@@ -20,7 +20,10 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                 browser_1 = browser_1_1;
             }],
         execute: function() {
+<<<<<<< HEAD
             // import {NgIf} from 'angular2/common';
+=======
+>>>>>>> design
             // import "rxjs/add/operator/map";
             // import "rxjs/add/operator/retry";
             // initial slice for metadata analysis
@@ -89,6 +92,10 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
+<<<<<<< HEAD
+=======
+                    var _this = this;
+>>>>>>> design
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate | 25000000;
                     // video bitrate is a bit smaller than overall bitrate
@@ -115,6 +122,13 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                         // console.log("my detections array", self.monoDetections);
                         // self.monoDetectFront = data;
                     });
+                    // this.requestMono(frontSlice, "front")
+                    //   .subscribe((res) => {
+                    //     console.log("did this shit actually work?");
+                    //     console.log(res);
+                    //     // this.data = res.json();
+                    //     // this.loading = false;
+                    // });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
                     var _this = this;
@@ -149,11 +163,19 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     // send fixed chunk, then request more bytes and concat if
                     // blackDetect shows a black_start but no black_end
                     // we detect tail black when head black is done, to avoid shared state issue
+<<<<<<< HEAD
                     this.headBlackStarted = true;
                     this.recursiveBlackDetect(this.mediaFile, "head");
                     this.tailBlackStarted = true;
                     this.recursiveBlackDetect(this.mediaFile, "tail");
                     this.monoDetectStarted = true;
+=======
+                    // this.headBlackStarted = true;
+                    // this.recursiveBlackDetect(this.mediaFile, "head");
+                    //
+                    // this.tailBlackStarted = true;
+                    // this.recursiveBlackDetect(this.mediaFile, "tail");
+>>>>>>> design
                     this.detectMono(this.mediaFile, bitrate);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
