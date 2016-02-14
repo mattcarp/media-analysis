@@ -4,6 +4,7 @@
 import {Component, Pipe, PipeTransform} from "angular2/core";
 // import {Observable} from 'rxjs/Rx';
 import {bootstrap} from "angular2/platform/browser";
+// import {NgIf} from 'angular2/common';
 
 // import "rxjs/add/operator/map";
 // import "rxjs/add/operator/retry";
@@ -22,7 +23,8 @@ declare var FileReader: any;
 
 @Component({
   selector: "analysis-app",
-  templateUrl: "src/main.html"
+  templateUrl: "src/main.html",
+  // directives: [NgIf]
 })
 export class AnalysisApp {
   endpoint: string;
@@ -45,7 +47,10 @@ export class AnalysisApp {
   headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   originalExtension: string;
+  monoDetectStarted: boolean;
   monoDetectFront: Object;
+  showFormat: boolean = false;
+  monoDetections: Object[] = [];
 
   streams: Object[][]; // an array of arrays of stream objects
 
@@ -76,7 +81,7 @@ export class AnalysisApp {
           // data type that we expect in return
           // dataType: "",
           error: function(err) {
-            console.log("you have an error on the ajax requst:");
+            console.log("you have an error on the ajax request:");
             console.log(err);
           },
           success: data => {
@@ -86,9 +91,7 @@ export class AnalysisApp {
             self.renderResult(data);
 
             let analysisObj = JSON.parse(data.analysis);
-
             let videoBitrate = analysisObj.streams[0].bit_rate;
-
             let type = analysisObj.streams[0].codec_type;
 
             if (type === "video") {
@@ -125,25 +128,22 @@ export class AnalysisApp {
     console.log("and the front slice is this long:", frontSlice.size);
     // console.log("middle slice:", midSlice);
     console.log("which is based on the video bitrate of", videoBitrate);
-
     // TODO use rxjs observable
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
+
         console.log("first mono detect call is complete:")
         console.log(data);
-        this.monoDetectFront = data;
+        // this.detectMonoStarted = false;
+        // self.monoDetections.push("bing");
+        // console.log("my detections array", self.monoDetections);
+        // self.monoDetectFront = data;
       });
 
-    // this.requestMono(frontSlice, "front")
-    //   .subscribe((res) => {
-    //     console.log("did this shit actually work?");
-    //     console.log(res);
-    //     // this.data = res.json();
-    //     // this.loading = false;
-    // });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
+    let self = this;
     let promise =  $.ajax({
       type: "POST",
       url: this.endpoint + "mono",
@@ -162,7 +162,9 @@ export class AnalysisApp {
         console.log(err);
       },
       success: (data) => {
-        console.log("from requestMono, for the chunk position", chunkPosition);
+        console.log("this, from requestMono, for the chunk position", chunkPosition);
+        console.log(this);
+        this.monoDetections.push(data);
         console.dir(data.blackDetect);
       }
     });
@@ -176,12 +178,13 @@ export class AnalysisApp {
     // blackDetect shows a black_start but no black_end
 
     // we detect tail black when head black is done, to avoid shared state issue
-    // this.headBlackStarted = true;
-    // this.recursiveBlackDetect(this.mediaFile, "head");
-    //
-    // this.tailBlackStarted = true;
-    // this.recursiveBlackDetect(this.mediaFile, "tail");
+    this.headBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "head");
 
+    this.tailBlackStarted = true;
+    this.recursiveBlackDetect(this.mediaFile, "tail");
+
+    this.monoDetectStarted = true;
     this.detectMono(this.mediaFile, bitrate);
   }
 
@@ -339,14 +342,15 @@ export class AnalysisApp {
     console.log(Object.keys(analysisObj).length);
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
       let formatObj = analysisObj.format;
+      // zone.run(() => { this.showFormat = true});
+      this.showFormat = true;
       this.format = this.processObject(formatObj);
       console.log("format object, from which we can filter extraneous keys:")
-      console.log(formatObj);
+      console.log(this.format);
 
       if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
         this.formatTags = this.processObject(formatObj.tags);
       }
-
     }
 
     if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
