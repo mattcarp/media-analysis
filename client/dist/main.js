@@ -1,5 +1,5 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, browser_1;
+    var core_1, browser_1, detect_black_component_1, detect_black_service_1;
     var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
@@ -18,14 +18,14 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
             },
             function (browser_1_1) {
                 browser_1 = browser_1_1;
+            },
+            function (detect_black_component_1_1) {
+                detect_black_component_1 = detect_black_component_1_1;
+            },
+            function (detect_black_service_1_1) {
+                detect_black_service_1 = detect_black_service_1_1;
             }],
         execute: function() {
-<<<<<<< HEAD
-            // import {NgIf} from 'angular2/common';
-=======
->>>>>>> design
-            // import "rxjs/add/operator/map";
-            // import "rxjs/add/operator/retry";
             // initial slice for metadata analysis
             SLICE_SIZE = 150000;
             // bit rates from ffmpeg are unreliable, so we have to take a fixed chunk
@@ -34,11 +34,8 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
             // minimum time, in seconds, for black at head and tail
             MIN_BLACK_TIME = 4;
             AnalysisApp = (function () {
-                function AnalysisApp() {
-                    this.headBlackTryCount = 0;
-                    this.tailBlackTryCount = 0;
-                    this.headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
-                    this.tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+                function AnalysisApp(detectBlackService) {
+                    this.detectBlackService = detectBlackService;
                     this.showFormat = false;
                     this.monoDetections = [];
                     this.displayMonoDetails = [];
@@ -92,10 +89,6 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
-<<<<<<< HEAD
-=======
-                    var _this = this;
->>>>>>> design
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate | 25000000;
                     // video bitrate is a bit smaller than overall bitrate
@@ -122,13 +115,6 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                         // console.log("my detections array", self.monoDetections);
                         // self.monoDetectFront = data;
                     });
-                    // this.requestMono(frontSlice, "front")
-                    //   .subscribe((res) => {
-                    //     console.log("did this shit actually work?");
-                    //     console.log(res);
-                    //     // this.data = res.json();
-                    //     // this.loading = false;
-                    // });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
                     var _this = this;
@@ -150,10 +136,9 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                             console.log(err);
                         },
                         success: function (data) {
-                            console.log("from requestMono, for the chunk position", chunkPosition);
-                            console.log(data);
                             _this.monoDetections.push(data);
-                            console.dir(data.blackDetect);
+                            console.log("mono detection array:");
+                            console.dir(_this.monoDetections);
                         }
                     });
                     return promise;
@@ -162,143 +147,15 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                 AnalysisApp.prototype.processVideo = function (mediaFile, bitrate) {
                     // send fixed chunk, then request more bytes and concat if
                     // blackDetect shows a black_start but no black_end
-                    // we detect tail black when head black is done, to avoid shared state issue
-<<<<<<< HEAD
-                    this.headBlackStarted = true;
-                    this.recursiveBlackDetect(this.mediaFile, "head");
-                    this.tailBlackStarted = true;
-                    this.recursiveBlackDetect(this.mediaFile, "tail");
-                    this.monoDetectStarted = true;
-=======
                     // this.headBlackStarted = true;
-                    // this.recursiveBlackDetect(this.mediaFile, "head");
-                    //
+                    this.detectBlackService.recursiveBlackDetect(mediaFile, "head");
                     // this.tailBlackStarted = true;
-                    // this.recursiveBlackDetect(this.mediaFile, "tail");
->>>>>>> design
+                    this.detectBlackService.recursiveBlackDetect(mediaFile, "tail");
+                    this.monoDetectStarted = true;
                     this.detectMono(this.mediaFile, bitrate);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
                     this.getMetadata($event.target);
-                };
-                // is called separately for "head" and "tail" (position string)
-                AnalysisApp.prototype.recursiveBlackDetect = function (mediaFile, position, headFilename) {
-                    var _this = this;
-                    if (headFilename === void 0) { headFilename = this.headBlackFilename; }
-                    var MAX_TRIES = 20;
-                    // use a fixed size chunk as bitrates from ffmpeg are unreliable
-                    var BLACK_CHUNK_SIZE = 1000000;
-                    // minimum time, in seconds, for black at head and tail
-                    var MIN_BLACK_TIME = 3;
-                    var sliceStart;
-                    var sliceEnd;
-                    var tailSliceStart;
-                    var tailSliceEnd;
-                    // initial stop condition:
-                    if (position === "head" && this.headBlackTryCount >= MAX_TRIES) {
-                        console.log("max retries exceeded for black detection in file", position);
-                        // TODO add alert to DOM
-                        this.headBlackStarted = false;
-                        return;
-                    }
-                    if (position === "tail" && this.tailBlackTryCount >= MAX_TRIES) {
-                        console.log("max retries exceeded for black detection in file", position);
-                        // TODO add alert to DOM
-                        this.tailBlackStarted = false;
-                        return;
-                    }
-                    if (position === "head") {
-                        sliceStart = (BLACK_CHUNK_SIZE * this.headBlackTryCount) +
-                            this.headBlackTryCount;
-                        sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-                        console.log("head try count:", this.headBlackTryCount, "slice start:", sliceStart, "slice end:", sliceEnd);
-                    }
-                    if (position === "tail") {
-                        tailSliceEnd = this.mediaFile.size -
-                            (BLACK_CHUNK_SIZE * this.tailBlackTryCount) - this.tailBlackTryCount;
-                        tailSliceStart = tailSliceEnd - BLACK_CHUNK_SIZE;
-                        // sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-                        console.log("tail try count:", this.tailBlackTryCount, "tail slice start:", tailSliceStart, "tail slice end:", tailSliceEnd);
-                    }
-                    var sliceToUse;
-                    if (position === "head") {
-                        sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
-                    }
-                    if (position === "tail") {
-                        sliceToUse = mediaFile.slice(tailSliceStart, tailSliceEnd);
-                    }
-                    if (position === "head") {
-                        this.blackProgressHead = this.headBlackTryCount / MAX_TRIES;
-                    }
-                    if (position === "tail") {
-                        this.blackProgressTail = this.tailBlackTryCount / MAX_TRIES;
-                    }
-                    var fileToUse;
-                    if (position === "head") {
-                        fileToUse = this.headBlackFilename + "." + this.originalExtension;
-                    }
-                    if (position === "tail") {
-                        fileToUse = this.tailBlackFilename + "." + this.originalExtension;
-                    }
-                    $.when(this.requestBlack(sliceToUse, position, fileToUse))
-                        .then(function (data, textStatus, jqXHR) {
-                        if (data.blackDetect[0]) {
-                            var duration = parseFloat(data.blackDetect[0].duration);
-                            console.log("this is my black duration, returned from requestBlack:");
-                            console.log(duration);
-                            // stop condition
-                            if (duration >= MIN_BLACK_TIME) {
-                                console.log("the detected black duration of", duration, "is greater or equal to the min black time of", MIN_BLACK_TIME);
-                                console.log("so we can stop recursing");
-                                // TODO set tail dom values
-                                if (position === "head") {
-                                    _this.headBlackStarted = false;
-                                    _this.headBlackDetection = data.blackDetect;
-                                }
-                                if (position === "tail") {
-                                    _this.tailBlackStarted = false;
-                                    _this.tailBlackDetection = data.blackDetect;
-                                }
-                                return;
-                            }
-                        }
-                        else {
-                            console.log("no blackdetect object on the returned array");
-                        }
-                        // TODO any additional stop conditions?
-                        if (position === "head") {
-                            _this.headBlackTryCount++;
-                        }
-                        if (position === "tail") {
-                            console.log("tailBlackTryCount:", _this.tailBlackTryCount);
-                            _this.tailBlackTryCount++;
-                        }
-                        // recurse
-                        _this.recursiveBlackDetect(mediaFile, position);
-                    });
-                };
-                AnalysisApp.prototype.requestBlack = function (slice, position, filename) {
-                    return $.ajax({
-                        type: "POST",
-                        url: this.endpoint + "black",
-                        data: slice,
-                        // don't massage binary to JSON
-                        processData: false,
-                        // content type that we are sending
-                        contentType: 'application/octet-stream',
-                        beforeSend: function (request) {
-                            request.setRequestHeader("xa-file-to-concat", filename);
-                            request.setRequestHeader("xa-black-position", position);
-                        },
-                        error: function (err) {
-                            console.log("error on the black detection ajax request:");
-                            console.log(err);
-                        },
-                        success: function (data) {
-                            console.log("from requestBlack, for the", position);
-                            console.dir(data.blackDetect);
-                        }
-                    });
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
                     var _this = this;
@@ -365,8 +222,10 @@ System.register(["angular2/core", "angular2/platform/browser"], function(exports
                     core_1.Component({
                         selector: "analysis-app",
                         templateUrl: "src/main.html",
+                        directives: [detect_black_component_1.DetectBlackComponent],
+                        providers: [detect_black_service_1.DetectBlackService]
                     }), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService])
                 ], AnalysisApp);
                 return AnalysisApp;
             })();

@@ -1,0 +1,26 @@
+<div class="" [hidden]="!headBlackStarted">
+  <h3>performing black detection on file head...</h3>
+  <progress class="progress" value="{{headBlackProgress}}" max="1">0%</progress>
+</div>
+<div [hidden]="!headBlackResult">
+  <h4>black detected in file head</h4>
+  <ul>
+    <li *ngFor="#item of headBlackResult">
+      Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
+    </li>
+  </ul>
+</div>
+
+<div [hidden]="!tailBlackStarted">
+  <h3>performing black detection on tail...</h3>
+  <progress class="progress" value="{{tailBlackProgress}}" max="1">0%</progress>
+</div>
+<div class="" [hidden]="!tailBlackResult">
+  <h4>black detected in file tail</h4>
+  <ul>
+    <li *ngFor="#item of tailBlackResult">
+      <div></div>
+      Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
+    </li>
+  </ul>
+</div>

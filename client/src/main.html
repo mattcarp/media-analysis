@@ -1,9 +1,9 @@
 <br>
 
 <div class="row ma-video-header">
-    <span class="col-xs-12 col-sm-12 col-md-2"><img class="rca" src="images/rca.svg" alt="RCA Logo"></span>
-    <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
-  </div>
+  <span class="col-xs-12 col-sm-12 col-md-2"><img class="rca" src="images/rca.svg" alt="RCA Logo"></span>
+  <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
+</div>
 
 <h2>please choose a media file</h2>
 <br>
@@ -23,39 +23,10 @@
 </div>
 
 <div>
-  <div class=""  [hidden]="!headBlackStarted">
-    <p>black detection started on video head...</p>
-    <h1>progress {{blackProgressHead}}</h1>
-    <progress class="progress" value="{{blackProgressHead}}" max="1">0%</progress>
-  </div>
+  <detect-black></detect-black>
 
-  <div class="" [hidden]="!headBlackDetection">
-    <h4>black detected in file head</h4>
-    <ul>
-      <li *ngFor="#item of headBlackDetection">
-        Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
-      </li>
-    </ul>
-  </div>
-  <div class=""  [hidden]="!tailBlackStarted">
-    <p>black detection started on video tail...</p>
-    <h1>progress {{blackProgressTail}}</h1>
-    <progress class="progress" value="{{blackProgressTail}}" max="1">0%</progress>
-  </div>
-
-  <div class="" [hidden]="!tailBlackDetection">
-    <h4>black detected in file tail</h4>
-    <ul>
-      <li *ngFor="#item of tailBlackDetection">
-        Start: {{item.start}} | End: {{item.end}} | Duration: {{item.duration}} seconds
-      </li>
-    </ul>
-  </div>
-
-  <div class=""  [hidden]="!monoDetectStarted">
-    <p>mono detection started on thee audio segments...</p>
-    <!-- <h1>progress {{blackProgressTail}}</h1> -->
-    <!-- <progress class="progress" value="{{blackProgressTail}}" max="1">0%</progress> -->
+  <div class="" [hidden]="!monoDetectStarted">
+    <p>mono detection started on three audio segments...</p>
   </div>
 
   <div class="" [hidden]="!monoDetections">
@@ -63,7 +34,7 @@
     <ul>
       <li *ngFor="#item of monoDetections; #index = index">
         <h3>segment {{index}} mono: {{item.isMono}}</h3>
-        <h4 (click)="showMonoDetails(index)">show segment analysis</h4>
+        <a (click)="showMonoDetails(index)">show segment analysis</a>
         <span [hidden]="!displayMonoDetails[index]">
           <div *ngFor="#item of item.data">
             {{item}}
