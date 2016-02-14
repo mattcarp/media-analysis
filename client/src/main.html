@@ -1,18 +1,20 @@
 <br>
 
 <div class="row ma-video-header">
-
   <span class="col-xs-12 col-sm-12 col-md-2"><img class="rca" src="images/rca.svg" alt="RCA Logo"></span>
   <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
 </div>
 
 
-<h2>please choose a media file</h2>
+
+
+<handle-files></handle-files>
+
 <br>
 
-<div class="ma-upload__input">
+<!-- <div class="ma-upload__input">
   <input type="file" (change)="changeListener($event)" />
-</div>
+</div> -->
 <br>
 <div class="card alert-danger" [hidden]="!ffprobeErr">
   <h3>Bummer</h3>
@@ -27,15 +29,15 @@
 <div>
   <detect-black></detect-black>
 
-  <div class="" [hidden]="!monoDetectStarted">
+  <div [hidden]="!monoDetectStarted">
     <p>mono detection started on three audio segments...</p>
   </div>
 
-  <div class="" [hidden]="!monoDetections">
-    <h3>mono detections</h3>
+  <div [hidden]="!monoDetections">
+    <!-- <h3>mono detections</h3> -->
     <ul>
       <li *ngFor="#item of monoDetections; #index = index">
-        <h3>segment {{index}} mono: {{item.isMono}}</h3>
+        <h3>segment {{index + 1}} mono: {{item.isMono}}</h3>
         <a (click)="showMonoDetails(index)">show segment analysis</a>
         <span [hidden]="!displayMonoDetails[index]">
           <div *ngFor="#item of item.data">

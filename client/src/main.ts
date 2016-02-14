@@ -7,11 +7,12 @@ import {bootstrap} from "angular2/platform/browser";
 
 import {DetectBlackComponent} from './detect-black/detect-black.component';
 import {DetectBlackService} from './detect-black/detect-black.service';
+import {HandleFilesComponent} from './handle-files/handle-files.component';
+import {FileHandlerService} from "./handle-files/handle-files.service";
 
 // initial slice for metadata analysis
 const SLICE_SIZE = 150000;
 // bit rates from ffmpeg are unreliable, so we have to take a fixed chunk
-// TODO send a smaller chunk then send more if we dont have a black_end
 const BLACK_CHUNK_SIZE = 10000000;
 // minimum time, in seconds, for black at head and tail
 const MIN_BLACK_TIME = 4;
@@ -19,12 +20,11 @@ const MIN_BLACK_TIME = 4;
 declare var $: any;
 declare var FileReader: any;
 
-
 @Component({
   selector: "analysis-app",
   templateUrl: "src/main.html",
-  directives: [DetectBlackComponent],
-  providers: [DetectBlackService]
+  directives: [DetectBlackComponent, HandleFilesComponent],
+  providers: [DetectBlackService, FileHandlerService]
 })
 export class AnalysisApp {
   endpoint: string;
@@ -32,42 +32,33 @@ export class AnalysisApp {
   format: Object[];
   formatTags: Object[];
   ffprobeErr: string;
-  // headBlackStarted: boolean;
-  // tailBlackStarted: boolean;
-  // headBlackDetection: Object[];
-  // tailBlackDetection: Object[];
-  // headBlob: any;
-  // tailBlob: any;
   mediaFile: File;
-  // headBlackTryCount: number = 0;
-  // tailBlackTryCount: number = 0;
-  // progress will be a float = MAX_TRIES / tryCount
-  // blackProgressHead: number;
-  // blackProgressTail: number;
-  // headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
-  // tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
   originalExtension: string;
   monoDetectStarted: boolean;
   monoDetectFront: Object;
   showFormat: boolean = false;
   monoDetections: Object[] = [];
   displayMonoDetails: boolean[] = [];
+  fileHandlerService: any;
 
   streams: Object[][]; // an array of arrays of stream objects
 
-  constructor(public detectBlackService: DetectBlackService) {
+  constructor(public detectBlackService: DetectBlackService,
+    fileHandlerService: FileHandlerService) {
+    // TODO call the endpoint service
+    this.fileHandlerService = fileHandlerService;
     this.endpoint = this.setEndpoint();
   }
 
-  getMetadata(target: any) {
+  getMetadata(mediaFile: File) {
     let self = this;
-    let files = target.files;
-    let file = files[0];
+    let mediafile = this.fileHandlerService.getMediaFile();
     let reader = new FileReader();
+    // let blob = this.mediaFile.slice(0, SLICE_SIZE);
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
-      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+      // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
         // angular Http doesn't yet support raw binary POSTs
         // see line 62 at
         // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
@@ -100,13 +91,14 @@ export class AnalysisApp {
             }
           }
         });
-      }
+      // }
     };
 
-    this.mediaFile = file;
+    // this.mediaFile = file;
     this.originalExtension = this.mediaFile.name.split(".").pop();
     console.log("original file extension:", this.originalExtension);
-    let blob = this.mediaFile.slice(0, SLICE_SIZE);
+    let blob = mediaFile.slice(0, SLICE_SIZE);
+    console.log("i believe i can fly");
     reader.readAsBinaryString(blob);
   }
 
@@ -117,14 +109,19 @@ export class AnalysisApp {
     const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
     console.log("mono chunk size", MONO_CHUNK_SIZE);
 
-
     const length = mediaFile.size;
     const frontSliceStart = Math.floor(length / 3);
     const frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
     const frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
-    // TODO calculate middle and end slices
+    // TODO calculate middle slice
+    const midSliceStart = Math.floor(length /2) - (MONO_CHUNK_SIZE / 2);
+    const midSliceEnd = midSliceStart + MONO_CHUNK_SIZE;
+    const midSlice = mediaFile.slice(midSliceStart, midSliceEnd);
+
     const endSliceStart = frontSliceStart * 2;
-    // const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
+    const endSliceEnd = endSliceStart + MONO_CHUNK_SIZE;
+    const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
+
     console.log("in detect mono, my source file is this long:", mediaFile.size);
     console.log("and the front slice is this long:", frontSlice.size);
     // console.log("middle slice:", midSlice);
@@ -132,15 +129,19 @@ export class AnalysisApp {
     // TODO use rxjs observable
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
-
         console.log("first mono detect call is complete:")
         console.log(data);
-        // this.detectMonoStarted = false;
-        // self.monoDetections.push("bing");
-        // console.log("my detections array", self.monoDetections);
-        // self.monoDetectFront = data;
-      });
-
+      })
+      .then(this.requestMono(midSlice, "middle"))
+      .then((data, textStatus, jqXHR) => {
+        console.log("second (middle) mono detect call should be done:");
+        console.log(data);
+      })
+      // .then(this.requestMono(endSlice, "end"))
+      // .then((data, textStatus, jqXHR) => {
+      //   console.log("final mono detect call should be done:");
+      //   console.log(data);
+      // });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
@@ -188,7 +189,8 @@ export class AnalysisApp {
   }
 
   changeListener($event): void {
-    this.getMetadata($event.target);
+    let mediaFile = this.fileHandlerService.getMediaFile();
+    this.getMetadata(mediaFile);
   }
 
   renderResult(data) {

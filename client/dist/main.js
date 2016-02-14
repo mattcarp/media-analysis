@@ -1,5 +1,5 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service'], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', "./handle-files/handle-files.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, browser_1, detect_black_component_1, detect_black_service_1;
+    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, handle_files_service_1;
     var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
@@ -24,68 +24,76 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
             },
             function (detect_black_service_1_1) {
                 detect_black_service_1 = detect_black_service_1_1;
+            },
+            function (handle_files_component_1_1) {
+                handle_files_component_1 = handle_files_component_1_1;
+            },
+            function (handle_files_service_1_1) {
+                handle_files_service_1 = handle_files_service_1_1;
             }],
         execute: function() {
             // initial slice for metadata analysis
             SLICE_SIZE = 150000;
             // bit rates from ffmpeg are unreliable, so we have to take a fixed chunk
-            // TODO send a smaller chunk then send more if we dont have a black_end
             BLACK_CHUNK_SIZE = 10000000;
             // minimum time, in seconds, for black at head and tail
             MIN_BLACK_TIME = 4;
             AnalysisApp = (function () {
-                function AnalysisApp(detectBlackService) {
+                function AnalysisApp(detectBlackService, fileHandlerService) {
                     this.detectBlackService = detectBlackService;
                     this.showFormat = false;
                     this.monoDetections = [];
                     this.displayMonoDetails = [];
+                    // TODO call the endpoint service
+                    this.fileHandlerService = fileHandlerService;
                     this.endpoint = this.setEndpoint();
                 }
-                AnalysisApp.prototype.getMetadata = function (target) {
+                AnalysisApp.prototype.getMetadata = function (mediaFile) {
                     var _this = this;
                     var self = this;
-                    var files = target.files;
-                    var file = files[0];
+                    var mediafile = this.fileHandlerService.getMediaFile();
                     var reader = new FileReader();
+                    // let blob = this.mediaFile.slice(0, SLICE_SIZE);
                     // if we use onloadend, we need to check the readyState.
                     reader.onloadend = function (evt) {
-                        if (evt.target.readyState == FileReader.DONE) {
-                            // angular Http doesn't yet support raw binary POSTs
-                            // see line 62 at
-                            // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-                            $.ajax({
-                                type: "POST",
-                                url: _this.endpoint + "analysis",
-                                data: blob,
-                                // don't massage binary to JSON
-                                processData: false,
-                                // content type that we are sending
-                                contentType: 'application/octet-stream',
-                                // data type that we expect in return
-                                // dataType: "",
-                                error: function (err) {
-                                    console.log("you have an error on the ajax request:");
-                                    console.log(err);
-                                },
-                                success: function (data) {
-                                    // error handling
-                                    console.log("this is what i got from ffprobe metadata:");
-                                    console.log(data);
-                                    self.renderResult(data);
-                                    var analysisObj = JSON.parse(data.analysis);
-                                    var videoBitrate = analysisObj.streams[0].bit_rate;
-                                    var type = analysisObj.streams[0].codec_type;
-                                    if (type === "video") {
-                                        _this.processVideo(_this.mediaFile, analysisObj);
-                                    }
+                        // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                        // angular Http doesn't yet support raw binary POSTs
+                        // see line 62 at
+                        // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
+                        $.ajax({
+                            type: "POST",
+                            url: _this.endpoint + "analysis",
+                            data: blob,
+                            // don't massage binary to JSON
+                            processData: false,
+                            // content type that we are sending
+                            contentType: 'application/octet-stream',
+                            // data type that we expect in return
+                            // dataType: "",
+                            error: function (err) {
+                                console.log("you have an error on the ajax request:");
+                                console.log(err);
+                            },
+                            success: function (data) {
+                                // error handling
+                                console.log("this is what i got from ffprobe metadata:");
+                                console.log(data);
+                                self.renderResult(data);
+                                var analysisObj = JSON.parse(data.analysis);
+                                var videoBitrate = analysisObj.streams[0].bit_rate;
+                                var type = analysisObj.streams[0].codec_type;
+                                if (type === "video") {
+                                    _this.processVideo(_this.mediaFile, analysisObj);
                                 }
-                            });
-                        }
+                            }
+                        });
+                        // }
                     };
-                    this.mediaFile = file;
+                    // this.mediaFile = file;
                     this.originalExtension = this.mediaFile.name.split(".").pop();
                     console.log("original file extension:", this.originalExtension);
-                    var blob = this.mediaFile.slice(0, SLICE_SIZE);
+                    var blob = mediaFile.slice(0, SLICE_SIZE);
+                    console.log("i believe i can fly");
                     reader.readAsBinaryString(blob);
                 };
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
@@ -98,9 +106,13 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     var frontSliceStart = Math.floor(length / 3);
                     var frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
                     var frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
-                    // TODO calculate middle and end slices
+                    // TODO calculate middle slice
+                    var midSliceStart = Math.floor(length / 2) - (MONO_CHUNK_SIZE / 2);
+                    var midSliceEnd = midSliceStart + MONO_CHUNK_SIZE;
+                    var midSlice = mediaFile.slice(midSliceStart, midSliceEnd);
                     var endSliceStart = frontSliceStart * 2;
-                    // const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
+                    var endSliceEnd = endSliceStart + MONO_CHUNK_SIZE;
+                    var endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
                     console.log("in detect mono, my source file is this long:", mediaFile.size);
                     console.log("and the front slice is this long:", frontSlice.size);
                     // console.log("middle slice:", midSlice);
@@ -110,11 +122,17 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                         .then(function (data, textStatus, jqXHR) {
                         console.log("first mono detect call is complete:");
                         console.log(data);
-                        // this.detectMonoStarted = false;
-                        // self.monoDetections.push("bing");
-                        // console.log("my detections array", self.monoDetections);
-                        // self.monoDetectFront = data;
+                    })
+                        .then(this.requestMono(midSlice, "middle"))
+                        .then(function (data, textStatus, jqXHR) {
+                        console.log("second (middle) mono detect call should be done:");
+                        console.log(data);
                     });
+                    // .then(this.requestMono(endSlice, "end"))
+                    // .then((data, textStatus, jqXHR) => {
+                    //   console.log("final mono detect call should be done:");
+                    //   console.log(data);
+                    // });
                 };
                 AnalysisApp.prototype.requestMono = function (slice, chunkPosition) {
                     var _this = this;
@@ -155,7 +173,8 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     this.detectMono(this.mediaFile, bitrate);
                 };
                 AnalysisApp.prototype.changeListener = function ($event) {
-                    this.getMetadata($event.target);
+                    var mediaFile = this.fileHandlerService.getMediaFile();
+                    this.getMetadata(mediaFile);
                 };
                 AnalysisApp.prototype.renderResult = function (data) {
                     var _this = this;
@@ -222,10 +241,10 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     core_1.Component({
                         selector: "analysis-app",
                         templateUrl: "src/main.html",
-                        directives: [detect_black_component_1.DetectBlackComponent],
-                        providers: [detect_black_service_1.DetectBlackService]
+                        directives: [detect_black_component_1.DetectBlackComponent, handle_files_component_1.HandleFilesComponent],
+                        providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService]
                     }), 
-                    __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService])
+                    __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService])
                 ], AnalysisApp);
                 return AnalysisApp;
             })();
