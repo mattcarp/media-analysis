@@ -17,3 +17,13 @@ h1, h2, h3 {
   padding-left: 25px;
   padding-top: 10px;
 }
+
+.ma-loading__message {
+  text-align: center;
+  display: block;
+  margin: auto;
+  margin-top: 200px;
+  font-weight: 100;
+  font-size: 30px;
+  color: #4F87BB;
+}
