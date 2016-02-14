@@ -13,4 +13,4 @@ pids
 # Debug log from npm
 npm-debug.log
 
-dist/*
+client/dist/*
