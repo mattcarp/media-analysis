@@ -13,8 +13,9 @@
 
 <div [hidden]="!tailBlackStarted">
   <h3>performing black detection on tail...</h3>
-  <progress class="progress" value="{{tailBlackProgress}}" max="1">0%</progress>
+  <progress class="progress ma-progress" value="{{tailBlackProgress}}" max="1">0%</progress>
 </div>
+
 <div class="" [hidden]="!tailBlackResult">
   <h4>black detected in file tail</h4>
   <ul>

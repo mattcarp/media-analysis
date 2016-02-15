@@ -1,37 +1,45 @@
 <br>
 
-<div class="row ma-video-header">
-  <span class="col-xs-12 col-sm-12 col-md-2"><img class="rca" src="images/rca.svg" alt="RCA Logo"></span>
+<div class="row ma-header">
+  <img class="ma-header-logo__rca col-xs-2" src="images/rca.svg" alt="RCA Logo">
   <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
 </div>
 
-<handle-files></handle-files>
+<div class="row">
+  <div class="ma-nav-left col-xs-2">i am left nav, and so can you</div>
+  <div class="col-xs-10 ma-panel-center">
 
-<br>
-<br>
+      <handle-files class="col-xs-8"></handle-files>
 
-<div class="card alert-danger" [hidden]="!ffprobeErr">
-  <h3>Bummer</h3>
-  <p>
-    The analyzer returned the following error:
-  </p>
-  <p>
-    {{ffprobeErr}}
-  </p>
+
+    <br>
+    <br>
+
+    <div class="card alert-danger" [hidden]="!ffprobeErr">
+      <h3>Bummer</h3>
+      <p>
+        The analyzer returned the following error:
+      </p>
+      <p>
+        {{ffprobeErr}}
+      </p>
+    </div>
+
+    <div class="ma-black">
+      <detect-black>
+        <h3>starting black detection...</h3></detect-black>
+    </div>
+    <!-- /.ma-black -->
+
+
+    <detect-mono>
+      <h3>performing mono audio detection...</h3>
+    </detect-mono>
+
+
+    <extract-metadata>
+      <h3>extracting metadata...</h3>
+    </extract-metadata>
+
+  </div>
 </div>
-
-<div class="ma-black">
-  <detect-black>
-    <h3>starting black detection...</h3></detect-black>
-</div>
-<!-- /.ma-black -->
-
-
-<detect-mono>
-  <h3>performing mono audio detection...</h3>
-</detect-mono>
-
-
-<extract-metadata>
-  <h3>extracting metadata...</h3>
-</extract-metadata>

@@ -32,4 +32,4 @@ export class HandleFilesComponent {
       detectMonoService.detectMono(file);
     });
   }
-}
+} // class

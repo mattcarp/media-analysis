@@ -35,7 +35,6 @@ export class DetectBlackService {
     let tailSliceStart;
     let tailSliceEnd;
 
-
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
       console.log("max retries exceeded for black detection in file", position);

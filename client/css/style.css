@@ -1,3 +1,5 @@
+/* ===== global ===== */
+
 body {
   font-family: proxima_nova, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #48637c;
@@ -8,212 +10,33 @@ h1, h2, h3 {
   color: #4F87BB;
 }
 
-.ma-video-header {
-  padding-top: 30px;
-  padding-bottom: 30px;
+.ma-progress {
+  height: 5px;
 }
 
-.ma-header-title {
-  padding-left: 25px;
-  padding-top: 10px;
-}
-
-.ma-loading__message {
+.ma-app__loading {
   text-align: center;
   display: block;
-  margin: auto;
   margin-top: 200px;
-  font-weight: 100;
-  font-size: 30px;
   color: #4F87BB;
 }
 
-
-/* file drag box */
-
-.container h1 a:hover, .container h1 a:focus {
-  color: #39bfd3;
+/* ===== header ===== */
+.ma-header-logo__rca {
+  height: 25px;
+  margin-top: 20px;
 }
 
-.container nav {
-  margin-bottom: 40px;
+/* ===== nav-left ===== */
+.ma-nav-left {
+    margin-top: 40px;
 }
 
-.container nav a {
-  border-bottom: 2px solid #c8dadf;
-  display: inline-block;
-  padding: 4px 8px;
-  margin: 0 5px;
-}
 
-.container nav a.is-selected {
-  font-weight: 700;
-  color: #39bfd3;
-  border-bottom-color: currentColor;
-}
+/* ===== handle-files ===== */
 
-.container nav a:not( .is-selected):hover, .container nav a:not( .is-selected):focus {
-  border-bottom-color: #0f3c4b;
-}
+/* ===== detect-black ===== */
 
-.container footer {
-  color: #92b0b3;
-  margin-top: 40px;
-}
+/* ===== detect-mono ===== */
 
-.container footer p + p {
-  margin-top: 1em;
-}
-
-.container footer a:hover, .container footer a:focus {
-  color: #39bfd3;
-}
-
-.box {
-  font-size: 1.25rem;
-  /* 20 */
-  background-color: #c8dadf;
-  position: relative;
-  padding: 100px 20px;
-}
-
-.box.has-advanced-upload {
-  outline: 2px dashed #92b0b3;
-  outline-offset: -10px;
-  -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
-  transition: outline-offset .15s ease-in-out, background-color .15s linear;
-}
-
-.box.is-dragover {
-  outline-offset: -20px;
-  outline-color: #c8dadf;
-  background-color: #fff;
-}
-
-.box__dragndrop, .box__icon {
-  display: none;
-}
-
-.box.has-advanced-upload .box__dragndrop {
-  display: inline;
-}
-
-.box.has-advanced-upload .box__icon {
-  width: 100%;
-  height: 80px;
-  fill: #92b0b3;
-  display: block;
-  margin-bottom: 40px;
-}
-
-.box.is-uploading .box__input, .box.is-success .box__input, .box.is-error .box__input {
-  visibility: hidden;
-}
-
-.box__uploading, .box__success, .box__error {
-  display: none;
-}
-
-.box.is-uploading .box__uploading, .box.is-success .box__success, .box.is-error .box__error {
-  display: block;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  left: 0;
-  -webkit-transform: translateY( -50%);
-  transform: translateY( -50%);
-}
-
-.box__uploading {
-  font-style: italic;
-}
-
-.box__success {
-  -webkit-animation: appear-from-inside .25s ease-in-out;
-  animation: appear-from-inside .25s ease-in-out;
-}
-
-@-webkit-keyframes appear-from-inside {
-  from {
-    -webkit-transform: translateY( -50%) scale( 0);
-  }
-  75% {
-    -webkit-transform: translateY( -50%) scale( 1.1);
-  }
-  to {
-    -webkit-transform: translateY( -50%) scale( 1);
-  }
-}
-
-@keyframes appear-from-inside {
-  from {
-    transform: translateY( -50%) scale( 0);
-  }
-  75% {
-    transform: translateY( -50%) scale( 1.1);
-  }
-  to {
-    transform: translateY( -50%) scale( 1);
-  }
-}
-
-.box__restart {
-  font-weight: 700;
-}
-
-.box__restart:focus, .box__restart:hover {
-  color: #39bfd3;
-}
-
-.js .box__file {
-  width: 0.1px;
-  height: 0.1px;
-  opacity: 0;
-  overflow: hidden;
-  position: absolute;
-  z-index: -1;
-}
-
-.js .box__file + label {
-  max-width: 80%;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-  display: inline-block;
-  overflow: hidden;
-}
-
-.js .box__file + label:hover strong, .box__file:focus + label strong, .box__file.has-focus + label strong {
-  color: #39bfd3;
-}
-
-.js .box__file:focus + label, .js .box__file.has-focus + label {
-  outline: 1px dotted #000;
-  outline: -webkit-focus-ring-color auto 5px;
-}
-
-.js .box__file + label * {
-  /* pointer-events: none; */
-  /* in case of FastClick lib use */
-}
-
-.no-js .box__file + label {
-  display: none;
-}
-
-.no-js .box__button {
-  display: block;
-}
-
-.box__button {
-  font-weight: 700;
-  color: #e5edf1;
-  background-color: #39bfd3;
-  display: none;
-  padding: 8px 16px;
-  margin: 40px auto 0;
-}
-
-.box__button:hover, .box__button:focus {
-  background-color: #0f3c4b;
-}
+/* ===== extract-metadata ===== */

@@ -10,7 +10,7 @@ declare var $: any;
 })
 
 export class DetectMonoComponent {
-  detectStartedEmitter: any;  // event emitter
+  detectStartedEmitter: any;
   detectingMono: boolean;
   monoResultsEmitter: any;
   monoResults: any;
