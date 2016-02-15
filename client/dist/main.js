@@ -1,5 +1,5 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', './extract-metadata/extract-metadata.component', "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, handle_files_service_1, extract_metadata_service_1;
+    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, extract_metadata_component_1, handle_files_service_1, extract_metadata_service_1;
     var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
@@ -28,6 +28,9 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
             function (handle_files_component_1_1) {
                 handle_files_component_1 = handle_files_component_1_1;
             },
+            function (extract_metadata_component_1_1) {
+                extract_metadata_component_1 = extract_metadata_component_1_1;
+            },
             function (handle_files_service_1_1) {
                 handle_files_service_1 = handle_files_service_1_1;
             },
@@ -42,66 +45,16 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
             // minimum time, in seconds, for black at head and tail
             MIN_BLACK_TIME = 4;
             AnalysisApp = (function () {
+                // streams: Object[][]; // an array of arrays of stream objects
                 function AnalysisApp(detectBlackService, fileHandlerService) {
                     this.detectBlackService = detectBlackService;
-                    this.showFormat = false;
+                    // showFormat: boolean = false;
                     this.monoDetections = [];
                     this.displayMonoDetails = [];
                     // TODO call the endpoint service
                     this.fileHandlerService = fileHandlerService;
                     this.endpoint = this.setEndpoint();
                 }
-                // getMetadata(mediaFile: File) {
-                //   let self = this;
-                //   let mediafile = this.fileHandlerService.getMediaFile();
-                //   let reader = new FileReader();
-                //   // let blob = this.mediaFile.slice(0, SLICE_SIZE);
-                //
-                //   // if we use onloadend, we need to check the readyState.
-                //   reader.onloadend = (evt) => {
-                //     // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                //       // angular Http doesn't yet support raw binary POSTs
-                //       // see line 62 at
-                //       // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-                //       $.ajax({
-                //         type: "POST",
-                //         url: this.endpoint + "analysis",
-                //         data: blob,
-                //         // don't massage binary to JSON
-                //         processData: false,
-                //         // content type that we are sending
-                //         contentType: 'application/octet-stream',
-                //         // data type that we expect in return
-                //         // dataType: "",
-                //         error: function(err) {
-                //           console.log("you have an error on the ajax request:");
-                //           console.log(err);
-                //         },
-                //         success: data => {
-                //           // error handling
-                //           console.log("this is what i got from ffprobe metadata:");
-                //           console.log(data);
-                //           self.renderResult(data);
-                //
-                //           let analysisObj = JSON.parse(data.analysis);
-                //           let videoBitrate = analysisObj.streams[0].bit_rate;
-                //           let type = analysisObj.streams[0].codec_type;
-                //
-                //           if (type === "video") {
-                //             this.processVideo(this.mediaFile, analysisObj);
-                //           }
-                //         }
-                //       });
-                //     // }
-                //   };
-                //
-                //   // this.mediaFile = file;
-                //   this.originalExtension = this.mediaFile.name.split(".").pop();
-                //   console.log("original file extension:", this.originalExtension);
-                //   let blob = mediaFile.slice(0, SLICE_SIZE);
-                //   console.log("i believe i can fly");
-                //   reader.readAsBinaryString(blob);
-                // }
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate | 25000000;
@@ -178,42 +131,46 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     this.monoDetectStarted = true;
                     this.detectMono(this.mediaFile, bitrate);
                 };
-                AnalysisApp.prototype.changeListener = function ($event) {
-                    var mediaFile = this.fileHandlerService.getMediaFile();
-                    this.getMetadata(mediaFile);
-                };
-                AnalysisApp.prototype.renderResult = function (data) {
-                    var _this = this;
-                    if (data.error) {
-                        this.ffprobeErr = data.error;
-                    }
-                    console.log("these are my top-level keys");
-                    console.log(Object.keys(data));
-                    var analysisObj = JSON.parse(data.analysis);
-                    console.log("analysis object, and number of keys:");
-                    console.log(analysisObj);
-                    console.log(Object.keys(analysisObj).length);
-                    if (analysisObj && Object.keys(analysisObj).length !== 0) {
-                        var formatObj = analysisObj.format;
-                        // zone.run(() => { this.showFormat = true});
-                        this.showFormat = true;
-                        this.format = this.processObject(formatObj);
-                        console.log("format object, from which we can filter extraneous keys:");
-                        console.log(this.format);
-                        if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
-                            this.formatTags = this.processObject(formatObj.tags);
-                        }
-                    }
-                    if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-                        var collectedStreams = [];
-                        var inputStreams = analysisObj.streams;
-                        inputStreams.forEach(function (currentStream) {
-                            console.log("i am a stream");
-                            collectedStreams.push(_this.processObject(currentStream));
-                        });
-                        this.streams = collectedStreams;
-                    }
-                };
+                // changeListener($event): void {
+                //   let mediaFile = this.fileHandlerService.getMediaFile();
+                //   // TODO fire off all analysis from here
+                //   this.getMetadata(mediaFile);
+                // }
+                // renderResult(data) {
+                //   if (data.error) {
+                //     this.ffprobeErr = data.error;
+                //   }
+                //   console.log("these are my top-level keys");
+                //   console.log(Object.keys(data));
+                //   let analysisObj = JSON.parse(data.analysis);
+                //   console.log("analysis object, and number of keys:");
+                //   console.log(analysisObj);
+                //   console.log(Object.keys(analysisObj).length);
+                //   if (analysisObj && Object.keys(analysisObj).length !== 0) {
+                //     let formatObj = analysisObj.format;
+                //     // zone.run(() => { this.showFormat = true});
+                //     this.showFormat = true;
+                //     this.format = this.processObject(formatObj);
+                //     console.log("format object, from which we can filter extraneous keys:")
+                //     console.log(this.format);
+                //
+                //     if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
+                //       this.formatTags = this.processObject(formatObj.tags);
+                //     }
+                //   }
+                //
+                //   if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
+                //     let collectedStreams = [];
+                //     let inputStreams = analysisObj.streams;
+                //     inputStreams.forEach(currentStream => {
+                //       console.log("i am a stream");
+                //       collectedStreams.push(this.processObject(currentStream));
+                //     });
+                //
+                //     this.streams = collectedStreams;
+                //   }
+                //
+                // }
                 AnalysisApp.prototype.showMonoDetails = function (index) {
                     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
                 };
@@ -228,17 +185,18 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                 // takes an object, removes any keys with array values, and returns
                 // an array of objects: {key: value}
                 // this is handy for ffprobe's format and tags objects
-                AnalysisApp.prototype.processObject = function (formatObj) {
-                    var keysArr = Object.keys(formatObj);
-                    return keysArr
-                        .filter(function (formatKey) { return formatKey !== "tags"; })
-                        .map(function (formatKey) {
-                        var item = {};
-                        item.key = formatKey;
-                        item.value = formatObj[formatKey];
-                        return item;
-                    });
-                };
+                // processObject(formatObj): Object[] {
+                //   let keysArr: string[] = Object.keys(formatObj);
+                //   return keysArr
+                //     // TODO filter if value for key is object or array, rather than not 'tags'
+                //     .filter(formatKey => formatKey !== "tags")
+                //     .map(formatKey => {
+                //     let item: any = {};
+                //     item.key = formatKey;
+                //     item.value = formatObj[formatKey];
+                //     return item;
+                //   })
+                // }
                 AnalysisApp.prototype.logError = function (err) {
                     console.log("There was an error: ");
                     console.log(err);
@@ -247,7 +205,8 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     core_1.Component({
                         selector: "analysis-app",
                         templateUrl: "src/main.html",
-                        directives: [detect_black_component_1.DetectBlackComponent, handle_files_component_1.HandleFilesComponent],
+                        directives: [detect_black_component_1.DetectBlackComponent, handle_files_component_1.HandleFilesComponent,
+                            extract_metadata_component_1.ExtractMetadataComponent],
                         providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService]
                     }), 
                     __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService])

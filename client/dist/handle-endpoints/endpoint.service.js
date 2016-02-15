@@ -9,17 +9,17 @@ System.register(['angular2/core'], function(exports_1) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1;
-    var endpointService;
+    var EndpointService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             }],
         execute: function() {
-            endpointService = (function () {
-                function endpointService() {
+            EndpointService = (function () {
+                function EndpointService() {
                 }
-                endpointService.prototype.getEndpoint = function () {
+                EndpointService.prototype.getEndpoint = function () {
                     if (window.location.hostname === "localhost") {
                         return "http://localhost:3000/";
                     }
@@ -27,13 +27,13 @@ System.register(['angular2/core'], function(exports_1) {
                         return "http://52.0.119.124:3000/";
                     }
                 };
-                endpointService = __decorate([
+                EndpointService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [])
-                ], endpointService);
-                return endpointService;
+                ], EndpointService);
+                return EndpointService;
             })();
-            exports_1("endpointService", endpointService);
+            exports_1("EndpointService", EndpointService);
         }
     }
 });

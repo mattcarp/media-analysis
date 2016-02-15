@@ -8,6 +8,8 @@ import {bootstrap} from "angular2/platform/browser";
 import {DetectBlackComponent} from './detect-black/detect-black.component';
 import {DetectBlackService} from './detect-black/detect-black.service';
 import {HandleFilesComponent} from './handle-files/handle-files.component';
+import {ExtractMetadataComponent} from './extract-metadata/extract-metadata.component';
+
 import {FileHandlerService} from "./handle-files/handle-files.service";
 import {ExtractMetadataService} from "./extract-metadata/extract-metadata.service";
 
@@ -24,25 +26,26 @@ declare var FileReader: any;
 @Component({
   selector: "analysis-app",
   templateUrl: "src/main.html",
-  directives: [DetectBlackComponent, HandleFilesComponent],
+  directives: [DetectBlackComponent, HandleFilesComponent,
+    ExtractMetadataComponent],
   providers: [DetectBlackService, FileHandlerService, ExtractMetadataService]
 })
 export class AnalysisApp {
   endpoint: string;
   results: Object;
-  format: Object[];
-  formatTags: Object[];
-  ffprobeErr: string;
+  // format: Object[];
+  // formatTags: Object[];
+  // ffprobeErr: string;
   mediaFile: File;
   originalExtension: string;
   monoDetectStarted: boolean;
   monoDetectFront: Object;
-  showFormat: boolean = false;
+  // showFormat: boolean = false;
   monoDetections: Object[] = [];
   displayMonoDetails: boolean[] = [];
   fileHandlerService: any;
 
-  streams: Object[][]; // an array of arrays of stream objects
+  // streams: Object[][]; // an array of arrays of stream objects
 
   constructor(public detectBlackService: DetectBlackService,
     fileHandlerService: FileHandlerService) {
@@ -50,58 +53,6 @@ export class AnalysisApp {
     this.fileHandlerService = fileHandlerService;
     this.endpoint = this.setEndpoint();
   }
-
-  // getMetadata(mediaFile: File) {
-  //   let self = this;
-  //   let mediafile = this.fileHandlerService.getMediaFile();
-  //   let reader = new FileReader();
-  //   // let blob = this.mediaFile.slice(0, SLICE_SIZE);
-  //
-  //   // if we use onloadend, we need to check the readyState.
-  //   reader.onloadend = (evt) => {
-  //     // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-  //       // angular Http doesn't yet support raw binary POSTs
-  //       // see line 62 at
-  //       // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-  //       $.ajax({
-  //         type: "POST",
-  //         url: this.endpoint + "analysis",
-  //         data: blob,
-  //         // don't massage binary to JSON
-  //         processData: false,
-  //         // content type that we are sending
-  //         contentType: 'application/octet-stream',
-  //         // data type that we expect in return
-  //         // dataType: "",
-  //         error: function(err) {
-  //           console.log("you have an error on the ajax request:");
-  //           console.log(err);
-  //         },
-  //         success: data => {
-  //           // error handling
-  //           console.log("this is what i got from ffprobe metadata:");
-  //           console.log(data);
-  //           self.renderResult(data);
-  //
-  //           let analysisObj = JSON.parse(data.analysis);
-  //           let videoBitrate = analysisObj.streams[0].bit_rate;
-  //           let type = analysisObj.streams[0].codec_type;
-  //
-  //           if (type === "video") {
-  //             this.processVideo(this.mediaFile, analysisObj);
-  //           }
-  //         }
-  //       });
-  //     // }
-  //   };
-  //
-  //   // this.mediaFile = file;
-  //   this.originalExtension = this.mediaFile.name.split(".").pop();
-  //   console.log("original file extension:", this.originalExtension);
-  //   let blob = mediaFile.slice(0, SLICE_SIZE);
-  //   console.log("i believe i can fly");
-  //   reader.readAsBinaryString(blob);
-  // }
 
   detectMono(mediaFile: File, bitrate: number) {
     // if bitrate is undefined, assume 25mbps
@@ -189,46 +140,47 @@ export class AnalysisApp {
     this.detectMono(this.mediaFile, bitrate);
   }
 
-  changeListener($event): void {
-    let mediaFile = this.fileHandlerService.getMediaFile();
-    this.getMetadata(mediaFile);
-  }
+  // changeListener($event): void {
+  //   let mediaFile = this.fileHandlerService.getMediaFile();
+  //   // TODO fire off all analysis from here
+  //   this.getMetadata(mediaFile);
+  // }
 
-  renderResult(data) {
-    if (data.error) {
-      this.ffprobeErr = data.error;
-    }
-    console.log("these are my top-level keys");
-    console.log(Object.keys(data));
-    let analysisObj = JSON.parse(data.analysis);
-    console.log("analysis object, and number of keys:");
-    console.log(analysisObj);
-    console.log(Object.keys(analysisObj).length);
-    if (analysisObj && Object.keys(analysisObj).length !== 0) {
-      let formatObj = analysisObj.format;
-      // zone.run(() => { this.showFormat = true});
-      this.showFormat = true;
-      this.format = this.processObject(formatObj);
-      console.log("format object, from which we can filter extraneous keys:")
-      console.log(this.format);
-
-      if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
-        this.formatTags = this.processObject(formatObj.tags);
-      }
-    }
-
-    if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-      let collectedStreams = [];
-      let inputStreams = analysisObj.streams;
-      inputStreams.forEach(currentStream => {
-        console.log("i am a stream");
-        collectedStreams.push(this.processObject(currentStream));
-      });
-
-      this.streams = collectedStreams;
-    }
-
-  }
+  // renderResult(data) {
+  //   if (data.error) {
+  //     this.ffprobeErr = data.error;
+  //   }
+  //   console.log("these are my top-level keys");
+  //   console.log(Object.keys(data));
+  //   let analysisObj = JSON.parse(data.analysis);
+  //   console.log("analysis object, and number of keys:");
+  //   console.log(analysisObj);
+  //   console.log(Object.keys(analysisObj).length);
+  //   if (analysisObj && Object.keys(analysisObj).length !== 0) {
+  //     let formatObj = analysisObj.format;
+  //     // zone.run(() => { this.showFormat = true});
+  //     this.showFormat = true;
+  //     this.format = this.processObject(formatObj);
+  //     console.log("format object, from which we can filter extraneous keys:")
+  //     console.log(this.format);
+  //
+  //     if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
+  //       this.formatTags = this.processObject(formatObj.tags);
+  //     }
+  //   }
+  //
+  //   if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
+  //     let collectedStreams = [];
+  //     let inputStreams = analysisObj.streams;
+  //     inputStreams.forEach(currentStream => {
+  //       console.log("i am a stream");
+  //       collectedStreams.push(this.processObject(currentStream));
+  //     });
+  //
+  //     this.streams = collectedStreams;
+  //   }
+  //
+  // }
 
   showMonoDetails(index: number) {
     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
@@ -245,18 +197,18 @@ export class AnalysisApp {
   // takes an object, removes any keys with array values, and returns
   // an array of objects: {key: value}
   // this is handy for ffprobe's format and tags objects
-  processObject(formatObj): Object[] {
-    let keysArr: string[] = Object.keys(formatObj);
-    return keysArr
-      // TODO filter if value for key is object or array, rather than not 'tags'
-      .filter(formatKey => formatKey !== "tags")
-      .map(formatKey => {
-      let item: any = {};
-      item.key = formatKey;
-      item.value = formatObj[formatKey];
-      return item;
-    })
-  }
+  // processObject(formatObj): Object[] {
+  //   let keysArr: string[] = Object.keys(formatObj);
+  //   return keysArr
+  //     // TODO filter if value for key is object or array, rather than not 'tags'
+  //     .filter(formatKey => formatKey !== "tags")
+  //     .map(formatKey => {
+  //     let item: any = {};
+  //     item.key = formatKey;
+  //     item.value = formatObj[formatKey];
+  //     return item;
+  //   })
+  // }
 
   logError(err) {
     console.log("There was an error: ");

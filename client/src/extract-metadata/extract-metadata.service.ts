@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {EventEmitter, Injectable} from 'angular2/core';
 
 declare var $: any;
 declare var FileReader: any;
@@ -10,6 +10,8 @@ export class ExtractMetadataService {
   // TODO use the endpoint service
   endpoint: string = "http://localhost:3000/";
   originalExtension: string;
+  metadataStarted = new EventEmitter();
+  metadataResult = new EventEmitter();
 
   extract(mediaFile: File) {
     let self = this;
@@ -20,6 +22,8 @@ export class ExtractMetadataService {
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
       if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+        console.log("we should now be emitting metadata started = true");
+        this.metadataStarted.emit(true);
         // angular Http doesn't yet support raw binary POSTs
         // see line 62 at
         // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
@@ -39,15 +43,18 @@ export class ExtractMetadataService {
             // error handling
             console.log("this is what i got from ffprobe metadata:");
             console.log(data);
-            console.log("TODO: render the result in extract-metadata.html")
-            self.renderResult(data);
+            console.log("emitting data, TODO subscribe to result in extract-metadata.html");
+            this.metadataStarted.emit(false);
+            this.metadataResult.emit(data);
 
+
+            // TODO in main.processVideo, subscribe to the result event, then fire:
             let analysisObj = JSON.parse(data.analysis);
             let videoBitrate = analysisObj.streams[0].bit_rate;
             let type = analysisObj.streams[0].codec_type;
-
             if (type === "video") {
-              this.processVideo(this.mediaFile, analysisObj);
+              console.log("we got a video, hoss, now we gotta fire processVideo()");
+              // this.processVideo(this.mediaFile, analysisObj);
             }
           }
         });
@@ -58,7 +65,6 @@ export class ExtractMetadataService {
     this.originalExtension = mediaFile.name.split(".").pop();
     console.log("original file extension:", this.originalExtension);
     let blob = mediaFile.slice(0, SLICE_SIZE);
-    console.log("i believe i can fly");
     reader.readAsBinaryString(blob);
   }
 }
