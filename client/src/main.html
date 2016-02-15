@@ -6,16 +6,11 @@
 </div>
 
 
-
-
 <handle-files></handle-files>
 
 <br>
-
-<!-- <div class="ma-upload__input">
-  <input type="file" (change)="changeListener($event)" />
-</div> -->
 <br>
+
 <div class="card alert-danger" [hidden]="!ffprobeErr">
   <h3>Bummer</h3>
   <p>
@@ -26,7 +21,7 @@
   </p>
 </div>
 
-<div>
+<div class="ma-black">
   <detect-black><h3>starting black detection...</h3></detect-black>
 
   <div [hidden]="!monoDetectStarted">
@@ -48,5 +43,6 @@
     </ul>
   </div>
 </div>
+<!-- /.ma-black -->
 
 <extract-metadata><h3>extracting metadata...</h3></extract-metadata>

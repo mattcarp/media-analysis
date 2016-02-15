@@ -126,6 +126,10 @@ export class AnalysisApp {
     // return Observable.fromPromise(promise);
   }
 
+  showMonoDetails(index: number) {
+    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
+  }
+
   processVideo(mediaFile: File, bitrate: number) {
     // send fixed chunk, then request more bytes and concat if
     // blackDetect shows a black_start but no black_end
@@ -140,52 +144,6 @@ export class AnalysisApp {
     this.detectMono(this.mediaFile, bitrate);
   }
 
-  // changeListener($event): void {
-  //   let mediaFile = this.fileHandlerService.getMediaFile();
-  //   // TODO fire off all analysis from here
-  //   this.getMetadata(mediaFile);
-  // }
-
-  // renderResult(data) {
-  //   if (data.error) {
-  //     this.ffprobeErr = data.error;
-  //   }
-  //   console.log("these are my top-level keys");
-  //   console.log(Object.keys(data));
-  //   let analysisObj = JSON.parse(data.analysis);
-  //   console.log("analysis object, and number of keys:");
-  //   console.log(analysisObj);
-  //   console.log(Object.keys(analysisObj).length);
-  //   if (analysisObj && Object.keys(analysisObj).length !== 0) {
-  //     let formatObj = analysisObj.format;
-  //     // zone.run(() => { this.showFormat = true});
-  //     this.showFormat = true;
-  //     this.format = this.processObject(formatObj);
-  //     console.log("format object, from which we can filter extraneous keys:")
-  //     console.log(this.format);
-  //
-  //     if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
-  //       this.formatTags = this.processObject(formatObj.tags);
-  //     }
-  //   }
-  //
-  //   if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-  //     let collectedStreams = [];
-  //     let inputStreams = analysisObj.streams;
-  //     inputStreams.forEach(currentStream => {
-  //       console.log("i am a stream");
-  //       collectedStreams.push(this.processObject(currentStream));
-  //     });
-  //
-  //     this.streams = collectedStreams;
-  //   }
-  //
-  // }
-
-  showMonoDetails(index: number) {
-    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
-  }
-
   setEndpoint() {
     if (window.location.hostname === "localhost") {
       return "http://localhost:3000/";
@@ -193,22 +151,6 @@ export class AnalysisApp {
       return "http://52.0.119.124:3000/";
     }
   }
-
-  // takes an object, removes any keys with array values, and returns
-  // an array of objects: {key: value}
-  // this is handy for ffprobe's format and tags objects
-  // processObject(formatObj): Object[] {
-  //   let keysArr: string[] = Object.keys(formatObj);
-  //   return keysArr
-  //     // TODO filter if value for key is object or array, rather than not 'tags'
-  //     .filter(formatKey => formatKey !== "tags")
-  //     .map(formatKey => {
-  //     let item: any = {};
-  //     item.key = formatKey;
-  //     item.value = formatObj[formatKey];
-  //     return item;
-  //   })
-  // }
 
   logError(err) {
     console.log("There was an error: ");

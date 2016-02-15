@@ -31,44 +31,29 @@ export class ExtractMetadataComponent {
     this.metadataResult.subscribe(value => {
       this.renderResult(value);
     });
-    // detectBlackService.headBlackStarted.subscribe(value => {
-    //   this.headBlackStarted = value;
-    // });
-    // detectBlackService.tailBlackStarted.subscribe(value => {
-    //   this.tailBlackStarted = value;
-    // });
-    // detectBlackService.headProgress.subscribe(value => {
-    //   this.headBlackProgress = value;
-    // });
-    // detectBlackService.tailProgress.subscribe(value => {
-    //   this.tailBlackProgress = value;
-    // });
-    // detectBlackService.headBlackResult.subscribe(value => {
-    //   this.headBlackResult = value;
-    // });
 
   }
 
-  ngOnit() {
-    if (this.metadataStarted) { console.log("oh my fucking god it works"); }
-    console.log("you have called the init function on extract meta component");
-    this.metadataStarted = false;
-    this.metadataStarted.subscribe(value => {
-      if (value === true) { console.log("oh my fucking god we went to true"); }
-      this.metadataStarted = value;
-
-    });
-    // this.extractMetadataService.metadataResult.subscribe(value => {
-    //   this.metadataResult = value;
-    // });
-
-    if (this.metadataStarted === true) {
-      console.log("it is started! (metadata)");
-    }
-    if (this.metadataResult) {
-      this.renderResult(this.metadataResult);
-    }
-  }
+  // ngOnit() {
+  //   if (this.metadataStarted) { console.log("oh my fucking god it works"); }
+  //   console.log("you have called the init function on extract meta component");
+  //   this.metadataStarted = false;
+  //   this.metadataStarted.subscribe(value => {
+  //     if (value === true) { console.log("oh my fucking god we went to true"); }
+  //     this.metadataStarted = value;
+  //
+  //   });
+  //   // this.extractMetadataService.metadataResult.subscribe(value => {
+  //   //   this.metadataResult = value;
+  //   // });
+  //
+  //   if (this.metadataStarted === true) {
+  //     console.log("it is started! (metadata)");
+  //   }
+  //   if (this.metadataResult) {
+  //     this.renderResult(this.metadataResult);
+  //   }
+  // }
 
   renderResult(data) {
     if (data.error) {
