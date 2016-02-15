@@ -3,6 +3,7 @@ import {Component, ElementRef} from "angular2/core";
 import {FileHandlerService} from "./handle-files.service";
 import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
 import {DetectBlackService} from "../detect-black/detect-black.service";
+import {DetectMonoService} from "../detect-mono/detect-mono.service";
 
 declare var $: any;
 declare var Dropzone: any;
@@ -15,7 +16,8 @@ declare var Dropzone: any;
 export class HandleFilesComponent {
   constructor(eltRef: ElementRef, fileHandlerService: FileHandlerService,
     extractMetadataService: ExtractMetadataService,
-    detectBlackService: DetectBlackService) {
+    detectBlackService: DetectBlackService,
+    detectMonoService: DetectMonoService) {
 
     let myDropzone = new Dropzone(eltRef.nativeElement, {
       url: "/file/post"
@@ -26,7 +28,8 @@ export class HandleFilesComponent {
       extractMetadataService.extract(file);
       detectBlackService.recursiveBlackDetect(file, "head");
       detectBlackService.recursiveBlackDetect(file, "tail");
-      // detectMonoService.detect
+      // TODO pass bitrate to detectMono as second param
+      detectMonoService.detectMono(file);
     });
   }
 }

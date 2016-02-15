@@ -34,33 +34,10 @@ export class ExtractMetadataComponent {
 
   }
 
-  // ngOnit() {
-  //   if (this.metadataStarted) { console.log("oh my fucking god it works"); }
-  //   console.log("you have called the init function on extract meta component");
-  //   this.metadataStarted = false;
-  //   this.metadataStarted.subscribe(value => {
-  //     if (value === true) { console.log("oh my fucking god we went to true"); }
-  //     this.metadataStarted = value;
-  //
-  //   });
-  //   // this.extractMetadataService.metadataResult.subscribe(value => {
-  //   //   this.metadataResult = value;
-  //   // });
-  //
-  //   if (this.metadataStarted === true) {
-  //     console.log("it is started! (metadata)");
-  //   }
-  //   if (this.metadataResult) {
-  //     this.renderResult(this.metadataResult);
-  //   }
-  // }
-
   renderResult(data) {
     if (data.error) {
       this.ffprobeErr = data.error;
     }
-    console.log("these are my top-level keys");
-    console.log(Object.keys(data));
     let analysisObj = JSON.parse(data.analysis);
     console.log("analysis object, and number of keys:");
     console.log(analysisObj);
@@ -91,7 +68,6 @@ export class ExtractMetadataComponent {
       this.metadata = true;
     }
 
-
   }
 
   // takes an object, removes any keys with array values, and returns
@@ -110,4 +86,4 @@ export class ExtractMetadataComponent {
     })
   }
 
-}
+} // class

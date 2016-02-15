@@ -1,0 +1,20 @@
+<h1>bang! hello from mono detect template!</h1>
+
+<div [hidden]="!monoDetectStarted">
+  <p>mono detection started on three audio segments...</p>
+</div>
+
+<div [hidden]="!monoDetections">
+  <!-- <h3>mono detections</h3> -->
+  <ul>
+    <li *ngFor="#item of monoDetections; #index = index">
+      <h3>segment {{index + 1}} mono: {{item.isMono}}</h3>
+      <a (click)="showMonoDetails(index)">show segment analysis</a>
+      <span [hidden]="!displayMonoDetails[index]">
+      <div *ngFor="#item of item.data">
+        {{item}}
+      </div>
+    </span>
+    </li>
+  </ul>
+</div>

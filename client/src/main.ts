@@ -12,6 +12,7 @@ import {ExtractMetadataComponent} from './extract-metadata/extract-metadata.comp
 
 import {FileHandlerService} from "./handle-files/handle-files.service";
 import {ExtractMetadataService} from "./extract-metadata/extract-metadata.service";
+import {DetectMonoService} from "./detect-mono/detect-mono.service";
 
 // initial slice for metadata analysis
 const SLICE_SIZE = 150000;
@@ -28,134 +29,9 @@ declare var FileReader: any;
   templateUrl: "src/main.html",
   directives: [DetectBlackComponent, HandleFilesComponent,
     ExtractMetadataComponent],
-  providers: [DetectBlackService, FileHandlerService, ExtractMetadataService]
+  providers: [DetectBlackService, FileHandlerService,
+    ExtractMetadataService, DetectMonoService]
 })
-export class AnalysisApp {
-  endpoint: string;
-  results: Object;
-  // format: Object[];
-  // formatTags: Object[];
-  // ffprobeErr: string;
-  mediaFile: File;
-  originalExtension: string;
-  monoDetectStarted: boolean;
-  monoDetectFront: Object;
-  // showFormat: boolean = false;
-  monoDetections: Object[] = [];
-  displayMonoDetails: boolean[] = [];
-  fileHandlerService: any;
-
-  // streams: Object[][]; // an array of arrays of stream objects
-
-  constructor(public detectBlackService: DetectBlackService,
-    fileHandlerService: FileHandlerService) {
-    // TODO call the endpoint service
-    this.fileHandlerService = fileHandlerService;
-    this.endpoint = this.setEndpoint();
-  }
-
-  detectMono(mediaFile: File, bitrate: number) {
-    // if bitrate is undefined, assume 25mbps
-    let videoBitrate = bitrate | 25000000;
-    // video bitrate is a bit smaller than overall bitrate
-    const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
-    console.log("mono chunk size", MONO_CHUNK_SIZE);
-
-    const length = mediaFile.size;
-    const frontSliceStart = Math.floor(length / 3);
-    const frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
-    const frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
-    // TODO calculate middle slice
-    const midSliceStart = Math.floor(length /2) - (MONO_CHUNK_SIZE / 2);
-    const midSliceEnd = midSliceStart + MONO_CHUNK_SIZE;
-    const midSlice = mediaFile.slice(midSliceStart, midSliceEnd);
-
-    const endSliceStart = frontSliceStart * 2;
-    const endSliceEnd = endSliceStart + MONO_CHUNK_SIZE;
-    const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
-
-    console.log("in detect mono, my source file is this long:", mediaFile.size);
-    console.log("and the front slice is this long:", frontSlice.size);
-    // console.log("middle slice:", midSlice);
-    console.log("which is based on the video bitrate of", videoBitrate);
-    // TODO use rxjs observable
-    $.when(this.requestMono(frontSlice, "front"))
-      .then((data, textStatus, jqXHR) => {
-        console.log("first mono detect call is complete:")
-        console.log(data);
-      })
-      .then(this.requestMono(midSlice, "middle"))
-      .then((data, textStatus, jqXHR) => {
-        console.log("second (middle) mono detect call should be done:");
-        console.log(data);
-      })
-      // .then(this.requestMono(endSlice, "end"))
-      // .then((data, textStatus, jqXHR) => {
-      //   console.log("final mono detect call should be done:");
-      //   console.log(data);
-      // });
-  }
-
-  requestMono(slice: Blob, chunkPosition: string) {
-    let self = this;
-    let promise =  $.ajax({
-      type: "POST",
-      url: this.endpoint + "mono",
-      data: slice,
-      // don't massage binary to JSON
-      processData: false,
-      // content type that we are sending
-      contentType: 'application/octet-stream',
-      // add any custom headers
-      beforeSend: function(request) {
-        request.setRequestHeader("xa-chunk-position",
-          chunkPosition);
-      },
-      error: (err) => {
-        console.log("error on the mono detection ajax request for chunk", chunkPosition);
-        console.log(err);
-      },
-      success: (data) => {
-        this.monoDetections.push(data);
-        console.log("mono detection array:");
-        console.dir(this.monoDetections);
-      }
-    });
-
-    return promise;
-    // return Observable.fromPromise(promise);
-  }
-
-  showMonoDetails(index: number) {
-    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
-  }
-
-  processVideo(mediaFile: File, bitrate: number) {
-    // send fixed chunk, then request more bytes and concat if
-    // blackDetect shows a black_start but no black_end
-
-    // this.headBlackStarted = true;
-    this.detectBlackService.recursiveBlackDetect(mediaFile, "head");
-
-    // this.tailBlackStarted = true;
-    this.detectBlackService.recursiveBlackDetect(mediaFile, "tail");
-
-    this.monoDetectStarted = true;
-    this.detectMono(this.mediaFile, bitrate);
-  }
-
-  setEndpoint() {
-    if (window.location.hostname === "localhost") {
-      return "http://localhost:3000/";
-    } else {
-      return "http://52.0.119.124:3000/";
-    }
-  }
-
-  logError(err) {
-    console.log("There was an error: ");
-    console.log(err);
-  }
-}
+export class AnalysisApp {}
 
 bootstrap(AnalysisApp);

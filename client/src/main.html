@@ -5,7 +5,6 @@
   <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
 </div>
 
-
 <handle-files></handle-files>
 
 <br>
@@ -22,27 +21,17 @@
 </div>
 
 <div class="ma-black">
-  <detect-black><h3>starting black detection...</h3></detect-black>
-
-  <div [hidden]="!monoDetectStarted">
-    <p>mono detection started on three audio segments...</p>
-  </div>
-
-  <div [hidden]="!monoDetections">
-    <!-- <h3>mono detections</h3> -->
-    <ul>
-      <li *ngFor="#item of monoDetections; #index = index">
-        <h3>segment {{index + 1}} mono: {{item.isMono}}</h3>
-        <a (click)="showMonoDetails(index)">show segment analysis</a>
-        <span [hidden]="!displayMonoDetails[index]">
-          <div *ngFor="#item of item.data">
-            {{item}}
-          </div>
-        </span>
-      </li>
-    </ul>
-  </div>
+  <detect-black>
+    <h3>starting black detection...</h3></detect-black>
 </div>
 <!-- /.ma-black -->
 
-<extract-metadata><h3>extracting metadata...</h3></extract-metadata>
+
+<detect-mono>
+  <h3>performing mono audio detection...</h3>
+</detect-mono>
+
+
+<extract-metadata>
+  <h3>extracting metadata...</h3>
+</extract-metadata>
