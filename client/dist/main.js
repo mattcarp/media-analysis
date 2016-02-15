@@ -1,5 +1,5 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', "./handle-files/handle-files.service"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, handle_files_service_1;
+    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, handle_files_service_1, extract_metadata_service_1;
     var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
@@ -30,6 +30,9 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
             },
             function (handle_files_service_1_1) {
                 handle_files_service_1 = handle_files_service_1_1;
+            },
+            function (extract_metadata_service_1_1) {
+                extract_metadata_service_1 = extract_metadata_service_1_1;
             }],
         execute: function() {
             // initial slice for metadata analysis
@@ -48,54 +51,57 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                     this.fileHandlerService = fileHandlerService;
                     this.endpoint = this.setEndpoint();
                 }
-                AnalysisApp.prototype.getMetadata = function (mediaFile) {
-                    var _this = this;
-                    var self = this;
-                    var mediafile = this.fileHandlerService.getMediaFile();
-                    var reader = new FileReader();
-                    // let blob = this.mediaFile.slice(0, SLICE_SIZE);
-                    // if we use onloadend, we need to check the readyState.
-                    reader.onloadend = function (evt) {
-                        // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
-                        // angular Http doesn't yet support raw binary POSTs
-                        // see line 62 at
-                        // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-                        $.ajax({
-                            type: "POST",
-                            url: _this.endpoint + "analysis",
-                            data: blob,
-                            // don't massage binary to JSON
-                            processData: false,
-                            // content type that we are sending
-                            contentType: 'application/octet-stream',
-                            // data type that we expect in return
-                            // dataType: "",
-                            error: function (err) {
-                                console.log("you have an error on the ajax request:");
-                                console.log(err);
-                            },
-                            success: function (data) {
-                                // error handling
-                                console.log("this is what i got from ffprobe metadata:");
-                                console.log(data);
-                                self.renderResult(data);
-                                var analysisObj = JSON.parse(data.analysis);
-                                var videoBitrate = analysisObj.streams[0].bit_rate;
-                                var type = analysisObj.streams[0].codec_type;
-                                if (type === "video") {
-                                    _this.processVideo(_this.mediaFile, analysisObj);
-                                }
-                            }
-                        });
-                        // }
-                    };
-                    // this.mediaFile = file;
-                    this.originalExtension = this.mediaFile.name.split(".").pop();
-                    console.log("original file extension:", this.originalExtension);
-                    var blob = mediaFile.slice(0, SLICE_SIZE);
-                    console.log("i believe i can fly");
-                    reader.readAsBinaryString(blob);
-                };
+                // getMetadata(mediaFile: File) {
+                //   let self = this;
+                //   let mediafile = this.fileHandlerService.getMediaFile();
+                //   let reader = new FileReader();
+                //   // let blob = this.mediaFile.slice(0, SLICE_SIZE);
+                //
+                //   // if we use onloadend, we need to check the readyState.
+                //   reader.onloadend = (evt) => {
+                //     // if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+                //       // angular Http doesn't yet support raw binary POSTs
+                //       // see line 62 at
+                //       // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
+                //       $.ajax({
+                //         type: "POST",
+                //         url: this.endpoint + "analysis",
+                //         data: blob,
+                //         // don't massage binary to JSON
+                //         processData: false,
+                //         // content type that we are sending
+                //         contentType: 'application/octet-stream',
+                //         // data type that we expect in return
+                //         // dataType: "",
+                //         error: function(err) {
+                //           console.log("you have an error on the ajax request:");
+                //           console.log(err);
+                //         },
+                //         success: data => {
+                //           // error handling
+                //           console.log("this is what i got from ffprobe metadata:");
+                //           console.log(data);
+                //           self.renderResult(data);
+                //
+                //           let analysisObj = JSON.parse(data.analysis);
+                //           let videoBitrate = analysisObj.streams[0].bit_rate;
+                //           let type = analysisObj.streams[0].codec_type;
+                //
+                //           if (type === "video") {
+                //             this.processVideo(this.mediaFile, analysisObj);
+                //           }
+                //         }
+                //       });
+                //     // }
+                //   };
+                //
+                //   // this.mediaFile = file;
+                //   this.originalExtension = this.mediaFile.name.split(".").pop();
+                //   console.log("original file extension:", this.originalExtension);
+                //   let blob = mediaFile.slice(0, SLICE_SIZE);
+                //   console.log("i believe i can fly");
+                //   reader.readAsBinaryString(blob);
+                // }
                 AnalysisApp.prototype.detectMono = function (mediaFile, bitrate) {
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate | 25000000;
@@ -242,7 +248,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                         selector: "analysis-app",
                         templateUrl: "src/main.html",
                         directives: [detect_black_component_1.DetectBlackComponent, handle_files_component_1.HandleFilesComponent],
-                        providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService]
+                        providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService]
                     }), 
                     __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService])
                 ], AnalysisApp);
