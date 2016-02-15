@@ -9,6 +9,7 @@ import {DetectBlackComponent} from './detect-black/detect-black.component';
 import {DetectBlackService} from './detect-black/detect-black.service';
 import {HandleFilesComponent} from './handle-files/handle-files.component';
 import {ExtractMetadataComponent} from './extract-metadata/extract-metadata.component';
+import {DetectMonoComponent} from './detect-mono/detect-mono.component';
 
 import {FileHandlerService} from "./handle-files/handle-files.service";
 import {ExtractMetadataService} from "./extract-metadata/extract-metadata.service";
@@ -28,7 +29,7 @@ declare var FileReader: any;
   selector: "analysis-app",
   templateUrl: "src/main.html",
   directives: [DetectBlackComponent, HandleFilesComponent,
-    ExtractMetadataComponent],
+    ExtractMetadataComponent, DetectMonoComponent],
   providers: [DetectBlackService, FileHandlerService,
     ExtractMetadataService, DetectMonoService]
 })

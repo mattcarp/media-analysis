@@ -1,5 +1,5 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', './extract-metadata/extract-metadata.component', "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service", "./detect-mono/detect-mono.service"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", './detect-black/detect-black.component', './detect-black/detect-black.service', './handle-files/handle-files.component', './extract-metadata/extract-metadata.component', './detect-mono/detect-mono.component', "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service", "./detect-mono/detect-mono.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9,7 +9,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, extract_metadata_component_1, handle_files_service_1, extract_metadata_service_1, detect_mono_service_1;
+    var core_1, browser_1, detect_black_component_1, detect_black_service_1, handle_files_component_1, extract_metadata_component_1, detect_mono_component_1, handle_files_service_1, extract_metadata_service_1, detect_mono_service_1;
     var SLICE_SIZE, BLACK_CHUNK_SIZE, MIN_BLACK_TIME, AnalysisApp;
     return {
         setters:[
@@ -30,6 +30,9 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
             },
             function (extract_metadata_component_1_1) {
                 extract_metadata_component_1 = extract_metadata_component_1_1;
+            },
+            function (detect_mono_component_1_1) {
+                detect_mono_component_1 = detect_mono_component_1_1;
             },
             function (handle_files_service_1_1) {
                 handle_files_service_1 = handle_files_service_1_1;
@@ -55,7 +58,7 @@ System.register(["angular2/core", "angular2/platform/browser", './detect-black/d
                         selector: "analysis-app",
                         templateUrl: "src/main.html",
                         directives: [detect_black_component_1.DetectBlackComponent, handle_files_component_1.HandleFilesComponent,
-                            extract_metadata_component_1.ExtractMetadataComponent],
+                            extract_metadata_component_1.ExtractMetadataComponent, detect_mono_component_1.DetectMonoComponent],
                         providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService,
                             extract_metadata_service_1.ExtractMetadataService, detect_mono_service_1.DetectMonoService]
                     }), 

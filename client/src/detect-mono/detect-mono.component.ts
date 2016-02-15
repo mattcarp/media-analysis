@@ -10,28 +10,31 @@ declare var $: any;
 })
 
 export class DetectMonoComponent {
-  monoDetectStarted: any;  // event emitter
-  monoComplte: any: // event emitter
+  detectStartedEmitter: any;  // event emitter
   detectingMono: boolean;
-  monoResults: Object[];
-  // ffprobeErr: string;
-  // format: Object[];
-  // formatTags: Object[];
-  // showFormat: boolean = false;
-  // streams: Object[][]; // an array of arrays of stream objects
+  monoResultsEmitter: any;
+  monoResults: any;
+  displayMonoDetails: boolean[] = [];
 
   constructor(detectMonoService: DetectMonoService) {
     this.detectingMono = false;
-    this.monoDetectStarted = detectMonoService.monoDetectStarted; // emitter
-    this.monoDetectStarted.subscribe(value => {
-      if (value === true) { console.log("oh my fucking god mono detect has begun"); }
-      this.monoLoading = value;
+    this.detectStartedEmitter = detectMonoService.detectStartedEmitter; // emitter
+    this.detectStartedEmitter.subscribe(value => {
+      if (value === true) { console.log("mono detect has begun"); }
+      this.detectingMono = value;
     });
-    this.monoResults = extractMetadataService.monoResults; // emitter
-    this.monoResults.subscribe(detections => {
-      this.renderResults(detections);
+    this.monoResultsEmitter = detectMonoService.resultsEmitter; // emitter
+    this.monoResultsEmitter.subscribe(detections => {
+      this.detectingMono = false;
+      console.log("bang mono detect returned:");
+      console.log(detections);
+      this.monoResults = detections;
     });
 
+  } // constructor
+
+  showMonoDetails(index: number) {
+    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
   }
 
 

@@ -10,9 +10,10 @@ export class DetectMonoService {
   endpoint: string = "http://localhost:3000/";
   originalExtension: string;
   monoDetections: Object[] = [];
-  displayMonoDetails: boolean[] = [];
-  monoDetectStarted = new EventEmitter();
-  monoResults = new EventEmitter();
+
+  detectStartedEmitter = new EventEmitter();
+  resultsEmitter = new EventEmitter();
+  results: Object[] = [];
 
   detectMono(mediaFile: File, bitrate?: number) {
     // if bitrate is undefined, assume 25mbps
@@ -34,27 +35,41 @@ export class DetectMonoService {
     const endSliceEnd = endSliceStart + MONO_CHUNK_SIZE;
     const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
 
+
+
     console.log("in detect mono, my source file is this long:", mediaFile.size);
     console.log("and the front slice is this long:", frontSlice.size);
     // console.log("middle slice:", midSlice);
     console.log("which is based on the video bitrate of", videoBitrate);
     // TODO use rxjs observable
-
+    this.detectStartedEmitter.emit(true);
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
         console.log("first mono detect call is complete:")
         console.log(data);
+        this.results.push(data);
+        return this.results;
+
       })
-      .then(this.requestMono(midSlice, "middle"))
-      .then((data, textStatus, jqXHR) => {
-        console.log("second (middle) mono detect call should be done:");
-        console.log(data);
-      })
+      // .then(this.requestMono(midSlice, "middle"))
+      // .then((data, textStatus, jqXHR) => {
+      //   console.log("second (middle) mono detect call should be done:");
+      //   console.log(data);
+      // results.push(data);
+      //   // TODO only emit after all three are done
+      //   this.resultsEmitter.emit(data)
+      // })
       // .then(this.requestMono(endSlice, "end"))
       // .then((data, textStatus, jqXHR) => {
       //   console.log("final mono detect call should be done:");
       //   console.log(data);
+      // results.push(data);
       // });
+      .then((finalResults) => {
+        console.log("final mono detect call should be done:");
+        console.log(finalResults);
+        this.resultsEmitter.emit(finalResults);
+      });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
@@ -85,9 +100,5 @@ export class DetectMonoService {
 
     return promise;
     // return Observable.fromPromise(promise);
-  }
-
-  showMonoDetails(index: number) {
-    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
   }
 }
