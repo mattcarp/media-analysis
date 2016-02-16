@@ -6,6 +6,7 @@ const router = express.Router();
 const fs = require("fs");
 const randomstring = require("randomstring");
 const exec = require("child_process").exec;
+const monoResult = {};
 
 module.exports = router;
 
@@ -19,15 +20,14 @@ function demux(fileToProcess, callback) {
 
   exec(demuxCmd,
     (error, stdout, stderr) => {
-      const result = {};
       console.log("STDOUT:", stdout);
       console.log("STDERR:", stderr);
       if (error !== null) {
         console.log("demux: exec error from ffmpeg: ", error);
       }
-      result.wavPath = wavOutPath;
-      result.error = stderr;
-      callback(result);
+      monoResult.wavPath = wavOutPath;
+      monoResult.demuxErr = stderr;
+      callback(monoResult);
     }); // exec
 }
 
@@ -38,42 +38,55 @@ function monoDetect(wavFile, callback) {
 
   exec(soxCmd,
     (error, stdout, stderr) => {
-      const result = {};
       console.log("monoDetect STDOUT:", stdout);
+      // TODO if stderr contains "No such file or directory", fail gracefully
       console.log("monoDetect STDERR:", stderr);
       if (error !== null) {
-        console.log("demux: exec error from ffmpeg: ", error);
+        console.log("demux: exec error from SoX: ", error);
+        if (stderr.indexOf("No such file or directory" > -1)) {
+          console.log("the demuxed wav file passed to SoX was not found")
+          monoResult.detectErr = "demuxed wav file was not found";
+          // callback(result);
+        }
+
       }
 
-      const soxArr = stderr.split("\n");
+      const soxArr = stderr.trim().split("\n");
       console.log("soxArr");
       console.log(soxArr);
       const peakRms = soxArr.filter((line) => {
         console.log("mono line:", line);
         return line.indexOf("RMS Pk dB") > -1;
       });
+      // TODO handle peakRms undefined
+      if (peakRms[0]) {
+        const peakVal = peakRms[0].substr(peakRms[0].length - 4);
+        console.log("peak rms value:", peakVal);
+        if (peakVal === "-inf") {
+          monoResult.isMono = true;
+        } else {
+          console.log("this audio is not mono");
+          monoResult.isMono = false;
+        }
 
-      const peakVal = peakRms[0].substr(peakRms[0].length - 4);
-      console.log("peak rms value:", peakVal);
-      if (peakVal === "-inf") {
-        result.isMono = true;
+        monoResult.data = soxArr;
+        console.log("from within monoDetect gonna return:", monoResult);
       } else {
-        console.log("this audio is not mono");
-        result.isMono = false;
+        monoResult.err = "Error: peak rms value is undefined";
       }
 
-      result.data = soxArr;
-      console.log("from within monoDetect gonna return:", result);
-      callback(result);
-    }); // exec
+      callback(monoResult);
+    }); // detect mono exec
 }
 
 router.post("/", (req, res) => {
   const headers = req.headers;
   const prefix = "/tmp/";
   const tempFile = prefix + randomstring.generate(12);
+  const position = headers["xa-chunk-position"];
+  console.log("the position for mono detect:", position);
   console.log("the incoming ip:", req.socket.remoteAddress);
-  console.log("mono detect: me headers are");
+  console.log("mono detect: headers:");
   console.log(headers);
 
   // const bufferStream = new stream.PassThrough();
@@ -93,7 +106,7 @@ router.post("/", (req, res) => {
 
   demux(tempFile, (result) => {
     // callback after demux is finished
-    console.log("this is the result from demux, which should be a wav file name:");
+    console.log("this is the result from demux, which should be a wav file named:");
     console.dir(result.wavPath);
     // console.log(result);
     monoDetect(result.wavPath, (detectResult) => {

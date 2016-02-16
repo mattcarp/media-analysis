@@ -43,7 +43,6 @@ export class ExtractMetadataService {
             // error handling
             console.log("this is what i got from ffprobe metadata:");
             console.log(data);
-            console.log("emitting data, TODO subscribe to result in extract-metadata.html");
             this.metadataStarted.emit(false);
             this.metadataResult.emit(data);
 

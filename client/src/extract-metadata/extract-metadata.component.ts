@@ -24,7 +24,7 @@ export class ExtractMetadataComponent {
     this.metadataLoading = false;
     this.metadataStarted = extractMetadataService.metadataStarted;
     this.metadataStarted.subscribe(value => {
-      if (value === true) { console.log("oh my fucking god we went to true"); }
+      if (value === true) { console.log("metadata extraction started"); }
       this.metadataLoading = value;
     });
     this.metadataResult = extractMetadataService.metadataResult;
