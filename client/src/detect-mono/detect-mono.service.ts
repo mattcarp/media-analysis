@@ -37,9 +37,10 @@ export class DetectMonoService {
 
 
 
-    console.log("in detect mono, my source file is this long:", mediaFile.size);
+    console.log("in detect mono, the source file is this long:", mediaFile.size);
     console.log("and the front slice is this long:", frontSlice.size);
-    // console.log("middle slice:", midSlice);
+    console.log("mono middle slice starts at", midSliceStart);
+    console.log("mono middle slice ends at", midSliceEnd);
     console.log("which is based on the video bitrate of", videoBitrate);
     // TODO use rxjs observable
     this.detectStartedEmitter.emit(true);

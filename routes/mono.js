@@ -12,7 +12,6 @@ module.exports = router;
 
 function demux(fileToProcess, callback) {
   const wavOutPath = "/tmp/" + randomstring.generate(12) + ".wav";
-  // TODO uniquely name the wav output file
   console.log("in demux, this is the file to process:", fileToProcess);
   const demuxCmd = `ffmpeg -i ${fileToProcess} ${wavOutPath}`;
 
@@ -55,10 +54,10 @@ function monoDetect(wavFile, callback) {
       console.log("soxArr");
       console.log(soxArr);
       const peakRms = soxArr.filter((line) => {
+        // TODO why is file not found for middle and end segments
         console.log("mono line:", line);
         return line.indexOf("RMS Pk dB") > -1;
       });
-      // TODO handle peakRms undefined
       if (peakRms[0]) {
         const peakVal = peakRms[0].substr(peakRms[0].length - 4);
         console.log("peak rms value:", peakVal);
@@ -106,8 +105,8 @@ router.post("/", (req, res) => {
 
   demux(tempFile, (result) => {
     // callback after demux is finished
-    console.log("this is the result from demux, which should be a wav file named:");
-    console.dir(result.wavPath);
+    console.log("result from demux, which should include a wav file path:");
+    console.dir(result);
     // console.log(result);
     monoDetect(result.wavPath, (detectResult) => {
       // callback after monoDetect is done
