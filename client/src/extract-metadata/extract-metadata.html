@@ -1,4 +1,4 @@
-<!-- boom chaka laka: {{metadata | async }} -->
+
 <div class="ma-metadata" [hidden]="!metadata">
   <div class="col-xs-6" [hidden]="!format">
     <ul class="list-group">
@@ -7,6 +7,20 @@
       </li>
 
       <li class="list-group-item" *ngFor="#item of format">
+        <span class="col-xs-5"><b>{{item.key}}</b></span>
+        <span>{{item.value}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-6" [hidden]="!streams">
+    <!-- <h3>{{streams.length}} streams</h3> -->
+    <ul class="list-group" *ngFor="#stream of streams">
+      <li class="list-group-item">
+        <h4 class="list-group-item-heading">stream {{stream[0].index}}</h4>
+      </li>
+
+      <li class="list-group-item" *ngFor="#item of stream">
         <span class="col-xs-5"><b>{{item.key}}</b></span>
         <span>{{item.value}}</span>
       </li>
@@ -29,19 +43,7 @@
   <div class="clearfix"></div>
   <br>
   <br>
-  <div class="col-xs-6" [hidden]="!streams">
-    <!-- <h3>{{streams.length}} streams</h3> -->
-    <ul class="list-group" *ngFor="#stream of streams">
-      <li class="list-group-item">
-        <h4 class="list-group-item-heading">stream {{stream[0].index}}</h4>
-      </li>
 
-      <li class="list-group-item" *ngFor="#item of stream">
-        <span class="col-xs-5"><b>{{item.key}}</b></span>
-        <span>{{item.value}}</span>
-      </li>
-    </ul>
-  </div>
 
 </div>
 <!-- /ma-metadata -->
