@@ -48,26 +48,27 @@ export class DetectMonoService {
       .then((data, textStatus, jqXHR) => {
         console.log("first mono detect call is complete:")
         console.log(data);
-        this.results.push(data);
-        return this.results;
-
+        // this.results.push(data);
+        // return this.results;
       })
       .then(this.requestMono(midSlice, "middle"))
       .then((data, textStatus, jqXHR) => {
         console.log("second (middle) mono detect call should be done:");
         console.log(data);
-        this.results.push(data);
+        // this.results.push(data);
+        // return this.results;
       })
       .then(this.requestMono(endSlice, "end"))
       .then((data, textStatus, jqXHR) => {
         console.log("final mono detect call should be done:");
         console.log(data);
-        this.results.push(data);
+        // this.results.push(data);
+        // return this.results;
       })
       .then((finalResults) => {
         console.log("final mono detect call should be done:");
         console.log(finalResults);
-        this.resultsEmitter.emit(finalResults);
+        this.resultsEmitter.emit(this.monoDetections);
       });
   }
 
