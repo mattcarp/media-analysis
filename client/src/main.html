@@ -5,12 +5,39 @@
   <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
 </div>
 
-<div class="row">
-  <div class="ma-nav-left col-xs-2">i am left nav, and so can you</div>
+<div class="row ma-body">
+  <div class="ma-nav col-xs-2">
+    <ul class="nav nav-masthead col-xs-3" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="tab" href="#premiere-export" role="tab">
+            Validations
+          </a>
+      </li>
+      <li class="nav-item ma-nav__item-indent">
+        <a class="nav-link float-left" data-toggle="tab" href="#premiere-template" role="tab">
+            Black
+          </a>
+      </li>
+      <li class="nav-item ma-nav__item-indent">
+        <a class="nav-link" data-toggle="tab" href="#messages" role="tab">
+            Mono
+          </a>
+      </li>
+      <li class="nav-item ma-nav__item-indent">
+        <a class="nav-link" data-toggle="tab" href="#premiere-audio" role="tab">
+             Format
+          </a>
+      </li>
+      <div class="ma-nav__separator"></div>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" href="#premiere-audio" role="tab">
+             Metadata
+          </a>
+      </li>
+    </ul>
+  </div>
   <div class="col-xs-10 ma-panel-center">
-    everything should be inside here,
-      <handle-files class="col-xs-12"></handle-files>
-
+    <handle-files class="col-xs-12"></handle-files>
 
     <br>
     <br>
@@ -25,22 +52,32 @@
       </p>
     </div>
 
-    <div class="ma-black">
-      <detect-black>
-        <h3>starting black detection...</h3></detect-black>
+    <div class="ma-validations">
+      <h2>Validations</h2>
+
+      <detect-black class="row">
+        <h3>starting black detection...</h3>
+      </detect-black>
+
+      <detect-mono class="row">
+        <h3>performing mono audio detection...</h3>
+      </detect-mono>
+
+      <validate-format class="row">
+        <h3>validating format...</h3>
+      </validate-format>
     </div>
-    <!-- /.ma-black -->
+    <!-- /.ma-validations -->
 
-
-    <detect-mono>
-      <h3>performing mono audio detection...</h3>
-    </detect-mono>
-
-
-    <extract-metadata>
-      <h3>extracting metadata...</h3>
-    </extract-metadata>
+    <div class="ma-metadata">
+      <h2>Metadata</h2>
+      <extract-metadata class="row">
+        <h3>extracting metadata...</h3>
+      </extract-metadata>
+    </div>
+    <!-- /.ma-metadata -->
 
   </div>
+  <!-- /.ma-panel-center -->
 </div>
-<!-- /.row -->
+<!-- /.ma-body -->

@@ -1,4 +1,4 @@
-/* ===== global ===== */
+/* ===== base ===== */
 
 body {
   font-family: proxima_nova, 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -21,22 +21,33 @@ h1, h2, h3 {
   color: #4F87BB;
 }
 
+/* ===== modules ===== */
+
 /* ===== header ===== */
 .ma-header-logo__rca {
   height: 25px;
   margin-top: 20px;
 }
 
-/* ===== nav-left ===== */
-.ma-nav-left {
+/* ===== nav ===== */
+.ma-nav {
     margin-top: 40px;
 }
 
+.ma-nav__item-indent {
+  padding-left: 20px;
+}
 
-/* ===== handle-files ===== */
+.ma-nav__separator {
+  height: 15px;
+}
 
-/* ===== detect-black ===== */
 
-/* ===== detect-mono ===== */
+/* ===== file ===== */
 
-/* ===== extract-metadata ===== */
+
+/* ===== black ===== */
+
+/* ===== mono ===== */
+
+/* ===== metadata ===== */
