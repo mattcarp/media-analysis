@@ -17,7 +17,7 @@ export class DetectMonoComponent {
   displayMonoDetails: boolean[] = [];
 
   constructor(detectMonoService: DetectMonoService) {
-    this.detectingMono = false;
+    this.detectingMono = true;
     this.detectStartedEmitter = detectMonoService.detectStartedEmitter; // emitter
     this.detectStartedEmitter.subscribe(value => {
       if (value === true) { console.log("mono detect has begun"); }
@@ -25,7 +25,7 @@ export class DetectMonoComponent {
     });
     this.monoResultsEmitter = detectMonoService.resultsEmitter; // emitter
     this.monoResultsEmitter.subscribe(detections => {
-      this.detectingMono = false;
+      this.detectingMono = true;
       console.log("bang mono detect returned:");
       console.log(detections);
       this.monoResults = detections;
