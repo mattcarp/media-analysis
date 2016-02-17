@@ -28,7 +28,12 @@ export class ValidateFormatComponent {
   }
 
   validate(metadata: any) {
+    // TODO we're guessing on the format of the non-29.97 rates
+    const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "23976/100",
+      "50/2", "60/2"]
+
     const analysisObj = JSON.parse(metadata.analysis);
+
 
     // build audio validations array
     // TODO possibly use a reduce function on the streams array...
@@ -76,6 +81,7 @@ export class ValidateFormatComponent {
 
     // TODO get index of first stream with codec_type === "video"
     const videoStream = analysisObj.streams[0];
+    const isProRes = videoStream.codec_long_name === "ProRes";
     // build video validations array
     this.videoValidations.push({
       name: "Codec",
@@ -84,6 +90,37 @@ export class ValidateFormatComponent {
       // a warning message
       pass: videoStream.codec_long_name === "ProRes",
       message: "Video codec should be ProRes."
+    });
+
+    this.videoValidations.push({
+      name: "Height",
+      value: videoStream.height,
+      pass: videoStream.height === 1080,
+      message: "Height must be 1080 pixels."
+    });
+
+    this.videoValidations.push({
+      name: "Width",
+      value: videoStream.width,
+      pass: videoStream.width === 1920,
+      message: "Width must be 1920 pixels."
+    });
+
+    if (isProRes) {
+      this.videoValidations.push({
+        name: "Encoder",
+        value: videoStream.tags.encoder,
+        pass: videoStream.tags.encoder === "Apple ProRes 422 (HQ)",
+        message: "ProRes must use the Apple 422 HQ encoder"
+      });
+    }
+
+
+    this.videoValidations.push({
+      name: "Frame Rate",
+      value: videoStream.r_frame_rate,
+      pass: ACCEPTED_FRAME_RATES.indexOf(videoStream.r_frame_rate) > - 1,
+      message: "Frame rate must be either 23.976, 24, 25, 29.97, or 30."
     });
 
     this.showResults = true;
