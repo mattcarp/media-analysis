@@ -42,8 +42,8 @@ export class DetectMonoService {
     console.log("mono middle slice starts at", midSliceStart);
     console.log("mono middle slice ends at", midSliceEnd);
     console.log("which is based on the video bitrate of", videoBitrate);
-    // TODO use rxjs observable
-    this.detectStartedEmitter.emit(true);
+
+    this.detectStartedEmitter.emit(false);
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
         console.log("first mono detect call is complete:")
@@ -68,11 +68,13 @@ export class DetectMonoService {
       .then((finalResults) => {
         console.log("final mono detect call should be done:");
         console.log(finalResults);
+        this.detectStartedEmitter.emit(false);
         this.resultsEmitter.emit(this.monoDetections);
       });
   }
 
   requestMono(slice: Blob, chunkPosition: string) {
+    this.detectStartedEmitter.emit(true);
     let self = this;
     let promise =  $.ajax({
       type: "POST",

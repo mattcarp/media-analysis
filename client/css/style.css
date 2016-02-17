@@ -24,9 +24,13 @@ h1, h2, h3 {
 /* ===== modules ===== */
 
 /* ===== header ===== */
-.ma-header-logo__rca {
+.ma-header__logo--rca {
   height: 25px;
   margin-top: 20px;
+}
+
+.ma-header__title {
+  margin-bottom: 30px;
 }
 
 /* ===== nav ===== */
@@ -45,6 +49,23 @@ h1, h2, h3 {
 
 /* ===== file ===== */
 
+/* ===== validations ===== */
+.ma-validations {
+  margin-top: 150px;
+}
+
+.fa-check-circle {
+  color: green;
+}
+
+.fa-times-circle {
+  color: red;
+}
+
+.fa-warning {
+  color: yellow;
+}
+
 /* ===== black ===== */
 
 /* ===== mono ===== */
@@ -58,8 +79,8 @@ h1, h2, h3 {
   background-color: rgba(255, 125, 125, 0.26);;
 }
 
-.ma-format__pass {
-  background-color: rgba(0, 220, 41, 0.07);;
+.ma-format__message {
+  color: red;
 }
 
 /* ===== metadata ===== */

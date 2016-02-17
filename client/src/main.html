@@ -1,15 +1,15 @@
 <br>
 
 <div class="row ma-header">
-  <img class="ma-header-logo__rca col-xs-2" src="images/rca.svg" alt="RCA Logo">
-  <h1 class="ma-header-title col-xs-10">Media Analysis</h1>
+  <img class="ma-header__logo--rca col-xs-2" src="images/rca.svg" alt="RCA Logo">
+  <h1 class="ma-header__title col-xs-10">Media Analysis</h1>
 </div>
 
 <div class="row ma-body">
   <div class="ma-nav col-xs-2">
     <ul class="nav nav-masthead col-xs-3" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#premiere-export" role="tab">
+        <a class="nav-link active" data-toggle="tab" href="#validations" role="tab">
             Validations
           </a>
       </li>
@@ -53,7 +53,7 @@
     </div>
 
     <div class="ma-validations">
-      <h2>Validations</h2>
+      <h2 [hidden]="false">Validations</h2>
 
       <detect-black class="row">
         <h3>starting black detection...</h3>
@@ -70,7 +70,7 @@
     <!-- /.ma-validations -->
 
     <div class="ma-metadata">
-      <h2>Metadata</h2>
+      <h2 [hidden]="false">Metadata</h2>
       <extract-metadata class="row">
         <h3>extracting metadata...</h3>
       </extract-metadata>

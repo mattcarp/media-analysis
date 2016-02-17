@@ -30,14 +30,22 @@ export class HandleFilesComponent {
       </div>
       `
     }).on("addedfile", function(file) {
-      // TODO would be better to fire all analysis from a central service,
-      // which in turn subscribes to changes on the mediaFile object
       fileHandlerService.setMediaFile(file);
       extractMetadataService.extract(file);
-      detectBlackService.recursiveBlackDetect(file, "head");
-      detectBlackService.recursiveBlackDetect(file, "tail");
-      // TODO pass bitrate to detectMono as second param
-      detectMonoService.detectMono(file);
+
+      extractMetadataService.metadataResult.subscribe(metadata => {
+        const analysisObj = JSON.parse(metadata.analysis);
+        // temporarily avoid black and mono detect on ProRes
+        if (analysisObj.streams[0].codec_long_name !== "ProRes") {
+          detectBlackService.recursiveBlackDetect(file, "head");
+          detectBlackService.recursiveBlackDetect(file, "tail");
+          // TODO pass bitrate to detectMono as second param
+          detectMonoService.detectMono(file);
+        }
+
+      });
+
+
     });
   }
 } // class
