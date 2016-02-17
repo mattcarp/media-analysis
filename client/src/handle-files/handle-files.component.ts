@@ -20,7 +20,15 @@ export class HandleFilesComponent {
     detectMonoService: DetectMonoService) {
 
     let myDropzone = new Dropzone(eltRef.nativeElement, {
-      url: "/file/post"
+      url: "/file/post",
+      previewTemplate: `
+      <div class="dz-preview dz-file-preview">
+        <div class="dz-details">
+          <div class="dz-filename">file name: <span data-dz-name></span></div>
+          size: <div class="dz-size" data-dz-size></div>
+        </div>
+      </div>
+      `
     }).on("addedfile", function(file) {
       // TODO would be better to fire all analysis from a central service,
       // which in turn subscribes to changes on the mediaFile object
