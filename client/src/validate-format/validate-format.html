@@ -1,7 +1,34 @@
-<div class="col-xs-6">
-  hi I'm the left side
+<div [hidden]="!metadataStarted">
+  <h3>validating format metadata...</h3>
 </div>
 
-<div class="col-xs-6">
-  hi I'm the right side
+<!-- <div [hidden]="!showResults"> -->
+
+<div class="row"  [hidden]="!showResults">
+  <h3>Format Verification</h3>
+  <div class="col-xs-6">
+    <div class="card card-block">
+      <h4 class="card-title">Audio</h4>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item ma-format__fail" *ngFor="#item of audioValidations">
+        <span class="ma-format__pass-icon">passfail</span>
+        <span><strong>{{item.name}}</strong></span>
+        <span>{{item.value}}</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-6">
+    <div class="card card-block">
+      <h4 class="card-title">Video</h4>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item ma-format__pass">
+        <span><strong>key</strong></span>
+        <span>value</span>
+      </li>
+    </ul>
+  </div>
 </div>
+<!-- /results  -->

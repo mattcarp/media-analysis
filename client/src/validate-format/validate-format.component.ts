@@ -12,7 +12,9 @@ declare var $: any;
 export class ValidateFormatComponent {
   metadataStarted: boolean;
   metadataResult: any;
-  showMetadata: boolean
+  showResults: boolean;
+  audioValidations: Object[] = [];
+  results: Object[] = [];
 
 
   constructor(extractMetadataService: ExtractMetadataService) {
@@ -20,16 +22,24 @@ export class ValidateFormatComponent {
       this.metadataStarted = value;
     });
     extractMetadataService.metadataResult.subscribe(value => {
-      this.metadataResult = value;
-      this.validate(this.metadataResult);
+      this.metadataStarted = false;
+      this.validate(value);
     });
-
 
   }
 
-  validate(metadata: Object) {
+  validate(metadata: any) {
+    const analysisObj = JSON.parse(metadata.analysis);;
     console.log("hiya from format validation, where you have received this:");
-    console.log(metadata);
+    console.log(analysisObj);
+    this.results.push("boo");
+    this.audioValidations.push({
+      name: "my name",
+      value: "my value"
+    })
+    console.log("my results:")
+    console.log(this.results);
+    this.showResults = true;
 
   }
 

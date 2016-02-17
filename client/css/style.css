@@ -45,9 +45,21 @@ h1, h2, h3 {
 
 /* ===== file ===== */
 
-
 /* ===== black ===== */
 
 /* ===== mono ===== */
+
+/* ===== format ===== */
+.ma-format__pass {
+  background-color: rgba(0, 220, 41, 0.07);;
+}
+
+.ma-format__fail {
+  background-color: rgba(255, 125, 125, 0.26);;
+}
+
+.ma-format__pass {
+  background-color: rgba(0, 220, 41, 0.07);;
+}
 
 /* ===== metadata ===== */
