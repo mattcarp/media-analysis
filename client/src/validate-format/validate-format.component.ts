@@ -14,7 +14,7 @@ export class ValidateFormatComponent {
   metadataResult: any;
   showResults: boolean;
   audioValidations: Object[] = [];
-  results: Object[] = [];
+  videoValidations: Object[] = [];
 
 
   constructor(extractMetadataService: ExtractMetadataService) {
@@ -25,24 +25,68 @@ export class ValidateFormatComponent {
       this.metadataStarted = false;
       this.validate(value);
     });
-
   }
 
   validate(metadata: any) {
-    const analysisObj = JSON.parse(metadata.analysis);;
-    console.log("hiya from format validation, where you have received this:");
-    console.log(analysisObj);
-    this.results.push("boo");
+    const analysisObj = JSON.parse(metadata.analysis);
+
+    // build audio validations array
+    // TODO possibly use a reduce function on the streams array...
+    // if   "codec_type": "audio", etc
+
+    // TODO get index number of stream with codec_type === "audio",
+    // rather than hard-codiing
+    const audioStream = analysisObj.streams[1];
+
     this.audioValidations.push({
-      name: "my name",
-      value: "my value"
-    })
-    console.log("my results:")
-    console.log(this.results);
+      name: "Bit Depth",
+      value: audioStream.bits_per_sample,
+      // mp2 has 0 bits per sample, so we use sample_fmt
+      pass: audioStream.bits_per_sample === 16 || audioStream.sample_fmt === "s16p",
+      message: "Audio bit depth must be 16 bits."
+    });
+
+    this.audioValidations.push({
+      name: "Sample Rate",
+      value: audioStream.sample_rate,
+      pass: audioStream.sample_rate === "48000",
+      message: "Audio sample rate must be 48kHz."
+    });
+
+    this.audioValidations.push({
+      name: "Channel Layout",
+      value: audioStream.channel_layout,
+      pass: audioStream.channel_layout === "stereo",
+      message: "Audio channel layout must be stereo."
+    });
+
+    this.audioValidations.push({
+      name: "Channel Count",
+      value: audioStream.channels,
+      pass: audioStream.channels === 2,
+      message: "There must be 2 audio channels."
+    });
+
+    this.audioValidations.push({
+      name: "Codec",
+      value: audioStream.codec_long_name,
+      pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
+      message: "Audio must be uncompressed (PCM)."
+    });
+
+    // TODO get index of first stream with codec_type === "video"
+    const videoStream = analysisObj.streams[0];
+    // build video validations array
+    this.videoValidations.push({
+      name: "Codec",
+      value: videoStream.codec_long_name,
+      // TODO ProRess is a pass, but h.264 and Avid DNX HD are allowed, with
+      // a warning message
+      pass: videoStream.codec_long_name === "ProRes",
+      message: "Video codec should be ProRes."
+    });
+
     this.showResults = true;
-
   }
-
-
 
 }
