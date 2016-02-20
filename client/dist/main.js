@@ -48,7 +48,8 @@ System.register(["angular2/core", "angular2/platform/browser", './handle-files/h
             }],
         execute: function() {
             AnalysisApp = (function () {
-                function AnalysisApp() {
+                function AnalysisApp(extractMetadataService) {
+                    // TODO subscribe to meta
                 }
                 AnalysisApp = __decorate([
                     core_1.Component({
@@ -61,7 +62,7 @@ System.register(["angular2/core", "angular2/platform/browser", './handle-files/h
                         providers: [detect_black_service_1.DetectBlackService, handle_files_service_1.FileHandlerService,
                             extract_metadata_service_1.ExtractMetadataService, detect_mono_service_1.DetectMonoService]
                     }), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
                 ], AnalysisApp);
                 return AnalysisApp;
             })();

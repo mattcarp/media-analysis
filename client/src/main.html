@@ -6,6 +6,7 @@
 </div>
 
 <div class="row ma-body">
+
   <div class="ma-nav col-xs-2">
     <ul class="nav nav-masthead col-xs-3" role="tablist">
       <li class="nav-item">
@@ -53,7 +54,7 @@
     </div>
 
     <div class="ma-validations">
-      <h2 [hidden]="false">Validations</h2>
+      <h2 [hidden]="!metadataResult">Validations</h2>
 
       <detect-black class="row">
         <h3>starting black detection...</h3>
@@ -70,9 +71,12 @@
     <!-- /.ma-validations -->
 
     <div class="ma-metadata">
-      <h2 [hidden]="false">Metadata</h2>
-      <extract-metadata class="row">
-        <h3>extracting metadata...</h3>
+
+      <extract-metadata>
+        <h2 [hidden]="!metadataResult">Metadata</h2>
+        <div class="row">
+          <h3>extracting metadata...</h3>
+        </div>
       </extract-metadata>
     </div>
     <!-- /.ma-metadata -->

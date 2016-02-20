@@ -26,6 +26,13 @@ import {DetectMonoService} from "./detect-mono/detect-mono.service";
   providers: [DetectBlackService, FileHandlerService,
     ExtractMetadataService, DetectMonoService]
 })
-export class AnalysisApp {}
+export class AnalysisApp {
+  constructor(extractMetadataService: ExtractMetadataService) {
+    // TODO subscribe to meta
+
+  }
+
+}
+
 
 bootstrap(AnalysisApp);

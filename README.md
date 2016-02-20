@@ -52,7 +52,7 @@ debug forever failing on prod server
 ### black detection
 this will give you black_duration, but you'll have more text to filter out:
 
-    ffprobe -f lavfi -i "movie=MVD_000000326734_001.26.mpg,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1
+    ffprobe -f lavfi -i "movie=mp4boxjs_issue_69_AitakuteIma_G010001894725Z_ProgramOnly.mov,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1
 
 where d=0.1 expresses the minimum length of black to detect in seconds. Lower this if you want single frames.
 pix_th=.1 is the level of black to detect between 0 and 1. a setting of one will flag all frames, a setting of .01 should only grab black. tweak as needed.
@@ -80,3 +80,15 @@ bash extract header from file
 and concat the header onto a binary slice
 
     cat header.txt > out.mov
+
+### extract image at around 60 seconds (just for fun)
+
+    ffmpeg -ss 60 -i input.mp4 -qscale:v 2 -vframes 1 output.jpg
+
+### for testing, get first 2 megs of file (use `tail` for tail)
+
+    head -c 2000000 input_file.mov > prores_first_2_megs.mov
+
+then you stick stick header onto the end of the file
+
+    cat file1 file2 file3 file4 file5 file6 > out.txt

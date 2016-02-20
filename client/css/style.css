@@ -36,6 +36,14 @@ h1, h2, h3 {
 /* ===== nav ===== */
 .ma-nav {
     margin-top: 40px;
+    /*position:fixed;
+    top: 100px;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    display: relative;
+    overflow-x: hidden;
+    margin-right: 50px;*/
 }
 
 .ma-nav__item-indent {
