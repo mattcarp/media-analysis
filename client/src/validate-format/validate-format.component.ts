@@ -15,6 +15,7 @@ export class ValidateFormatComponent {
   showResults: boolean;
   audioValidations: Object[] = [];
   videoValidations: Object[] = [];
+  isProRes: boolean = false;
 
 
   constructor(extractMetadataService: ExtractMetadataService) {
@@ -81,7 +82,7 @@ export class ValidateFormatComponent {
 
     // TODO get index of first stream with codec_type === "video"
     const videoStream = analysisObj.streams[0];
-    const isProRes = videoStream.codec_long_name === "ProRes";
+    this.isProRes = videoStream.codec_long_name === "ProRes";
     // build video validations array
     this.videoValidations.push({
       name: "Codec",
@@ -106,7 +107,7 @@ export class ValidateFormatComponent {
       message: "Width must be 1920 pixels."
     });
 
-    if (isProRes) {
+    if (this.isProRes) {
       this.videoValidations.push({
         name: "Encoder",
         value: videoStream.tags.encoder,

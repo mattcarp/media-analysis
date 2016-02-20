@@ -79,10 +79,14 @@ export class ExtractMetadataComponent {
     // TODO filter if value for key is object or array, rather than not 'tags'
       .filter(formatKey => formatKey !== "tags")
       .map(formatKey => {
-      let item: any = {};
-      item.key = formatKey;
-      item.value = formatObj[formatKey];
-      return item;
+        let item: any = {};
+        // replace underscores and format with initial caps
+        item.key = formatKey.replace(/_/g, " ")
+        .replace(/(?:^|\s)[a-z]/g, function (m) {
+          return m.toUpperCase();
+        }).replace("Nb ", "Number of ");;
+        item.value = formatObj[formatKey];
+        return item;
     })
   }
 

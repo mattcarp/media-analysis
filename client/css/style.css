@@ -21,7 +21,16 @@ h1, h2, h3 {
   color: #4F87BB;
 }
 
+/* ===== svg fonts ===== */
+.icon-ao-prores {
+  font-size: 40px;
+  color: #4F87BB;
+}
+
 /* ===== modules ===== */
+.ma-metadata__section {
+  margin-bottom: 35px;
+}
 
 /* ===== header ===== */
 .ma-header__logo--rca {
