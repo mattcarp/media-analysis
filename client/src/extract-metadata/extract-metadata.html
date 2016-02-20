@@ -37,7 +37,7 @@
       <li class="list-group-item" *ngFor="#item of stream">
         <span class="col-xs-5"><b>{{item.key}}</b></span>
         <span>{{item.value}}</span>
-        <div [hidden]="item.key !== 'Disposition'">disp, hoss: {{item.value | json}}</div>
+        <div [hidden]="item.key !== 'Disposition'">disp, hoss: {{item.value}}</div>
       </li>
 
     </ul>

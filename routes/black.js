@@ -2,21 +2,25 @@
 /* eslint arrow-body-style: [2, "always"]*/
 
 const express = require("express");
-const router = express.Router();
+const router = new express.Router();
 const fs = require("fs");
 const prependFile = require("prepend-file");
 const exec = require("child_process").exec;
+var blackObjs = {};
+var blackString;
+var blackInStdOut;
 
 module.exports = router;
 
 function processBlack(fileToProcess, callback) {
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
-  console.log("call ffprobe black detection:");
+
   // const ffprobeCmd2 = `ffprobe -f lavfi -i "-f prores movie=${fileToProcess},blackdetect[out0]"` +
   //   ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
+  console.log(":");
+  console.log(fileToProcess);
   console.log("call ffprobe black detection:");
-
   exec(ffprobeCmd,
     (error, stdout, stderr) => {
       const result = {};
@@ -25,25 +29,52 @@ function processBlack(fileToProcess, callback) {
       if (error !== null) {
         console.log("here is the exec error from ffprobe: ", error);
       }
-      // becuase we're sending slices, the info will be within stderr
-      // TODO is the above true even if we force the format?
-      const analysisArr = stderr.split("\n");
-      // const analysisArr = stdout==.split("\n");
 
-      const blackIntervals = analysisArr.filter(item => {
-        return item.indexOf("black_duration") > -1;
-      });
+      // TODO black can be in either stdout or stderr
+      if (stdout.indexOf("black_end") > -1) {
+        blackInStdOut = true;
+        blackString = stdout;
+      } else {
+        blackInStdOut = false;
+        blackString = stderr;
+      }
+      const analysisArr = blackString.split("\n");
 
-      const blackObjs = blackIntervals.map(item => {
-        return {
-          tempFile: fileToProcess,
-          start: item.substring(item.lastIndexOf("start:") + 6,
-            item.indexOf("black_end") - 1),
-          end: item.substring(item.lastIndexOf("end:") + 4,
-            item.indexOf("black_duration") - 1),
-          duration: item.substr(item.indexOf("black_duration:") + 15),
-        };
-      });
+      console.log("black analysis array:");
+      console.log(analysisArr);
+
+
+      if (!blackInStdOut) {
+        const blackIntervals = analysisArr.filter(item => {
+          return item.indexOf("black_start") > -1;
+        });
+        console.log("these are my black intervals:");
+        console.log(blackIntervals);
+        blackObjs = blackIntervals.map(item => {
+          return {
+            tempFile: fileToProcess,
+            start: item.substring(item.lastIndexOf("start:") + 6,
+              item.indexOf("black_end") - 1),
+            end: item.substring(item.lastIndexOf("end:") + 4,
+              item.indexOf("black_duration") - 1),
+            duration: item.substr(item.indexOf("black_duration:") + 15),
+          };
+        });
+      }
+      if (blackInStdOut) {
+        blackObjs = blackIntervals.map(item => {
+          return {
+            tempFile: fileToProcess,
+            start: item.substring(item.lastIndexOf("start=") + 6),
+            end: item.substring(item.lastIndexOf("end=") + 4),
+            // TODO stdout doesn't give duration: need to calculate it
+            // duration: item.substr(item.indexOf("black_duration:") + 15),
+          };
+        });
+      }
+
+      console.log("and me black objs:");
+      console.log(blackObjs);
       result.error = stderr;
       result.blackDetect = blackObjs;
       callback(result);

@@ -36,12 +36,12 @@ export class HandleFilesComponent {
       extractMetadataService.metadataResult.subscribe(metadata => {
         const analysisObj = JSON.parse(metadata.analysis);
         // temporarily avoid black and mono detect on ProRes
-        if (analysisObj.streams[0].codec_long_name !== "ProRes") {
+        // if (analysisObj.streams[0].codec_long_name !== "ProRes") {
           detectBlackService.recursiveBlackDetect(file, "head");
           detectBlackService.recursiveBlackDetect(file, "tail");
           // TODO pass bitrate to detectMono as second param
-          detectMonoService.detectMono(file);
-        }
+          // detectMonoService.detectMono(file);
+        // }
 
       });
 

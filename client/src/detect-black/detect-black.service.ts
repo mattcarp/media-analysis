@@ -35,6 +35,10 @@ export class DetectBlackService {
     let tailSliceStart;
     let tailSliceEnd;
 
+    this.originalExtension = mediaFile.name.split('.').pop();
+    console.log("EXTENSTION:", this.originalExtension);
+
+
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
       console.log("max retries exceeded for black detection in file", position);
@@ -71,6 +75,8 @@ export class DetectBlackService {
     let sliceToUse;
     if (position === "head") {
       sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
+      console.log("slice for head black detect:");
+      console.log(sliceToUse);
       this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;;
       this.headProgress.emit(this.blackProgressHead);
       fileToUse = this.headBlackFilename + "." + this.originalExtension;
@@ -128,6 +134,8 @@ export class DetectBlackService {
   } // recursiveBlackDetect
 
   requestBlack(slice: any, position: string, filename: string) {
+    console.log("me totally ready to sent this, for position = ", position);
+    console.log(slice);
     return $.ajax({
       type: "POST",
       url: this.endpoint + "black",

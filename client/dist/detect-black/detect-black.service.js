@@ -44,6 +44,8 @@ System.register(['angular2/core'], function(exports_1) {
                     var sliceEnd;
                     var tailSliceStart;
                     var tailSliceEnd;
+                    this.originalExtension = mediaFile.name.split('.').pop();
+                    console.log("EXTENSTION:", this.originalExtension);
                     // initial stop condition:
                     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
                         console.log("max retries exceeded for black detection in file", position);
@@ -76,6 +78,8 @@ System.register(['angular2/core'], function(exports_1) {
                     var sliceToUse;
                     if (position === "head") {
                         sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
+                        console.log("slice for head black detect:");
+                        console.log(sliceToUse);
                         this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;
                         ;
                         this.headProgress.emit(this.blackProgressHead);
@@ -126,6 +130,8 @@ System.register(['angular2/core'], function(exports_1) {
                     });
                 }; // recursiveBlackDetect
                 DetectBlackService.prototype.requestBlack = function (slice, position, filename) {
+                    console.log("me totally ready to sent this, for position = ", position);
+                    console.log(slice);
                     return $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",
