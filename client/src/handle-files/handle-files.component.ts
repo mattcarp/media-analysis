@@ -38,7 +38,7 @@ export class HandleFilesComponent {
         // temporarily avoid black and mono detect on ProRes
         // if (analysisObj.streams[0].codec_long_name !== "ProRes") {
           detectBlackService.recursiveBlackDetect(file, "head");
-          detectBlackService.recursiveBlackDetect(file, "tail");
+          // detectBlackService.recursiveBlackDetect(file, "tail");
           // TODO pass bitrate to detectMono as second param
           // detectMonoService.detectMono(file);
         // }

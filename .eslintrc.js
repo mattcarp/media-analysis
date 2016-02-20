@@ -6,7 +6,8 @@ module.exports = {
   "extends": "airbnb/base",
   "rules": {
     // Override any settings from the "parent" configuration
-    "quotes": [2, "double"]
+    "quotes": [2, "double"],
+    "no-var": [2]
   },
   "plugins": [
     "react"

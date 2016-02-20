@@ -1,25 +1,28 @@
 /* eslint no-console: 0 */
 /* eslint arrow-body-style: [2, "always"]*/
+/* eslint no-var: 0*/
 
 const express = require("express");
 const router = new express.Router();
 const fs = require("fs");
 const prependFile = require("prepend-file");
 const exec = require("child_process").exec;
-var blackObjs = {};
+var blackObjs = [];
+var blackObj = {};
 var blackString;
 var blackInStdOut;
 
 module.exports = router;
 
 function processBlack(fileToProcess, callback) {
+  var start;
+  var end;
+  var duration;
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
 
   // const ffprobeCmd2 = `ffprobe -f lavfi -i "-f prores movie=${fileToProcess},blackdetect[out0]"` +
   //   ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
-  console.log(":");
-  console.log(fileToProcess);
   console.log("call ffprobe black detection:");
   exec(ffprobeCmd,
     (error, stdout, stderr) => {
@@ -43,13 +46,14 @@ function processBlack(fileToProcess, callback) {
       console.log("black analysis array:");
       console.log(analysisArr);
 
+      const blackIntervals = analysisArr.filter(item => {
+        return item.indexOf("black_start") > -1;
+      });
+
+      console.log("these are my black intervals:");
+      console.log(blackIntervals);
 
       if (!blackInStdOut) {
-        const blackIntervals = analysisArr.filter(item => {
-          return item.indexOf("black_start") > -1;
-        });
-        console.log("these are my black intervals:");
-        console.log(blackIntervals);
         blackObjs = blackIntervals.map(item => {
           return {
             tempFile: fileToProcess,
@@ -62,15 +66,29 @@ function processBlack(fileToProcess, callback) {
         });
       }
       if (blackInStdOut) {
-        blackObjs = blackIntervals.map(item => {
-          return {
-            tempFile: fileToProcess,
-            start: item.substring(item.lastIndexOf("start=") + 6),
-            end: item.substring(item.lastIndexOf("end=") + 4),
-            // TODO stdout doesn't give duration: need to calculate it
-            // duration: item.substr(item.indexOf("black_duration:") + 15),
-          };
-        });
+        // blackObjs = blackIntervals.map(item => {
+
+        blackObjs = [];
+        start = analysisArr[0].substring(analysisArr[0].lastIndexOf("start=") + 6);
+        console.log("me start:", start);
+        end = analysisArr[1].substring(analysisArr[1].lastIndexOf("end=") + 4);
+        console.log("me end", end);
+        duration = parseFloat(end) - parseFloat(start);
+        blackObj.tempFile = fileToProcess;
+        blackObj.start = start;
+        blackObj.end = end;
+        blackObj.duration = duration;
+
+        // blackObj = {
+        //   tempFile: fileToProcess,
+        //   start: start,
+        //   end: end,
+        //   // TODO stdout doesn't give duration: need to calculate it
+        //   duration: duration,
+        // };
+        blackObjs.push(blackObj);
+          // return result;
+        // };
       }
 
       console.log("and me black objs:");
@@ -96,9 +114,9 @@ router.post("/", (req, res) => {
   console.log(req.body);
   console.log(req.body.length);
 
-  if (position === "head") {
+  if(position === "head") {
     fs.appendFile(fileToConcat, req.body, err => {
-      if (err) {
+      if(err) {
         console.log("error while appending", err);
       }
       console.log("hopefully, we just appended", fileToConcat,
@@ -112,11 +130,10 @@ router.post("/", (req, res) => {
     }); // fs.append
   }
 
-
-  if (position === "tail") {
+  if(position === "tail") {
     // var processedBytes;
     prependFile(fileToConcat, req.body, "binary", err => {
-      if (err) {
+      if(err) {
         console.log("error while prepending", err);
       }
       // success
@@ -132,6 +149,5 @@ router.post("/", (req, res) => {
     }); // prependFile
   }
 }); // router.post
-
 
 module.exports = router;
