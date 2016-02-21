@@ -22,10 +22,10 @@ export class HandleFilesComponent {
     let myDropzone = new Dropzone(eltRef.nativeElement, {
       url: "/file/post",
       previewTemplate: `
-      <div class="dz-preview dz-file-preview">
+      <div class="dz-preview dz-file-preview ma-file__stats">
         <div class="dz-details">
-          <div class="dz-filename">file name: <span data-dz-name></span></div>
-          size: <div class="dz-size" data-dz-size></div>
+          <div class="dz-filename"><h5>file name: <span data-dz-name></span></h5></div>
+          <h5>size: <span data-dz-size></span></h5>
         </div>
       </div>
       `

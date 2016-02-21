@@ -7,11 +7,13 @@
 
 <div class="col-xs-6" [hidden]="!headBlackResult">
   <div *ngFor="#item of headBlackResult">
-    <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
-    <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video head.
-      ({{item.duration}} found.)</span>
-    <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-    <i [hidden]="item.duration < 3">more than 3 seconds found in video head</i>
+    <h5>
+      <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
+      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video head.
+        ({{item.duration}} found.)</span>
+      <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
+      <span [hidden]="item.duration < 3">more than 3 seconds found in video head</span>
+    </h5>
   </div>
 </div>
 
@@ -22,10 +24,12 @@
 
 <div class="col-xs-6" [hidden]="!tailBlackResult">
   <div *ngFor="#item of tailBlackResult">
-    <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
-    <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video tail.
-          ({{item.duration}} found.)</span>
-    <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-    <i [hidden]="item.duration < 3">more than 3 seconds found in video tail</i>
+    <h5>
+      <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
+      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video tail.
+            ({{item.duration}} found.)</span>
+      <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
+      <span [hidden]="item.duration < 3">more than 3 seconds found in video tail</span>
+    </h5>
   </div>
 </div>

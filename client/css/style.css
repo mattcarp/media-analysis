@@ -5,7 +5,7 @@ body {
   color: #48637c;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
   font-weight: 100;
   color: #4F87BB;
 }
@@ -64,14 +64,18 @@ h1, h2, h3, h4 {
 
 
 /* ===== file ===== */
+.ma-file__stats {
+  margin-top: 10px;
+}
 
 /* ===== validations ===== */
 .ma-validations {
+  display: block;
   margin-top: 150px;
 }
 
 .fa-check-circle {
-  color: green;
+  color: #6FD66F;
 }
 
 .fa-times-circle {
@@ -90,8 +94,18 @@ h1, h2, h3, h4 {
 }
 
 /* ===== mono ===== */
-.ma-mono__segment:hover {
+.ma-mono__module {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.ma-mono__segment--link:hover {
   cursor: pointer;
+}
+
+.ma-mono__segment--link {
+  color: #8DBDE6;
 }
 .ma-mono__message {
   margin-top: 15px;
@@ -108,7 +122,9 @@ h1, h2, h3, h4 {
 }
 
 .ma-format__message {
-  color: red;
+  color: rgba(255, 54, 54, 0.65);
+  padding-left: 18px;
+  font-style: italic;
 }
 
 /* ===== metadata ===== */

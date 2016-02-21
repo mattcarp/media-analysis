@@ -5,8 +5,8 @@
 <div [hidden]="!monoResults">
   <h3>Mono Detection</h3>
   <div class="col-xs-4" *ngFor="#item of monoResults; #index = index">
-    <h4>segment {{index + 1}} mono: {{item.isMono}}</h4>
-    <a (click)="showMonoDetails(index)" class="ma-mono__segment">
+    <h5>segment {{index + 1}} is <span [hidden]="item.isMono">not</span> mono</h5>
+    <a (click)="showMonoDetails(index)" class="ma-mono__segment--link">
       <span [hidden]="!displayMonoDetails[index]">hide</span>
       <span [hidden]="displayMonoDetails[index]">show</span>
         segment {{index + 1}} analysis</a>
