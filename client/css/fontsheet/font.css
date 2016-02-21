@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'icomoon';
-    src:    url('fonts/icomoon.eot?6t2oa8');
-    src:    url('fonts/icomoon.eot?6t2oa8#iefix') format('embedded-opentype'),
-        url('fonts/icomoon.ttf?6t2oa8') format('truetype'),
-        url('fonts/icomoon.woff?6t2oa8') format('woff'),
-        url('fonts/icomoon.svg?6t2oa8#icomoon') format('svg');
+    src:    url('fonts/icomoon.eot?9jn06w');
+    src:    url('fonts/icomoon.eot?9jn06w#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf?9jn06w') format('truetype'),
+        url('fonts/icomoon.woff?9jn06w') format('woff'),
+        url('fonts/icomoon.svg?9jn06w#icomoon') format('svg');
     font-weight: normal;
     font-style: normal;
 }
@@ -24,12 +24,52 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-sony_logo:before {
-    content: "\e901";
-}
-.icon-rca:before {
-    content: "\e902";
-}
-.icon-ao-prores:before {
+.icon-ma-icon__mpeg4:before {
     content: "\e900";
 }
+.icon-ma-icon__video:before {
+    content: "\e901";
+}
+.icon-ma-icon__mpeg2:before {
+    content: "\e902";
+}
+.icon-ma-icon__xmark:before {
+    content: "\e903";
+}
+.icon-ma-icon__checkmark:before {
+    content: "\e904";
+}
+.icon-ma-icon__dvdddp:before {
+    content: "\e905";
+}
+.icon-ma-icon__bluray:before {
+    content: "\e906";
+}
+.icon-ma-icon__chevronleft:before {
+    content: "\e907";
+}
+.icon-ma-icon__chevrondown:before {
+    content: "\e908";
+}
+.icon-ma-icon__chevronup:before {
+    content: "\e909";
+}
+.icon-ma-icon__chevronright:before {
+    content: "\e90a";
+}
+.icon-ma-icon__16bitwav:before {
+    content: "\e90b";
+}
+.icon-ma-icon__prores:before {
+    content: "\e90c";
+}
+.icon-ma-icon__sony:before {
+    content: "\e90d";
+}
+.icon-ma-icon__rca:before {
+    content: "\e90e";
+}
+.icon-ma-icon__24bitwav:before {
+    content: "\e90f";
+}
+

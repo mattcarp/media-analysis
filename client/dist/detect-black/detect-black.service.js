@@ -22,7 +22,6 @@ System.register(['angular2/core'], function(exports_1) {
                     this.tailBlackStarted = new core_1.EventEmitter();
                     this.headBlackResult = new core_1.EventEmitter();
                     this.tailBlackResult = new core_1.EventEmitter();
-                    // mediaFile: File;
                     this.headBlackTryCount = 0;
                     this.tailBlackTryCount = 0;
                     this.headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
@@ -45,16 +44,15 @@ System.register(['angular2/core'], function(exports_1) {
                     var tailSliceStart;
                     var tailSliceEnd;
                     this.originalExtension = mediaFile.name.split('.').pop();
-                    console.log("EXTENSTION:", this.originalExtension);
                     // initial stop condition:
                     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
-                        console.log("max retries exceeded for black detection in file", position);
+                        console.log("max retries exceeded for head black detection in file", position);
                         // TODO add alert to DOM
                         this.headBlackStarted.emit(false);
                         return;
                     }
                     if (position === "tail" && this.tailBlackTryCount >= this.MAX_TRIES) {
-                        console.log("max retries exceeded for black detection in file", position);
+                        console.log("max retries exceeded for tail black detection in file", position);
                         // TODO add alert to DOM
                         this.tailBlackStarted.emit(false);
                         return;
@@ -117,7 +115,7 @@ System.register(['angular2/core'], function(exports_1) {
                         else {
                             console.log("no blackdetect object on the returned array");
                         }
-                        // TODO any additional stop conditions?
+                        // TODO additonal stop condition: if duration doesn't increment
                         if (position === "head") {
                             _this.headBlackTryCount++;
                         }
@@ -130,8 +128,6 @@ System.register(['angular2/core'], function(exports_1) {
                     });
                 }; // recursiveBlackDetect
                 DetectBlackService.prototype.requestBlack = function (slice, position, filename) {
-                    console.log("me totally ready to sent this, for position = ", position);
-                    console.log(slice);
                     return $.ajax({
                         type: "POST",
                         url: this.endpoint + "black",

@@ -5,12 +5,21 @@
 <div [hidden]="!monoResults">
   <h3>Mono Detection</h3>
   <div class="col-xs-4" *ngFor="#item of monoResults; #index = index">
-      <h3>segment {{index + 1}} mono: {{item.isMono}}</h3>
-      <a (click)="showMonoDetails(index)">show segment analysis</a>
-      <span [hidden]="!displayMonoDetails[index]">
-      <div *ngFor="#item of item.data">
-        {{item}}
-      </div>
+    <h4>segment {{index + 1}} mono: {{item.isMono}}</h4>
+    <a (click)="showMonoDetails(index)" class="ma-mono__segment">
+      <span [hidden]="!displayMonoDetails[index]">hide</span>
+      <span [hidden]="displayMonoDetails[index]">show</span>
+        segment {{index + 1}} analysis</a>
+    <span [hidden]="!displayMonoDetails[index]">
+        <div *ngFor="#item of item.data">
+          {{item}}
+        </div>
     </span>
   </div>
+
+    <div [hidden]="!shouldWarn" class="ma-mono__message col-xs-12">
+      <span class="fa fa-warning"></span>
+      <i>All three tested audio segments are mono.
+         Before uploading, please make sure this is intentional.</i>
+    </div>
 </div>

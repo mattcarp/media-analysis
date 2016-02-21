@@ -5,12 +5,9 @@
 <div class="row"  [hidden]="!showResults">
 
   <h3>Format Verification</h3>
-  <i [hidden]="!isProRes" class="icon-ao-prores"></i>
   <h2>{{proResMsg}}</h2>
   <div class="col-xs-6">
-    <div class="card card-block">
-      <h4 class="card-title">Audio</h4>
-    </div>
+    <h4>audio</h4>
     <ul class="list-group list-group-flush">
       <li class="list-group-item"
         *ngFor="#item of audioValidations">
@@ -25,9 +22,10 @@
   </div>
 
   <div class="col-xs-6">
-    <div class="card card-block">
-      <h4 class="card-title">Video</h4>
-    </div>
+    <h4>video
+      <i [hidden]="videoFormat !== 'prores'" class="icon-ma-icon__prores pull-right"></i>
+      <i [hidden]="videoFormat !== 'mpeg2video'" class="icon-ma-icon__mpeg2 pull-right"></i>
+    </h4>
     <ul class="list-group list-group-flush">
       <li class="list-group-item" *ngFor="#item of videoValidations">
         <span [hidden]="!item.pass" class="fa fa-check-circle"></span>

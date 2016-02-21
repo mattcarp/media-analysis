@@ -16,6 +16,7 @@ export class ValidateFormatComponent {
   audioValidations: Object[] = [];
   videoValidations: Object[] = [];
   isProRes: boolean = false;
+  videoFormat: string;
 
 
   constructor(extractMetadataService: ExtractMetadataService) {
@@ -80,9 +81,12 @@ export class ValidateFormatComponent {
       message: "Audio must be uncompressed (PCM)."
     });
 
-    // TODO get index of first stream with codec_type === "video"
+    // TODO get index of first stream with codec_type === "video",
+    // rather than hard-coding this as index 0
     const videoStream = analysisObj.streams[0];
     this.isProRes = videoStream.codec_long_name === "ProRes";
+    this.videoFormat = videoStream.codec_name;
+
     // build video validations array
     this.videoValidations.push({
       name: "Codec",

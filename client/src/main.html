@@ -43,7 +43,7 @@
     <br>
     <br>
 
-    <div class="card alert-danger" [hidden]="!ffprobeErr">
+    <div class="card alert alert-danger" [hidden]="!ffprobeErr">
       <h3>Bummer</h3>
       <p>
         The analyzer returned the following error:
@@ -56,26 +56,15 @@
     <div class="ma-validations">
       <h2 [hidden]="!metadataResult">Validations</h2>
 
-      <detect-black class="row">
-        <h3>starting black detection...</h3>
-      </detect-black>
+      <detect-black class="row ma-black__module"></detect-black>
+      <detect-mono class="row ma-mono__module"></detect-mono>
+      <validate-format class="row ma-format__module"></validate-format>
 
-      <detect-mono class="row">
-        <h3>performing mono audio detection...</h3>
-      </detect-mono>
-
-      <validate-format class="row">
-      </validate-format>
     </div>
     <!-- /.ma-validations -->
 
     <div class="ma-metadata">
-
-      <extract-metadata>
-        <div class="row">
-          <h3>extracting metadata...</h3>
-        </div>
-      </extract-metadata>
+      <extract-metadata class="row"></extract-metadata>
     </div>
     <!-- /.ma-metadata -->
 

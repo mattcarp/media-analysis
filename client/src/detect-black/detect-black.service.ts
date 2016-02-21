@@ -10,7 +10,6 @@ export class DetectBlackService {
   tailBlackResult = new EventEmitter();
   headBlob: any;
   tailBlob: any;
-  // mediaFile: File;
   headBlackTryCount: number = 0;
   tailBlackTryCount: number = 0;
   blackProgressHead: number;
@@ -30,24 +29,22 @@ export class DetectBlackService {
 
   // is called separately for "head" and "tail" (position string)
   recursiveBlackDetect(mediaFile: File, position: string) {
-    let sliceStart;
-    let sliceEnd;
-    let tailSliceStart;
-    let tailSliceEnd;
+    let sliceStart: number;
+    let sliceEnd: number;
+    let tailSliceStart: number;
+    let tailSliceEnd: number;
 
     this.originalExtension = mediaFile.name.split('.').pop();
-    console.log("EXTENSTION:", this.originalExtension);
-
 
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
-      console.log("max retries exceeded for black detection in file", position);
+      console.log("max retries exceeded for head black detection in file", position);
       // TODO add alert to DOM
       this.headBlackStarted.emit(false);
       return;
     }
     if (position === "tail" && this.tailBlackTryCount >= this.MAX_TRIES) {
-      console.log("max retries exceeded for black detection in file", position);
+      console.log("max retries exceeded for tail black detection in file", position);
       // TODO add alert to DOM
       this.tailBlackStarted.emit(false);
       return;
@@ -118,13 +115,12 @@ export class DetectBlackService {
         console.log("no blackdetect object on the returned array");
       }
 
-      // TODO any additional stop conditions?
+      // TODO additonal stop condition: if duration doesn't increment
       if (position === "head") {
         this.headBlackTryCount++;
       }
       if (position === "tail") {
-        console.log("tailBlackTryCount:",
-          this.tailBlackTryCount)
+        console.log("tailBlackTryCount:", this.tailBlackTryCount)
         this.tailBlackTryCount++;
       }
 
@@ -134,8 +130,6 @@ export class DetectBlackService {
   } // recursiveBlackDetect
 
   requestBlack(slice: any, position: string, filename: string) {
-    console.log("me totally ready to sent this, for position = ", position);
-    console.log(slice);
     return $.ajax({
       type: "POST",
       url: this.endpoint + "black",

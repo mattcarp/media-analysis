@@ -5,7 +5,7 @@ body {
   color: #48637c;
 }
 
-h1, h2, h3 {
+h1, h2, h3, h4 {
   font-weight: 100;
   color: #4F87BB;
 }
@@ -21,21 +21,20 @@ h1, h2, h3 {
   color: #4F87BB;
 }
 
-/* ===== svg fonts ===== */
-.icon-ao-prores {
-  font-size: 40px;
+/* ===== custom svg fonts ===== */
+.icon-ma-icon__prores, .icon-ma-icon__mpeg2 {
+  font-size: 18px;
+  margin-top: 5px;
+  margin-right: 25px;
   color: #4F87BB;
 }
 
 /* ===== modules ===== */
-.ma-metadata__section {
-  margin-bottom: 35px;
-}
 
 /* ===== header ===== */
 .ma-header__logo--rca {
-  height: 25px;
-  margin-top: 20px;
+  height: 35px;
+  margin-top: 12px;
 }
 
 .ma-header__title {
@@ -80,12 +79,24 @@ h1, h2, h3 {
 }
 
 .fa-warning {
-  color: yellow;
+  color: orange;
 }
 
 /* ===== black ===== */
+.ma-black__module {
+  display: block;
+  margin-top: 200px;
+  height: 100px;
+}
 
 /* ===== mono ===== */
+.ma-mono__segment:hover {
+  cursor: pointer;
+}
+.ma-mono__message {
+  margin-top: 15px;
+  margin-left: 15px;
+}
 
 /* ===== format ===== */
 .ma-format__pass {
@@ -101,3 +112,6 @@ h1, h2, h3 {
 }
 
 /* ===== metadata ===== */
+.ma-metadata__block{
+  margin-bottom: 35px;
+}

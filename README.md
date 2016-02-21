@@ -1,6 +1,6 @@
 start express server, from project root:
 
-    nodemon DEBUG=media-analysis:* npm start
+    nodemon DEBUG=media-analysis:* npm start | bunyan
 
 ### Bash: Open Chrome and ignore CORS errors
 

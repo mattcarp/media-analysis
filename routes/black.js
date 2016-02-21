@@ -1,9 +1,11 @@
-/* eslint no-console: 0 */
-/* eslint arrow-body-style: [2, "always"]*/
-/* eslint no-var: 0*/
+/* eslint arrow-body-style: [2, "always"] */
+/* eslint no-var: 0 */
 
 const express = require("express");
 const router = new express.Router();
+var bunyan = require("bunyan");
+var log = bunyan.createLogger({ name: "black" });
+
 const fs = require("fs");
 const prependFile = require("prepend-file");
 const exec = require("child_process").exec;
@@ -21,16 +23,15 @@ function processBlack(fileToProcess, callback) {
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
 
-  // const ffprobeCmd2 = `ffprobe -f lavfi -i "-f prores movie=${fileToProcess},blackdetect[out0]"` +
-  //   ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
-  console.log("call ffprobe black detection:");
+
+  log.info("from processBlack, calling ffprobe black detection:");
   exec(ffprobeCmd,
     (error, stdout, stderr) => {
       const result = {};
-      console.log("STDOUT:", stdout);
-      console.log("STDERR:", stderr);
+      log.info("ffprobe STDOUT:\n", stdout);
+      log.info("ffprobe STDERR:\n", stderr);
       if (error !== null) {
-        console.log("here is the exec error from ffprobe: ", error);
+        log.info({ foo: "bar", err: error }, "some msg about this error");
       }
 
       // TODO black can be in either stdout or stderr
@@ -43,15 +44,9 @@ function processBlack(fileToProcess, callback) {
       }
       const analysisArr = blackString.split("\n");
 
-      console.log("black analysis array:");
-      console.log(analysisArr);
-
       const blackIntervals = analysisArr.filter(item => {
         return item.indexOf("black_start") > -1;
       });
-
-      console.log("these are my black intervals:");
-      console.log(blackIntervals);
 
       if (!blackInStdOut) {
         blackObjs = blackIntervals.map(item => {
@@ -66,33 +61,22 @@ function processBlack(fileToProcess, callback) {
         });
       }
       if (blackInStdOut) {
-        // blackObjs = blackIntervals.map(item => {
-
         blackObjs = [];
         start = analysisArr[0].substring(analysisArr[0].lastIndexOf("start=") + 6);
-        console.log("me start:", start);
+        log.info("black detection found in stdout. start:\n", start);
         end = analysisArr[1].substring(analysisArr[1].lastIndexOf("end=") + 4);
-        console.log("me end", end);
+        log.info("back in stout. end:\n", end);
         duration = parseFloat(end) - parseFloat(start);
         blackObj.tempFile = fileToProcess;
         blackObj.start = start;
         blackObj.end = end;
         blackObj.duration = duration;
 
-        // blackObj = {
-        //   tempFile: fileToProcess,
-        //   start: start,
-        //   end: end,
-        //   // TODO stdout doesn't give duration: need to calculate it
-        //   duration: duration,
-        // };
         blackObjs.push(blackObj);
-          // return result;
-        // };
       }
 
-      console.log("and me black objs:");
-      console.log(blackObjs);
+      log.info("black objs, from processBlack:");
+      log.info(blackObjs);
       result.error = stderr;
       result.blackDetect = blackObjs;
       callback(result);
@@ -104,46 +88,33 @@ router.post("/", (req, res) => {
   const prefix = "/tmp/";
   const fileToConcat = prefix + headers["xa-file-to-concat"];
   const position = headers["xa-black-position"];
-  console.log("me headers are");
-  console.log(headers);
-  console.log("position", position);
+  log.info("headers send to black endpoint:");
+  log.info(headers);
 
-  // const bufferStream = new stream.PassThrough();
-  // bufferStream.end(req.body);
-  console.log("black req.body and length:");
-  console.log(req.body);
-  console.log(req.body.length);
+  log.info("black req.body and length:");
+  log.info(req.body);
+  log.info(req.body.length);
 
-  if(position === "head") {
+  if (position === "head") {
     fs.appendFile(fileToConcat, req.body, err => {
-      if(err) {
-        console.log("error while appending", err);
+      if (err) {
+        log.error("error while appending", err);
       }
-      console.log("hopefully, we just appended", fileToConcat,
-        "which now has these stats:");
-      fs.stat(fileToConcat, (err2, stats) => {
-        console.log(stats);
-      });
+
       processBlack(fileToConcat, (result) => {
         res.json(result);
       });
     }); // fs.append
   }
 
-  if(position === "tail") {
+  if (position === "tail") {
     // var processedBytes;
     prependFile(fileToConcat, req.body, "binary", err => {
-      if(err) {
-        console.log("error while prepending", err);
+      if (err) {
+        log.error("error while prepending", err);
       }
       // success
-      console.log("hopefully, we just prepended", fileToConcat,
-        "which now has these stats:");
-      fs.stat(fileToConcat, (err2, stats) => {
-        console.log(stats.size);
-      });
       processBlack(fileToConcat, (result) => {
-        // result.processedBytes = processedBytes;
         res.json(result);
       });
     }); // prependFile
