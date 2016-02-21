@@ -56,15 +56,16 @@
     <div class="ma-validations">
       <h2 [hidden]="!metadataResult">Validations</h2>
 
+      <validate-format class="row ma-format__module"></validate-format>
       <detect-black class="row ma-black__module"></detect-black>
       <detect-mono class="row ma-mono__module"></detect-mono>
-      <validate-format class="row ma-format__module"></validate-format>
+
 
     </div>
     <!-- /.ma-validations -->
 
     <div class="ma-metadata">
-      <extract-metadata class="row"></extract-metadata>
+      <extract-metadata class="row ma-metadata__module"></extract-metadata>
     </div>
     <!-- /.ma-metadata -->
 

@@ -12,7 +12,7 @@
       <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video head.
         ({{item.duration}} found.)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-      <span [hidden]="item.duration < 3">more than 3 seconds found in video head</span>
+      <span [hidden]="item.duration < 3">3 seconds or more found in video head</span>
     </h5>
   </div>
 </div>
@@ -29,7 +29,7 @@
       <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video tail.
             ({{item.duration}} found.)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-      <span [hidden]="item.duration < 3">more than 3 seconds found in video tail</span>
+      <span [hidden]="item.duration < 3">3 seconds or more found in video tail</span>
     </h5>
   </div>
 </div>

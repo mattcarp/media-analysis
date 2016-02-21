@@ -25,7 +25,7 @@ h1, h2, h3, h4, h5 {
 .icon-ma-icon__prores, .icon-ma-icon__mpeg2 {
   font-size: 18px;
   margin-top: 5px;
-  margin-right: 25px;
+  margin-left: 25px;
   color: #4F87BB;
 }
 
@@ -38,7 +38,7 @@ h1, h2, h3, h4, h5 {
 }
 
 .ma-header__title {
-  margin-bottom: 30px;
+  margin-bottom: 60px;
 }
 
 /* ===== nav ===== */
@@ -64,8 +64,22 @@ h1, h2, h3, h4, h5 {
 
 
 /* ===== file ===== */
+.ma-file__panel {
+  display: block;
+  border-color: #4F87BB;
+  border-style: dashed;
+  border-width: 2px;
+  margin-bottom: 20px;
+  margin: auto;
+  width: 600px;
+}
+
 .ma-file__stats {
   margin-top: 10px;
+}
+
+.ma-file__dz--hidden {
+  display: none;
 }
 
 /* ===== validations ===== */
@@ -86,10 +100,28 @@ h1, h2, h3, h4, h5 {
   color: orange;
 }
 
+/* ===== format ===== */
+.ma-format__module {
+  margin-top: 1000px;
+}
+.ma-format__pass {
+  background-color: rgba(0, 220, 41, 0.07);;
+}
+
+.ma-format__fail {
+  background-color: rgba(255, 125, 125, 0.26);;
+}
+
+.ma-format__message {
+  color: rgba(255, 54, 54, 0.65);
+  padding-left: 18px;
+  font-style: italic;
+}
+
 /* ===== black ===== */
 .ma-black__module {
   display: block;
-  margin-top: 200px;
+  /*margin-top: 200px;*/
   height: 100px;
 }
 
@@ -112,22 +144,13 @@ h1, h2, h3, h4, h5 {
   margin-left: 15px;
 }
 
-/* ===== format ===== */
-.ma-format__pass {
-  background-color: rgba(0, 220, 41, 0.07);;
-}
-
-.ma-format__fail {
-  background-color: rgba(255, 125, 125, 0.26);;
-}
-
-.ma-format__message {
-  color: rgba(255, 54, 54, 0.65);
-  padding-left: 18px;
-  font-style: italic;
-}
-
 /* ===== metadata ===== */
+.ma-metadata__module {
+  display: block;
+  margin-top: 20px;
+}
+
 .ma-metadata__block{
+  margin-top: 20px;
   margin-bottom: 35px;
 }
