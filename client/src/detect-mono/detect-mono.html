@@ -7,8 +7,12 @@
   <div class="ma-monodetect">
     <div class="col-xs-4" *ngFor="#segment of audioResults; #index = index">
       <h5>segment {{index + 1}} is
-        <span [hidden]="segment.isMono">stereo</span>
-        <span [hidden]="!segment.isMono">mono</span></h5>
+        <strong>
+          <span [hidden]="segment.isMono">stereo</span>
+          <span [hidden]="!segment.isMono">mono</span>
+        </strong>
+      </h5>
+
         <h5>segment {{index + 1}} peak:
           <strong>{{segment.peakLevel}}</strong>
         </h5>
