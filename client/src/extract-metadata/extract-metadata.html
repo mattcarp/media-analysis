@@ -40,9 +40,8 @@
     </div>
 
 
-    <div class="col-xs-10 ma-metadata__block" [hidden]="!streams">
-      <!-- <h3>{{streams.length}} streams</h3> -->
-      <ul class="list-group" *ngFor="#stream of streams; #idx = index">
+    <div class="col-xs-10" [hidden]="!streams">
+      <ul class="list-group ma-metadata__block" *ngFor="#stream of streams; #idx = index">
         <li class="list-group-item">
           <h4 class="list-group-item-heading">stream {{idx}}</h4>
         </li>

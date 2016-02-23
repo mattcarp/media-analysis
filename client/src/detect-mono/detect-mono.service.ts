@@ -9,7 +9,7 @@ export class DetectMonoService {
   // TODO use the endpoint service
   endpoint: string = "http://localhost:3000/";
   originalExtension: string;
-  monoDetections: Object[] = [];
+  audioAnalysis: Object[] = [];
 
   detectStartedEmitter = new EventEmitter();
   resultsEmitter = new EventEmitter();
@@ -62,7 +62,7 @@ export class DetectMonoService {
         console.log("final mono detect call should be done:");
         console.log(finalResults);
         this.detectStartedEmitter.emit(false);
-        this.resultsEmitter.emit(this.monoDetections);
+        this.resultsEmitter.emit(this.audioAnalysis);
       });
   }
 
@@ -87,9 +87,9 @@ export class DetectMonoService {
         console.log(err);
       },
       success: (data) => {
-        this.monoDetections.push(data);
-        console.log("mono detection array:");
-        console.dir(this.monoDetections);
+        this.audioAnalysis.push(data);
+        console.log("audio analysis array:");
+        console.dir(this.audioAnalysis);
       }
     });
 

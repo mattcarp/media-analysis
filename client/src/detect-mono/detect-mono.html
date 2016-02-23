@@ -2,11 +2,40 @@
   <h3>mono detection started on three audio segments...</h3>
 </div>
 
-<div [hidden]="!monoResults" class="ma-audio__analysis">
+<div [hidden]="!audioResults" class="ma-audio__analysis">
   <h3>Audio Signal Analysis</h3>
   <div class="ma-monodetect">
-    <div class="col-xs-4" *ngFor="#item of monoResults; #index = index">
+    <div class="col-xs-4" *ngFor="#segment of audioResults; #index = index">
       <h5>segment {{index + 1}} is
+        <span [hidden]="segment.isMono">stereo</span>
+        <span [hidden]="!segment.isMono">mono</span></h5>
+        <h5>segment {{index + 1}} peak:
+          <strong>{{segment.peakLevel}}</strong>
+        </h5>
+      <a (click)="showMonoDetails(index)" class="ma-mono__segment--link">
+        <span [hidden]="!displayMonoDetails[index]">hide</span>
+        <span [hidden]="displayMonoDetails[index]">show</span>
+          segment {{index + 1}} analysis</a>
+      <span [hidden]="!displayMonoDetails[index]" class="ma-fade-in">
+
+          <div *ngFor="#item of segment.data" class="ma-monospace">
+            <pre>{{item}}</pre>
+          </div>
+
+      </span>
+    </div>
+
+    <div [hidden]="!shouldWarnMono" class="ma-mono__message col-xs-12">
+      <span class="fa fa-warning"></span>
+      <i>All three tested audio segments are mono.
+         Before uploading, please make sure this is intentional.</i>
+    </div>
+  </div>
+  <!-- /.ma-monodetect -->
+
+  <!-- <div class="ma-peakdetect">
+    <div class="col-xs-4" *ngFor="#item of stereoResults; #index = index">
+      <h5>segment {{index + 1}} peak
         <span [hidden]="item.isMono">stereo</span>
         <span [hidden]="!item.isMono">mono</span></h5>
       <a (click)="showMonoDetails(index)" class="ma-mono__segment--link">
@@ -20,15 +49,11 @@
       </span>
     </div>
 
-    <div [hidden]="!shouldWarn" class="ma-mono__message col-xs-12">
+    <div [hidden]="!shouldWarnMono" class="ma-mono__message col-xs-12">
       <span class="fa fa-warning"></span>
       <i>All three tested audio segments are mono.
          Before uploading, please make sure this is intentional.</i>
     </div>
-  </div>
-  <!-- /.ma-monodetect -->
-  <div class="ma-peakdetect">
-
-  </div>
+  </div> -->
 
 </div>

@@ -13,9 +13,10 @@ export class DetectMonoComponent {
   detectStartedEmitter: any;
   detectingMono: boolean;
   monoResultsEmitter: any;
-  monoResults: any;
+  audioResults: any;
   displayMonoDetails: boolean[] = [];
-  shouldWarn: boolean;
+  shouldWarnMono: boolean;
+  peakThresholdExceeded: boolean;
 
 
   constructor(detectMonoService: DetectMonoService) {
@@ -29,11 +30,11 @@ export class DetectMonoComponent {
     this.monoResultsEmitter.subscribe(detections => {
       this.detectingMono = false;
       if (detections[0].isMono && detections[1].isMono && detections[2].isMono) {
-        this.shouldWarn = true;
+        this.shouldWarnMono = true;
       }
-      this.monoResults = detections;
+      this.audioResults = detections;
       console.log("not only are you an asshole, but i passed this from the back end:");
-      console.log(this.monoResults);
+      console.log(this.audioResults);
     });
 
   } // constructor
