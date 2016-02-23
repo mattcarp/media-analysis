@@ -106,13 +106,13 @@ function stereoPeakDetect(wavFile, callback) {
       const peakVal = parseFloat(stereoPeakLev[0].substr(10).trim().split(" ")[0]);
 
       log.info("stereo peak level value:", peakVal);
-      if (peakVal > -6) {
-        stereoResult.overThreshold = true;
-      } else {
-        // TODO handle error where stereoPeakLev is undefined or null
-        log.info("value found for stereo peak level:", stereoPeakLev[0]);
-        stereoResult.peakLevel = stereoPeakLev[0];
-      }
+      // if (peakVal > PEAK_THRESHOLD) {
+      //   stereoResult.overThreshold = true;
+      // } else {
+      //   // TODO handle error if stereoPeakLev is undefined or null
+      //   log.info("value found for stereo peak level:", stereoPeakLev[0]);
+      //   stereoResult.peakLevel = stereoPeakLev[0];
+      // }
       log.error("gonna add this stereo sox array to the returned resutl:",
        soxArr); // looks fine
       result.peakLevel = peakVal;

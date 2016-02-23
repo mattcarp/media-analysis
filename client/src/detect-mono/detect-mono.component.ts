@@ -17,6 +17,7 @@ export class DetectMonoComponent {
   displayMonoDetails: boolean[] = [];
   shouldWarnMono: boolean;
   peakThresholdExceeded: boolean;
+  PEAK_THRESHOLD = -6;
 
 
   constructor(detectMonoService: DetectMonoService) {
@@ -32,8 +33,15 @@ export class DetectMonoComponent {
       if (detections[0].isMono && detections[1].isMono && detections[2].isMono) {
         this.shouldWarnMono = true;
       }
+      console.log("the detection array:");
+      console.log(detections);
+      if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
+        detections[1].peakLevel > this.PEAK_THRESHOLD ||
+        detections[2].peakLevel > this.PEAK_THRESHOLD) {
+        this.peakThresholdExceeded = true;
+      }
       this.audioResults = detections;
-      console.log("not only are you an asshole, but i passed this from the back end:");
+      console.log("audio results after mono and peak warnings added:");
       console.log(this.audioResults);
     });
 

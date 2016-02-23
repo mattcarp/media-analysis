@@ -30,30 +30,11 @@
       <i>All three tested audio segments are mono.
          Before uploading, please make sure this is intentional.</i>
     </div>
+    <div [hidden]="!peakThresholdExceeded" class="ma-mono__message col-xs-12">
+      <span class="fa fa-warning"></span>
+      <i>The audio in this file peaks above -6 dB, and is too loud. This file can't be uploaded.</i>
+    </div>
   </div>
   <!-- /.ma-monodetect -->
-
-  <!-- <div class="ma-peakdetect">
-    <div class="col-xs-4" *ngFor="#item of stereoResults; #index = index">
-      <h5>segment {{index + 1}} peak
-        <span [hidden]="item.isMono">stereo</span>
-        <span [hidden]="!item.isMono">mono</span></h5>
-      <a (click)="showMonoDetails(index)" class="ma-mono__segment--link">
-        <span [hidden]="!displayMonoDetails[index]">hide</span>
-        <span [hidden]="displayMonoDetails[index]">show</span>
-          segment {{index + 1}} analysis</a>
-      <span [hidden]="!displayMonoDetails[index]">
-          <div *ngFor="#item of item.data">
-            {{item}}
-          </div>
-      </span>
-    </div>
-
-    <div [hidden]="!shouldWarnMono" class="ma-mono__message col-xs-12">
-      <span class="fa fa-warning"></span>
-      <i>All three tested audio segments are mono.
-         Before uploading, please make sure this is intentional.</i>
-    </div>
-  </div> -->
 
 </div>
