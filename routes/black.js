@@ -31,7 +31,7 @@ function processBlack(fileToProcess, callback) {
       log.info("ffprobe STDOUT:\n", stdout);
       log.info("ffprobe STDERR:\n", stderr);
       if (error !== null) {
-        log.info({ foo: "bar", err: error }, "some msg about this error");
+        log.error({ foo: "bar", err: error }, "some msg about this error");
       }
 
       // TODO black can be in either stdout or stderr

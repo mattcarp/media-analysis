@@ -48,18 +48,15 @@ export class HandleFilesComponent {
           detectBlackService.recursiveBlackDetect(file, "tail");
           // TODO pass bitrate to detectMono as second param
           detectMonoService.detectMono(file);
-        // }
 
       });
-
-
     });
   }
 
   bytesToSize(bytes: number) {
    let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
    if (bytes == 0) return '0 Byte';
-   let i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+   let i = Math.floor(Math.log(bytes) / Math.log(1024));
    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
-};
+ };
 } // class

@@ -32,6 +32,8 @@ export class DetectMonoComponent {
         this.shouldWarn = true;
       }
       this.monoResults = detections;
+      console.log("not only are you an asshole, but i passed this from the back end:");
+      console.log(this.monoResults);
     });
 
   } // constructor

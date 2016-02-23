@@ -10,6 +10,11 @@ h1, h2, h3, h4, h5 {
   color: #4F87BB;
 }
 
+.ma-showhide:hover {
+  cursor: pointer;
+  /*text-decoration: underline;*/
+}
+
 .ma-progress {
   height: 5px;
 }
@@ -27,6 +32,10 @@ h1, h2, h3, h4, h5 {
   margin-top: 5px;
   margin-left: 25px;
   color: #4F87BB;
+}
+
+.icon-ma-icon__chevronright, .icon-ma-icon__chevrondown {
+  font-size: 18px;
 }
 
 /* ===== modules ===== */

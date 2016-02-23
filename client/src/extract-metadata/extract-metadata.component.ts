@@ -19,6 +19,7 @@ export class ExtractMetadataComponent {
   formatTags: Object[];
   showFormat: boolean = false;
   streams: Object[][]; // an array of arrays of stream objects
+  showMetadata: boolean = false;
 
   constructor(extractMetadataService: ExtractMetadataService) {
     this.metadataLoading = false;
@@ -88,6 +89,11 @@ export class ExtractMetadataComponent {
         item.value = formatObj[formatKey];
         return item;
     })
+  }
+
+  toggleMetadata() {
+    console.log("toggle metadata:", this.showMetadata);
+    this.showMetadata = !this.showMetadata;
   }
 
 } // class

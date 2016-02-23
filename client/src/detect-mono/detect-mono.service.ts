@@ -36,7 +36,6 @@ export class DetectMonoService {
     const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
 
 
-
     console.log("in detect mono, the source file is this long:", mediaFile.size);
     console.log("and the front slice is this long:", frontSlice.size);
     console.log("mono middle slice starts at", midSliceStart);
@@ -48,22 +47,16 @@ export class DetectMonoService {
       .then((data, textStatus, jqXHR) => {
         console.log("first mono detect call is complete:")
         console.log(data);
-        // this.results.push(data);
-        // return this.results;
       })
       .then(this.requestMono(midSlice, "middle"))
       .then((data, textStatus, jqXHR) => {
         console.log("second (middle) mono detect call should be done:");
         console.log(data);
-        // this.results.push(data);
-        // return this.results;
       })
       .then(this.requestMono(endSlice, "end"))
       .then((data, textStatus, jqXHR) => {
         console.log("final mono detect call should be done:");
         console.log(data);
-        // this.results.push(data);
-        // return this.results;
       })
       .then((finalResults) => {
         console.log("final mono detect call should be done:");
