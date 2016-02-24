@@ -46,7 +46,7 @@ export class HandleFilesComponent {
         // if (analysisObj.streams[0].codec_long_name !== "ProRes") {
           detectBlackService.recursiveBlackDetect(file, "head");
           detectBlackService.recursiveBlackDetect(file, "tail");
-          // TODO pass bitrate to detectMono as second param
+          // TODO pass bitrate from to detectMono as second param
           detectMonoService.detectMono(file);
 
       });

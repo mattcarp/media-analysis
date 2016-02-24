@@ -9,6 +9,8 @@ import {DetectBlackComponent} from './detect-black/detect-black.component';
 import {ExtractMetadataComponent} from './extract-metadata/extract-metadata.component';
 import {DetectMonoComponent} from './detect-mono/detect-mono.component';
 import {ValidateFormatComponent} from './validate-format/validate-format.component';
+import {PlayerComponent} from './player/player.component';
+import {UploadFileComponent} from './upload-file/upload-file.component';
 
 import {DetectBlackService} from './detect-black/detect-black.service';
 import {FileHandlerService} from "./handle-files/handle-files.service";
@@ -21,7 +23,7 @@ import {DetectMonoService} from "./detect-mono/detect-mono.service";
   templateUrl: "src/main.html",
   directives: [DetectBlackComponent, HandleFilesComponent,
     ExtractMetadataComponent, DetectMonoComponent,
-    ValidateFormatComponent
+    ValidateFormatComponent, PlayerComponent, UploadFileComponent
   ],
   providers: [DetectBlackService, FileHandlerService,
     ExtractMetadataService, DetectMonoService]
@@ -29,9 +31,7 @@ import {DetectMonoService} from "./detect-mono/detect-mono.service";
 export class AnalysisApp {
   constructor(extractMetadataService: ExtractMetadataService) {
     // TODO subscribe to meta
-
   }
-
 }
 
 

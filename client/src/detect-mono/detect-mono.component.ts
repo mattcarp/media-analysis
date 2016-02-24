@@ -35,11 +35,14 @@ export class DetectMonoComponent {
       }
       console.log("the detection array:");
       console.log(detections);
-      if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
-        detections[1].peakLevel > this.PEAK_THRESHOLD ||
-        detections[2].peakLevel > this.PEAK_THRESHOLD) {
-        this.peakThresholdExceeded = true;
+      if (detections.length > 2){
+        if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
+          detections[1].peakLevel > this.PEAK_THRESHOLD ||
+          detections[2].peakLevel > this.PEAK_THRESHOLD) {
+          this.peakThresholdExceeded = true;
+        }
       }
+
       this.audioResults = detections;
       console.log("audio results after mono and peak warnings added:");
       console.log(this.audioResults);

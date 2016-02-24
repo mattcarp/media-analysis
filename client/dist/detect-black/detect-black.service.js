@@ -1,4 +1,4 @@
-System.register(['angular2/core'], function(exports_1) {
+System.register(["angular2/core"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -24,8 +24,8 @@ System.register(['angular2/core'], function(exports_1) {
                     this.tailBlackResult = new core_1.EventEmitter();
                     this.headBlackTryCount = 0;
                     this.tailBlackTryCount = 0;
-                    this.headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
-                    this.tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+                    this.headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
+                    this.tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
                     this.headProgress = new core_1.EventEmitter();
                     this.tailProgress = new core_1.EventEmitter();
                     // TODO - this is temp - should call a getEndpoint() service
@@ -43,17 +43,20 @@ System.register(['angular2/core'], function(exports_1) {
                     var sliceEnd;
                     var tailSliceStart;
                     var tailSliceEnd;
-                    this.originalExtension = mediaFile.name.split('.').pop();
+                    this.originalExtension = mediaFile.name.split(".").pop();
                     // initial stop condition:
                     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
                         console.log("max retries exceeded for head black detection in file", position);
                         // TODO add alert to DOM
+                        this.headBlackResult.emit(this.currentHeadData);
                         this.headBlackStarted.emit(false);
+                        this.headBlackResult.emit(this.currentHeadData);
                         return;
                     }
                     if (position === "tail" && this.tailBlackTryCount >= this.MAX_TRIES) {
                         console.log("max retries exceeded for tail black detection in file", position);
                         // TODO add alert to DOM
+                        this.headBlackResult.emit(this.currentTailData);
                         this.tailBlackStarted.emit(false);
                         return;
                     }
@@ -79,7 +82,6 @@ System.register(['angular2/core'], function(exports_1) {
                         console.log("slice for head black detect:");
                         console.log(sliceToUse);
                         this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;
-                        ;
                         this.headProgress.emit(this.blackProgressHead);
                         fileToUse = this.headBlackFilename + "." + this.originalExtension;
                     }
@@ -96,6 +98,12 @@ System.register(['angular2/core'], function(exports_1) {
                             var duration = parseFloat(data.blackDetect[0].duration);
                             console.log("this is my black duration, returned from requestBlack:");
                             console.log(duration);
+                            if (position === "head") {
+                                _this.currentHeadData = data;
+                            }
+                            if (position === "tail") {
+                                _this.currentTailData = data;
+                            }
                             // stop condition
                             if (duration >= _this.MIN_BLACK_TIME) {
                                 console.log("the detected black duration of", duration, "is greater or equal to the min black time of", _this.MIN_BLACK_TIME);

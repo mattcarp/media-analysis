@@ -1,4 +1,4 @@
-System.register(['angular2/core', './detect-black.service'], function(exports_1) {
+System.register(["angular2/core", "./detect-black.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -34,8 +34,16 @@ System.register(['angular2/core', './detect-black.service'], function(exports_1)
                     detectBlackService.tailProgress.subscribe(function (value) {
                         _this.tailBlackProgress = value;
                     });
+                    // TODO this never completes on prores
                     detectBlackService.headBlackResult.subscribe(function (value) {
-                        _this.headBlackResult = value;
+                        console.log("hello god its me margaret:");
+                        console.log(value);
+                        // hack for angular "cannot find a differ" error
+                        if (value) {
+                            // let tempArr = [];
+                            // tempArr.push(value.blackDetect);
+                            _this.headBlackResult = value.blackDetect;
+                        }
                     });
                     detectBlackService.tailBlackResult.subscribe(function (value) {
                         _this.tailBlackResult = value;
@@ -43,8 +51,8 @@ System.register(['angular2/core', './detect-black.service'], function(exports_1)
                 }
                 DetectBlackComponent = __decorate([
                     core_1.Component({
-                        selector: 'detect-black',
-                        templateUrl: 'src/detect-black/detect-black.html',
+                        selector: "detect-black",
+                        templateUrl: "src/detect-black/detect-black.html",
                     }), 
                     __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService])
                 ], DetectBlackComponent);

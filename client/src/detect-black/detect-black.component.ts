@@ -1,12 +1,13 @@
-import {Component} from 'angular2/core';
+import {Component} from "angular2/core";
+import {Pipe, PipeTransform} from "angular2/core";
 
-import {DetectBlackService} from './detect-black.service';
+import {DetectBlackService} from "./detect-black.service";
 
 declare var $: any;
 
 @Component({
-  selector: 'detect-black',
-  templateUrl: 'src/detect-black/detect-black.html',
+  selector: "detect-black",
+  templateUrl: "src/detect-black/detect-black.html",
 })
 
 export class DetectBlackComponent {
@@ -31,8 +32,17 @@ export class DetectBlackComponent {
     detectBlackService.tailProgress.subscribe(value => {
       this.tailBlackProgress = value;
     });
+    // TODO this never completes on prores
     detectBlackService.headBlackResult.subscribe(value => {
-      this.headBlackResult = value;
+      console.log("hello god its me margaret:");
+      console.log(value);
+      // hack for angular "cannot find a differ" error
+      if (value) {
+        // let tempArr = [];
+        // tempArr.push(value.blackDetect);
+        this.headBlackResult = value.blackDetect;
+      }
+
     });
     detectBlackService.tailBlackResult.subscribe(value => {
       this.tailBlackResult = value;

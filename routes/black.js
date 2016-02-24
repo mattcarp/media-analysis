@@ -23,13 +23,12 @@ function processBlack(fileToProcess, callback) {
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
 
-
   log.info("from processBlack, calling ffprobe black detection:");
   exec(ffprobeCmd,
     (error, stdout, stderr) => {
       const result = {};
-      log.info("ffprobe STDOUT:\n", stdout);
-      log.info("ffprobe STDERR:\n", stderr);
+      log.info("process black: ffprobe STDOUT:\n", stdout);
+      log.info("proces black: ffprobe STDERR:\n", stderr);
       if (error !== null) {
         log.error({ foo: "bar", err: error }, "some msg about this error");
       }

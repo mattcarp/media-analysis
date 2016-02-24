@@ -17,17 +17,17 @@
       </li>
 
       <li class="nav-item ma-nav__item-indent">
-        <a class="nav-link" data-toggle="tab" href="#premiere-audio" role="tab">
+        <a class="nav-link" data-toggle="tab" href="#format" role="tab">
              Format
           </a>
       </li>
       <li class="nav-item ma-nav__item-indent">
-        <a class="nav-link float-left" data-toggle="tab" href="#premiere-template" role="tab">
+        <a class="nav-link float-left" data-toggle="tab" href="#black" role="tab">
             Black
           </a>
       </li>
       <li class="nav-item ma-nav__item-indent">
-        <a class="nav-link" data-toggle="tab" href="#messages" role="tab">
+        <a class="nav-link" data-toggle="tab" href="#audio" role="tab">
             Audio
           </a>
       </li>
@@ -61,21 +61,24 @@
       </p>
     </div>
 
-    <div class="ma-validations">
+    <div class="ma-validations" id="validations">
       <h2 [hidden]="!metadataResult">Validations</h2>
 
-      <validate-format class="row ma-format__module"></validate-format>
-      <detect-black class="row ma-black__module"></detect-black>
-      <detect-mono class="row ma-mono__module"></detect-mono>
-
+      <validate-format class="row ma-format__module" id="format"></validate-format>
+      <detect-black class="row ma-black__module" id="black"></detect-black>
+      <!-- TODO refactor mono to 'audio signal analysis' -->
+      <detect-mono class="row ma-mono__module" id="audo"></detect-mono>
 
     </div>
     <!-- /.ma-validations -->
 
-    <div class="ma-metadata">
+    <div class="ma-metadata" id="metadata">
       <extract-metadata class="row ma-metadata__module"></extract-metadata>
     </div>
     <!-- /.ma-metadata -->
+
+    <player class="row ma-player" id="player"></player>
+    <upload-file class="row ma-upload" id="upload"></upload-file>
 
   </div>
   <!-- /.ma-panel-center -->

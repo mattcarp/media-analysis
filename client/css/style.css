@@ -142,7 +142,7 @@ pre {
 }
 
 .fa-times-circle {
-  color: red;
+  color: #F08383;
 }
 
 .fa-warning {
@@ -202,4 +202,15 @@ pre {
 .ma-metadata__block{
   margin-top: 20px;
   margin-bottom: 35px;
+}
+
+/* ===== player ===== */
+.ma-player {
+  display: block;
+}
+
+/* ===== upload ===== */
+.ma-upload {
+  display: block;
+  margin-top: 20px;
 }

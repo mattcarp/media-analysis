@@ -152,7 +152,7 @@ router.post("/", (req, res) => {
         log.info("this is where i should call mono detect, because stereo is done");
 
         // TODO we are approaching callback hell
-        monoDetect(demuxResult.wavPath, (detectResult) => {
+        monoDetect(demuxResult.wavPath, () => {
           // callback after monoDetect is done
           log.info("inside the mono callback, this is what i got for the whole enchilada",
             result);

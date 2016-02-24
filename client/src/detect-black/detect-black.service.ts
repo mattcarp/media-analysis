@@ -1,4 +1,4 @@
-import {EventEmitter, Injectable} from 'angular2/core';
+import {EventEmitter, Injectable} from "angular2/core";
 
 declare var $: any;
 
@@ -14,11 +14,13 @@ export class DetectBlackService {
   tailBlackTryCount: number = 0;
   blackProgressHead: number;
   blackProgressTail: number;
-  headBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
-  tailBlackFilename = (Math.random().toString(36) + '00000000000000000').slice(2, 12);
+  headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
+  tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
   originalExtension: string;
   headProgress = new EventEmitter();
   tailProgress = new EventEmitter();
+  currentHeadData: any;
+  currentTailData: any;
   // TODO - this is temp - should call a getEndpoint() service
   endpoint = "http://localhost:3000/";
   MAX_TRIES = 20;
@@ -34,18 +36,21 @@ export class DetectBlackService {
     let tailSliceStart: number;
     let tailSliceEnd: number;
 
-    this.originalExtension = mediaFile.name.split('.').pop();
+    this.originalExtension = mediaFile.name.split(".").pop();
 
     // initial stop condition:
     if (position === "head" && this.headBlackTryCount >= this.MAX_TRIES) {
       console.log("max retries exceeded for head black detection in file", position);
       // TODO add alert to DOM
+      this.headBlackResult.emit(this.currentHeadData);
       this.headBlackStarted.emit(false);
+      this.headBlackResult.emit(this.currentHeadData);
       return;
     }
     if (position === "tail" && this.tailBlackTryCount >= this.MAX_TRIES) {
       console.log("max retries exceeded for tail black detection in file", position);
       // TODO add alert to DOM
+      this.headBlackResult.emit(this.currentTailData);
       this.tailBlackStarted.emit(false);
       return;
     }
@@ -74,7 +79,7 @@ export class DetectBlackService {
       sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
       console.log("slice for head black detect:");
       console.log(sliceToUse);
-      this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;;
+      this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;
       this.headProgress.emit(this.blackProgressHead);
       fileToUse = this.headBlackFilename + "." + this.originalExtension;
     }
@@ -94,6 +99,13 @@ export class DetectBlackService {
         let duration = parseFloat(data.blackDetect[0].duration);
         console.log("this is my black duration, returned from requestBlack:");
         console.log(duration);
+
+        if (position === "head") {
+          this.currentHeadData = data;
+        }
+        if (position === "tail") {
+          this.currentTailData = data;
+        }
 
         // stop condition
         if (duration >= this.MIN_BLACK_TIME) {

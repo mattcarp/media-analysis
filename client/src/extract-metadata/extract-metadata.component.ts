@@ -21,6 +21,7 @@ export class ExtractMetadataComponent {
   streams: Object[][]; // an array of arrays of stream objects
   showMetadata: boolean = false;
 
+
   constructor(extractMetadataService: ExtractMetadataService) {
     this.metadataLoading = false;
     this.metadataStarted = extractMetadataService.metadataStarted;
@@ -92,8 +93,8 @@ export class ExtractMetadataComponent {
   }
 
   toggleMetadata() {
-    console.log("toggle metadata:", this.showMetadata);
     this.showMetadata = !this.showMetadata;
   }
+
 
 } // class
