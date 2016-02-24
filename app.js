@@ -24,7 +24,7 @@ const app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "client"));
 // app.set("view engine", "hbs");
-// app.set("view engine", "html");
+app.set("view engine", "html");
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
@@ -84,6 +84,10 @@ if (app.get("env") === "development") {
 app.use(function (err, req, res, next) {
   console.log("this is my error prod env:");
   console.log(err);
+  console.log("===== the req:");
+  console.log(req);
+  console.log("the response");
+  console.log(res);
   res.status(err.status || 500);
   res.render("error", {
     message: err.message,
