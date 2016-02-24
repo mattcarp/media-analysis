@@ -136,6 +136,7 @@ pre {
 .ma-file__panel {
   display: block;
   border-color: #4F87BB;
+  color: #4F87BB;
   border-style: dashed;
   border-width: 2px;
   margin: auto;

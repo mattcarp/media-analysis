@@ -1,5 +1,10 @@
-<h3 [hidden]="!headBlackResult">Black Detection</h3>
-<h3 [hidden]="!headBlackStarted">Black Detection in Progress</h3>
+<h3 [hidden]="!headBlackStarted">performing black detection...</h3>
+
+<div [hidden]="!headBlackResult">
+  <h3 >Black Detection</h3>
+  <hr>
+</div>
+
 <div class="col-xs-6" [hidden]="!headBlackStarted">
   <h4>file head...</h4>
   <progress class="progress ma-progress" value="{{headBlackProgress}}" max="1">0%</progress>
@@ -9,10 +14,10 @@
   <div *ngFor="#item of headBlackResult">
     <h5>
       <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
-      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video head
+      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in head
         ({{item.duration}} found)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-      <span [hidden]="item.duration < 3">3 seconds or more found in video head</span>
+      <span [hidden]="item.duration < 3">3 seconds or more found in head</span>
     </h5>
   </div>
 </div>
@@ -26,10 +31,10 @@
   <div *ngFor="#item of tailBlackResult">
     <h5>
       <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
-      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in video tail
+      <span [hidden]="item.duration >= 3">less than 3 seconds of black found in tail
             ({{item.duration}} found)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
-      <span [hidden]="item.duration < 3">3 seconds or more found in video tail</span>
+      <span [hidden]="item.duration < 3">3 seconds or more found in tail</span>
     </h5>
   </div>
 </div>

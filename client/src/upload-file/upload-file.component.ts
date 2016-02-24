@@ -37,7 +37,11 @@ export class UploadFileComponent {
       "DescriptiveWindowName",
       "width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0"
     );
-    windowObjectReference.locationbar.visible = false;
+    windowObjectReference.foo = "heeeyyyyy";
+    // windowObjectReference.locationbar.visible = false;
+
+
+
   }
 
   toggleUploadButton() {

@@ -31,7 +31,7 @@ export class ValidateFormatComponent {
 
   validate(metadata: any) {
     // TODO we're guessing on the format of the non-29.97 rates
-    const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "23976/100",
+    const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
       "50/2", "60/2"]
 
     const analysisObj = JSON.parse(metadata.analysis);

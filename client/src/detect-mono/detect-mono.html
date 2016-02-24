@@ -1,9 +1,11 @@
+<br>
 <div [hidden]="!detectingMono">
   <h3>mono detection started on three audio segments...</h3>
 </div>
 
 <div [hidden]="!audioResults" class="ma-audio__analysis">
   <h3>Audio Signal Analysis</h3>
+  <hr>
   <div class="ma-monodetect">
     <div class="col-xs-4" *ngFor="#segment of audioResults; #index = index">
       <!-- <div [hidden]="detectingMono && segment.data">
@@ -45,5 +47,5 @@
     </div>
   </div>
   <!-- /.ma-monodetect -->
-
+<br><br>
 </div>
