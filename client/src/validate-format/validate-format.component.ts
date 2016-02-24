@@ -49,7 +49,7 @@ export class ValidateFormatComponent {
       name: "Bit Depth",
       value: audioStream.bits_per_sample,
       // mp2 has 0 bits per sample, so we use sample_fmt
-      pass: audioStream.bits_per_sample === 16 || audioStream.sample_fmt === "s16p",
+      pass: audioStream.bits_per_sample === 16,
       message: "Audio bit depth must be 16 bits."
     });
 
