@@ -39,8 +39,12 @@ deployment:
 
     ssh upload-demo
     cd media-analysis
-    git pull origin master
+    git fetch --all
+    git reset --hard origin/master
     forever -f npm start
+
+    // or to debug, instead of last line:
+    nodemon DEBUG=media-analysis:* npm start | bunyan
 
 debug forever failing on prod server
     nodemon DEBUG=media-analysis:* npm start
