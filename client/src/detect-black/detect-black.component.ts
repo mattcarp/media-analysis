@@ -32,17 +32,18 @@ export class DetectBlackComponent {
     detectBlackService.tailProgress.subscribe(value => {
       this.tailBlackProgress = value;
     });
-    // TODO this never completes on prores
     detectBlackService.headBlackResult.subscribe(value => {
-      console.log("hello god its me margaret:");
-      console.log(value);
-      // hack for angular "cannot find a differ" error
-      if (value) {
-        // let tempArr = [];
-        // tempArr.push(value.blackDetect);
-        this.headBlackResult = value.blackDetect;
-      }
+      console.log("i am subscribing, and should not be undefined");
+      console.log(typeof value);
 
+      if (value) {
+        if (value.blackDetect) {
+          this.headBlackResult = value.blackDetect;
+        } else {
+          this.headBlackResult = value;
+        }
+        // if (typof )
+      }
     });
     detectBlackService.tailBlackResult.subscribe(value => {
       this.tailBlackResult = value;

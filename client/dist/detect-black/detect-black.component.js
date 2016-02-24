@@ -34,15 +34,16 @@ System.register(["angular2/core", "./detect-black.service"], function(exports_1)
                     detectBlackService.tailProgress.subscribe(function (value) {
                         _this.tailBlackProgress = value;
                     });
-                    // TODO this never completes on prores
                     detectBlackService.headBlackResult.subscribe(function (value) {
-                        console.log("hello god its me margaret:");
-                        console.log(value);
-                        // hack for angular "cannot find a differ" error
+                        console.log("i am subscribing, and should not be undefined");
+                        console.log(typeof value);
                         if (value) {
-                            // let tempArr = [];
-                            // tempArr.push(value.blackDetect);
-                            _this.headBlackResult = value.blackDetect;
+                            if (value.blackDetect) {
+                                _this.headBlackResult = value.blackDetect;
+                            }
+                            else {
+                                _this.headBlackResult = value;
+                            }
                         }
                     });
                     detectBlackService.tailBlackResult.subscribe(function (value) {
