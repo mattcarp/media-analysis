@@ -42,6 +42,10 @@ pre {
   color: #4F87BB;
 }
 
+.ma-panel-center {
+  padding-left: 213px;
+}
+
 /* ===== effects ===== */
 @-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 @-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -101,6 +105,18 @@ pre {
     display: relative;
     overflow-x: hidden;
     margin-right: 50px;*/
+
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /*background-color: #f5f5f5;*/
+    border-right: 1px solid #eee;
 }
 
 .ma-nav__item-indent {
@@ -109,6 +125,10 @@ pre {
 
 .ma-nav__separator {
   height: 15px;
+}
+
+.ma-nav a {
+  color: #48637c;
 }
 
 
