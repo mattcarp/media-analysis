@@ -82,12 +82,13 @@ if (app.get("env") === "development") {
 // production error handler
 // no stacktraces leaked to user
 app.use(function (err, req, res, next) {
-  console.log("this is my error prod env:");
-  console.log(err);
   console.log("===== the req:");
   console.log(req);
   console.log("the response");
   console.log(res);
+  console.log("this is my error prod env:");
+  console.log(err);
+
   res.status(err.status || 500);
   res.render("error", {
     message: err.message,
