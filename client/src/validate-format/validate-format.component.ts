@@ -33,7 +33,7 @@ export class ValidateFormatComponent {
     // TODO calculate framrates as floats
     const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
       "50/2", "60/2"];
-    const ACCEPTED_FILE_FORMATS = ["ProRes", "MPEG-2 video"]
+    const ACCEPTED_FILE_FORMATS = ["prores", "mpeg2video", "h264"]
 
     const analysisObj = JSON.parse(metadata.analysis);
 
@@ -94,7 +94,8 @@ export class ValidateFormatComponent {
       value: videoStream.codec_long_name,
       // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
       // are allowed, with a warning message
-      pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_long_name) > - 1,
+      // match on the short
+      pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_name) > - 1,
       // pass: videoStream.codec_long_name === "ProRes",
       message: "Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD."
     });

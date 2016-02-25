@@ -37,7 +37,7 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     // TODO calculate framrates as floats
                     var ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
                         "50/2", "60/2"];
-                    var ACCEPTED_FILE_FORMATS = ["ProRes", "MPEG-2 video"];
+                    var ACCEPTED_FILE_FORMATS = ["prores", "mpeg2video", "h264"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
                     // TODO possibly use a reduce function on the streams array...
@@ -87,7 +87,8 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                         value: videoStream.codec_long_name,
                         // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
                         // are allowed, with a warning message
-                        pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_long_name) > -1,
+                        // match on the short
+                        pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_name) > -1,
                         // pass: videoStream.codec_long_name === "ProRes",
                         message: "Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD."
                     });
