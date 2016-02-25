@@ -35,8 +35,7 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                 }
                 ValidateFormatComponent.prototype.validate = function (metadata) {
                     // TODO calculate framrates as floats
-                    var ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
-                        "50/2", "60/2"];
+                    var ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
                     var ACCEPTED_FILE_FORMATS = ["prores", "mpeg2video", "h264"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
@@ -114,8 +113,8 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     }
                     this.videoValidations.push({
                         name: "Frame Rate",
-                        value: videoStream.r_frame_rate,
-                        pass: ACCEPTED_FRAME_RATES.indexOf(videoStream.r_frame_rate) > -1,
+                        value: parseFloat(videoStream.r_frame_rate),
+                        pass: ACCEPTED_FRAME_RATES.indexOf(parseFloat(videoStream.r_frame_rate)) > -1,
                         message: "Frame rate must be either 23.976, 24, 25, 29.97, or 30."
                     });
                     this.showResults = true;

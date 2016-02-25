@@ -31,8 +31,7 @@ export class ValidateFormatComponent {
 
   validate(metadata: any) {
     // TODO calculate framrates as floats
-    const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
-      "50/2", "60/2"];
+    const ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
     const ACCEPTED_FILE_FORMATS = ["prores", "mpeg2video", "h264"]
 
     const analysisObj = JSON.parse(metadata.analysis);
@@ -126,8 +125,8 @@ export class ValidateFormatComponent {
 
     this.videoValidations.push({
       name: "Frame Rate",
-      value: videoStream.r_frame_rate,
-      pass: ACCEPTED_FRAME_RATES.indexOf(videoStream.r_frame_rate) > - 1,
+      value: parseFloat(videoStream.r_frame_rate),
+      pass: ACCEPTED_FRAME_RATES.indexOf(parseFloat(videoStream.r_frame_rate)) > - 1,
       message: "Frame rate must be either 23.976, 24, 25, 29.97, or 30."
     });
 
