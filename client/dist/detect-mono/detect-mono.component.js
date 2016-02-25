@@ -1,0 +1,70 @@
+System.register(['angular2/core', './detect-mono.service'], function(exports_1) {
+    var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+        var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+        if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+        else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+        return c > 3 && r && Object.defineProperty(target, key, r), r;
+    };
+    var __metadata = (this && this.__metadata) || function (k, v) {
+        if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+    };
+    var core_1, detect_mono_service_1;
+    var DetectMonoComponent;
+    return {
+        setters:[
+            function (core_1_1) {
+                core_1 = core_1_1;
+            },
+            function (detect_mono_service_1_1) {
+                detect_mono_service_1 = detect_mono_service_1_1;
+            }],
+        execute: function() {
+            DetectMonoComponent = (function () {
+                function DetectMonoComponent(detectMonoService) {
+                    var _this = this;
+                    this.displayMonoDetails = [];
+                    this.PEAK_THRESHOLD = -6;
+                    // this.detectingMono = true;
+                    this.detectStartedEmitter = detectMonoService.detectStartedEmitter; // emitter
+                    this.detectStartedEmitter.subscribe(function (value) {
+                        if (value === true) {
+                            console.log("mono detect has begun");
+                        }
+                        _this.detectingMono = value;
+                    });
+                    this.monoResultsEmitter = detectMonoService.resultsEmitter; // emitter
+                    this.monoResultsEmitter.subscribe(function (detections) {
+                        _this.detectingMono = false;
+                        if (detections[0].isMono && detections[1].isMono && detections[2].isMono) {
+                            _this.shouldWarnMono = true;
+                        }
+                        console.log("the detection array:");
+                        console.log(detections);
+                        if (detections.length > 2) {
+                            if (detections[0].peakLevel > _this.PEAK_THRESHOLD ||
+                                detections[1].peakLevel > _this.PEAK_THRESHOLD ||
+                                detections[2].peakLevel > _this.PEAK_THRESHOLD) {
+                                _this.peakThresholdExceeded = true;
+                            }
+                        }
+                        _this.audioResults = detections;
+                        console.log("audio results after mono and peak warnings added:");
+                        console.log(_this.audioResults);
+                    });
+                } // constructor
+                DetectMonoComponent.prototype.showMonoDetails = function (index) {
+                    this.displayMonoDetails[index] = !this.displayMonoDetails[index];
+                };
+                DetectMonoComponent = __decorate([
+                    core_1.Component({
+                        selector: 'detect-mono',
+                        templateUrl: 'src/detect-mono/detect-mono.html',
+                    }), 
+                    __metadata('design:paramtypes', [detect_mono_service_1.DetectMonoService])
+                ], DetectMonoComponent);
+                return DetectMonoComponent;
+            })();
+            exports_1("DetectMonoComponent", DetectMonoComponent); // class
+        }
+    }
+});

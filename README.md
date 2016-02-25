@@ -41,7 +41,8 @@ deployment:
     ssh upload-demo
     cd media-analysis
     git fetch --all
-    git reset --hard origin/master
+    sudo git reset --hard origin/master
+    NOTE: you have to run `sudo gulp` on media-analysis/client in order to compile ts to js (alternative: don't gitignore the dist folder)
     forever -f npm start
 
     // or to debug, instead of last line:
