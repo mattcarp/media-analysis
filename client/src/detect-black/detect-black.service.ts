@@ -18,6 +18,9 @@ export class DetectBlackService {
   tailBlackTryCount: number = 0;
   blackProgressHead: number;
   blackProgressTail: number;
+  // the duration of the previous iteration, to see if there was an increase
+  headBlackPrevDuration: number;
+  tailBlackPrevDuration: number;
   headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
   originalExtension: string;
@@ -26,7 +29,7 @@ export class DetectBlackService {
   currentTailData: any;
 
   endpoint: string;
-  MAX_TRIES = 20;
+  MAX_TRIES = 10;
   // use a fixed size chunk as bitrates from ffmpeg are unreliable
   BLACK_CHUNK_SIZE = 1000000;
   // minimum time, in seconds, for black at head and tail
@@ -98,7 +101,6 @@ export class DetectBlackService {
       fileToUse = this.tailBlackFilename + "." + this.originalExtension;
     }
 
-
     $.when(this.requestBlack(sliceToUse, position, fileToUse))
       .then((data, textStatus, jqXHR) => {
 
@@ -109,6 +111,10 @@ export class DetectBlackService {
 
         if (position === "head") {
           this.currentHeadData = data;
+          if (this.headBlackPrevDuration && this.headBlackPrevDuration <= duration) {
+            // duration is not increasing, might as well stop
+            console.log("black detection: duration isn't getting longer. TODO - stop here");
+          }
         }
         if (position === "tail") {
           this.currentTailData = data;

@@ -31,7 +31,7 @@ System.register(["angular2/core", "../handle-endpoints/endpoint.service"], funct
                     this.tailBlackTryCount = 0;
                     this.headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
                     this.tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
-                    this.MAX_TRIES = 20;
+                    this.MAX_TRIES = 10;
                     // use a fixed size chunk as bitrates from ffmpeg are unreliable
                     this.BLACK_CHUNK_SIZE = 1000000;
                     // minimum time, in seconds, for black at head and tail
@@ -102,6 +102,10 @@ System.register(["angular2/core", "../handle-endpoints/endpoint.service"], funct
                             console.log(duration);
                             if (position === "head") {
                                 _this.currentHeadData = data;
+                                if (_this.headBlackPrevDuration && _this.headBlackPrevDuration <= duration) {
+                                    // duration is not increasing, might as well stop
+                                    console.log("black detection: duration isn't getting longer. TODO - stop here");
+                                }
                             }
                             if (position === "tail") {
                                 _this.currentTailData = data;
