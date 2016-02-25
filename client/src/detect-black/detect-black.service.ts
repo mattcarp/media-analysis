@@ -1,11 +1,15 @@
 import {EventEmitter, Injectable} from "angular2/core";
 
+import {EndpointService} from "../handle-endpoints/endpoint.service";
+
 declare var $: any;
 
 @Injectable()
 export class DetectBlackService {
   headBlackStarted = new EventEmitter();
   tailBlackStarted = new EventEmitter();
+  headProgress = new EventEmitter();
+  tailProgress = new EventEmitter();
   headBlackResult = new EventEmitter();
   tailBlackResult = new EventEmitter();
   headBlob: any;
@@ -17,17 +21,20 @@ export class DetectBlackService {
   headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
   tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
   originalExtension: string;
-  headProgress = new EventEmitter();
-  tailProgress = new EventEmitter();
+
   currentHeadData: any;
   currentTailData: any;
-  // TODO - this is temp - should call a getEndpoint() service
-  endpoint = "http://localhost:3000/";
+
+  endpoint: string;
   MAX_TRIES = 20;
   // use a fixed size chunk as bitrates from ffmpeg are unreliable
   BLACK_CHUNK_SIZE = 1000000;
   // minimum time, in seconds, for black at head and tail
   MIN_BLACK_TIME = 3;
+
+  constructor(endpointService: EndpointService) {
+    this.endpoint = endpointService.getEndpoint();
+  }
 
   // is called separately for "head" and "tail" (position string)
   recursiveBlackDetect(mediaFile: File, position: string) {
@@ -132,7 +139,7 @@ export class DetectBlackService {
         this.headBlackTryCount++;
       }
       if (position === "tail") {
-        console.log("tailBlackTryCount:", this.tailBlackTryCount)
+        console.log("tailBlackTryCount:", this.tailBlackTryCount);
         this.tailBlackTryCount++;
       }
 
@@ -149,7 +156,7 @@ export class DetectBlackService {
       // don't massage binary to JSON
       processData: false,
       // content type that we are sending
-      contentType: 'application/octet-stream',
+      contentType: "application/octet-stream",
       beforeSend: function(request) {
         request.setRequestHeader("xa-file-to-concat",
           filename);

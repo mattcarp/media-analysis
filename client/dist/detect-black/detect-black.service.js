@@ -1,4 +1,4 @@
-System.register(["angular2/core"], function(exports_1) {
+System.register(["angular2/core", "../handle-endpoints/endpoint.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,33 +8,35 @@ System.register(["angular2/core"], function(exports_1) {
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1;
+    var core_1, endpoint_service_1;
     var DetectBlackService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
+            },
+            function (endpoint_service_1_1) {
+                endpoint_service_1 = endpoint_service_1_1;
             }],
         execute: function() {
             DetectBlackService = (function () {
-                function DetectBlackService() {
+                function DetectBlackService(endpointService) {
                     this.headBlackStarted = new core_1.EventEmitter();
                     this.tailBlackStarted = new core_1.EventEmitter();
+                    this.headProgress = new core_1.EventEmitter();
+                    this.tailProgress = new core_1.EventEmitter();
                     this.headBlackResult = new core_1.EventEmitter();
                     this.tailBlackResult = new core_1.EventEmitter();
                     this.headBlackTryCount = 0;
                     this.tailBlackTryCount = 0;
                     this.headBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
                     this.tailBlackFilename = (Math.random().toString(36) + "00000000000000000").slice(2, 12);
-                    this.headProgress = new core_1.EventEmitter();
-                    this.tailProgress = new core_1.EventEmitter();
-                    // TODO - this is temp - should call a getEndpoint() service
-                    this.endpoint = "http://localhost:3000/";
                     this.MAX_TRIES = 20;
                     // use a fixed size chunk as bitrates from ffmpeg are unreliable
                     this.BLACK_CHUNK_SIZE = 1000000;
                     // minimum time, in seconds, for black at head and tail
                     this.MIN_BLACK_TIME = 3;
+                    this.endpoint = endpointService.getEndpoint();
                 }
                 // is called separately for "head" and "tail" (position string)
                 DetectBlackService.prototype.recursiveBlackDetect = function (mediaFile, position) {
@@ -143,7 +145,7 @@ System.register(["angular2/core"], function(exports_1) {
                         // don't massage binary to JSON
                         processData: false,
                         // content type that we are sending
-                        contentType: 'application/octet-stream',
+                        contentType: "application/octet-stream",
                         beforeSend: function (request) {
                             request.setRequestHeader("xa-file-to-concat", filename);
                             request.setRequestHeader("xa-black-position", position);
@@ -160,7 +162,7 @@ System.register(["angular2/core"], function(exports_1) {
                 }; // requestBlack
                 DetectBlackService = __decorate([
                     core_1.Injectable(), 
-                    __metadata('design:paramtypes', [])
+                    __metadata('design:paramtypes', [endpoint_service_1.EndpointService])
                 ], DetectBlackService);
                 return DetectBlackService;
             })();

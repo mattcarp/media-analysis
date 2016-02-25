@@ -33,8 +33,6 @@ export class HandleFilesComponent {
       </div>
       `
     }).on("addedfile", (file) => {
-      console.log("da file:");
-      console.log(file);
       this.filename = file.name;
       this.fileSize = this.bytesToSize(file.size);
       fileHandlerService.setMediaFile(file);
@@ -42,8 +40,6 @@ export class HandleFilesComponent {
 
       extractMetadataService.metadataResult.subscribe(metadata => {
         const analysisObj = JSON.parse(metadata.analysis);
-        // temporarily avoid black and mono detect on ProRes
-        // if (analysisObj.streams[0].codec_long_name !== "ProRes") {
           detectBlackService.recursiveBlackDetect(file, "head");
           detectBlackService.recursiveBlackDetect(file, "tail");
           // TODO pass bitrate from to detectMono as second param

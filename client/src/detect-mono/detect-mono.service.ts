@@ -1,4 +1,6 @@
-import {EventEmitter, Injectable} from 'angular2/core';
+import {EventEmitter, Injectable} from "angular2/core";
+
+import {EndpointService} from "../handle-endpoints/endpoint.service";
 
 declare var $: any;
 declare var FileReader: any;
@@ -6,8 +8,7 @@ declare var FileReader: any;
 
 @Injectable()
 export class DetectMonoService {
-  // TODO use the endpoint service
-  endpoint: string = "http://localhost:3000/";
+  endpoint: string;
   originalExtension: string;
   audioAnalysis: Object[] = [];
 
@@ -15,10 +16,15 @@ export class DetectMonoService {
   resultsEmitter = new EventEmitter();
   results: Object[] = [];
 
+  constructor(endpointService: EndpointService) {
+    this.endpoint = endpointService.getEndpoint();
+  }
+
   detectMono(mediaFile: File, bitrate?: number) {
     // if bitrate is undefined, assume 25mbps
-    let videoBitrate = bitrate | 25000000;
+    let videoBitrate = bitrate || 25000000;
     // video bitrate is a bit smaller than overall bitrate
+    // TODO adjust chunk size if file is very short
     const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
     console.log("mono chunk size", MONO_CHUNK_SIZE);
 
@@ -26,8 +32,8 @@ export class DetectMonoService {
     const frontSliceStart = Math.floor(length / 3);
     const frontSliceEnd = frontSliceStart + MONO_CHUNK_SIZE;
     const frontSlice = mediaFile.slice(frontSliceStart, frontSliceEnd);
-    // TODO calculate middle slice
-    const midSliceStart = Math.floor(length /2) - (MONO_CHUNK_SIZE / 2);
+
+    const midSliceStart = Math.floor(length / 2) - (MONO_CHUNK_SIZE / 2);
     const midSliceEnd = midSliceStart + MONO_CHUNK_SIZE;
     const midSlice = mediaFile.slice(midSliceStart, midSliceEnd);
 
@@ -45,7 +51,7 @@ export class DetectMonoService {
     this.detectStartedEmitter.emit(false);
     $.when(this.requestMono(frontSlice, "front"))
       .then((data, textStatus, jqXHR) => {
-        console.log("first mono detect call is complete:")
+        console.log("first mono detect call is complete:");
         console.log(data);
       })
       .then(this.requestMono(midSlice, "middle"))
@@ -76,7 +82,7 @@ export class DetectMonoService {
       // don't massage binary to JSON
       processData: false,
       // content type that we are sending
-      contentType: 'application/octet-stream',
+      contentType: "application/octet-stream",
       // add any custom headers
       beforeSend: function(request) {
         request.setRequestHeader("xa-chunk-position",

@@ -1,4 +1,6 @@
-import {EventEmitter, Injectable} from 'angular2/core';
+import {EventEmitter, Injectable} from "angular2/core";
+
+import {EndpointService} from "../handle-endpoints/endpoint.service";
 
 declare var $: any;
 declare var FileReader: any;
@@ -8,20 +10,23 @@ const SLICE_SIZE = 150000;
 @Injectable()
 export class ExtractMetadataService {
   // TODO use the endpoint service
-  endpoint: string = "http://localhost:3000/";
+  endpoint: string;
   originalExtension: string;
   metadataStarted = new EventEmitter();
   metadataResult = new EventEmitter();
 
+  constructor(endpointService: EndpointService) {
+    this.endpoint = endpointService.getEndpoint();
+    console.log("ExtractMetadataService: EndpointService provided this base path:", this.endpoint);
+  }
+
   extract(mediaFile: File) {
     let self = this;
-    // let mediafile = this.fileHandlerService.getMediaFile();
     let reader = new FileReader();
-    // let blob = this.mediaFile.slice(0, SLICE_SIZE);
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
-      if (evt.target.readyState == FileReader.DONE) { // DONE == 2
+      if (evt.target.readyState === FileReader.DONE) { // DONE == 2
         console.log("we should now be emitting metadata started = true");
         this.metadataStarted.emit(true);
         // angular Http doesn't yet support raw binary POSTs
@@ -34,7 +39,7 @@ export class ExtractMetadataService {
           // don't massage binary to JSON
           processData: false,
           // content type that we are sending
-          contentType: 'application/octet-stream',
+          contentType: "application/octet-stream",
           error: function(err) {
             console.log("you have an error on the ajax request:");
             console.log(err);

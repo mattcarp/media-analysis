@@ -1,3 +1,4 @@
+
 start express server, from project root:
 
     nodemon DEBUG=media-analysis:* npm start | bunyan
@@ -49,7 +50,7 @@ deployment:
 NOTE: you may have to run gulp on /client in order to compile to js
 
 debug forever failing on prod server
-    nodemon DEBUG=media-analysis:* npm start
+    nodemon DEBUG=media-analysis:* npm start | bunyan &
 
 
 

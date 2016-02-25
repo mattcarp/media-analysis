@@ -1,24 +1,28 @@
 import {Component} from "angular2/core";
-import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
-import {FileHandlerService} from '../handle-files/handle-files.service';
-// import {PlayerService} from "./player.service";
+import {
+  Router,
+  RouterLink,
+  RouteParams,
+} from "angular2/router";
 
-declare var jwplayer: any;
+import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
+import {FileHandlerService} from "../handle-files/handle-files.service";
 
-// TODOmc inject the player service
 
 @Component({
   selector: "upload-file",
-  templateUrl: "src/upload-file/upload-file.html"
+  templateUrl: "src/upload-file/upload-file.html",
+  directives: [RouterLink]
 })
-
 export class UploadFileComponent {
   showUploadButton: boolean = false;
   enableUpload: boolean = false;
   metadataResult: any;
+  fileHandlerService: any;
 
   constructor(extractMetadataService: ExtractMetadataService,
     fileHandlerService: FileHandlerService) {
+    this.fileHandlerService = fileHandlerService;
     this.metadataResult = extractMetadataService.metadataResult;
     this.metadataResult.subscribe(value => {
       this.showUploadButton = true;
@@ -26,22 +30,25 @@ export class UploadFileComponent {
   }
 
   startUpload() {
-    // alert("this is where we would launch a separate uploader screen");
-    this.openRequestedPopup();
+    let mediaFile = this.fileHandlerService.getMediaFile();
+    this.openRequestedPopup(mediaFile);
   }
 
-  openRequestedPopup() {
+  openRequestedPopup(mediaFile: File) {
     let windowObjectReference;
+    console.log("you passed this");
+    console.log(mediaFile);
     windowObjectReference = window.open(
       "http://blank.org",
       "DescriptiveWindowName",
       "width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0"
     );
+
     windowObjectReference.foo = "heeeyyyyy";
+
+    windowObjectReference.theFile = mediaFile;
+    // let mediaFile = this.fileHandlerService.getMediaFile();
     // windowObjectReference.locationbar.visible = false;
-
-
-
   }
 
   toggleUploadButton() {

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Media Analysis</title>
+    <base href="/">
 
     <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -30,12 +31,15 @@
 <script src="/node_modules/rxjs/bundles/Rx.js"></script>
 <script src="/node_modules/angular2/bundles/http.dev.js"></script>
 <script src="/node_modules/angular2/bundles/angular2.min.js"></script>
+<script src="node_modules/angular2/bundles/router.dev.js"></script>
 <script src="/lib/jquery.min.js"></script>
 <script src="/src/handle-files/dropzone.min.js"></script>
 
 <script>
     //bootstrap the Angular2 application
-    System.import('dist/main').catch(console.log.bind(console));
+    System.import('dist/main').catch(
+      console.log.bind(console)
+    );
 </script>
 
 </html>
