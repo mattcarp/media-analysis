@@ -1,8 +1,17 @@
 const gulp = require("gulp");
+var rev = require('gulp-rev-append');
+
 
 const PATHS = {
   src: "src/**/*.ts"
 };
+
+// cache busting task - TODO put on watch path
+gulp.task("rev", function() {
+  gulp.src("./index.html")
+    .pipe(rev())
+    .pipe(gulp.dest('.'));
+});
 
 gulp.task('clean', function (done) {
   gulp.src('./dist/index.html')

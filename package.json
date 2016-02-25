@@ -27,6 +27,7 @@
   "devDependencies": {
     "eslint-config-airbnb": "^5.0.0",
     "eslint-plugin-react": "^3.16.1",
+    "gulp-rev-append": "^0.1.6",
     "node-inspector": "^0.12.6"
   }
 }
