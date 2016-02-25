@@ -34,9 +34,11 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     });
                 }
                 ValidateFormatComponent.prototype.validate = function (metadata) {
-                    // TODO calculate framrates as floats
                     var ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
-                    var ACCEPTED_FILE_FORMATS = ["prores", "mpeg2video", "h264"];
+                    var ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
+                    // the allowed lossy formats will have a bit depth of 0
+                    var ACCEPTED_BIT_DEPTHS = [0, 16];
+                    var ACCEPTED_AUDIO_CODECS = ["something like lpcm", "aac"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
                     // TODO possibly use a reduce function on the streams array...
@@ -47,8 +49,7 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     this.audioValidations.push({
                         name: "Bit Depth",
                         value: audioStream.bits_per_sample,
-                        // mp2 has 0 bits per sample, so we use sample_fmt
-                        pass: audioStream.bits_per_sample === 16,
+                        pass: ACCEPTED_BIT_DEPTHS.indexOf(audioStream.bits_per_sample) > -1,
                         message: "Audio bit depth must be 16 bits."
                     });
                     this.audioValidations.push({
@@ -72,7 +73,8 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     this.audioValidations.push({
                         name: "Codec",
                         value: audioStream.codec_long_name,
-                        pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
+                        // pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
+                        pass: ACCEPTED_AUDIO_CODECS.indexOf(audioStream.codec_name) > -1,
                         message: "Audio must be uncompressed (PCM)."
                     });
                     // TODO get index of first stream with codec_type === "video",
@@ -80,14 +82,12 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     var videoStream = analysisObj.streams[0];
                     this.isProRes = videoStream.codec_long_name === "ProRes";
                     this.videoFormat = videoStream.codec_name;
-                    // build video validations array
                     this.videoValidations.push({
                         name: "Codec",
-                        value: videoStream.codec_long_name,
+                        value: videoStream.codec_long_name.substring(0, 20),
                         // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
                         // are allowed, with a warning message
-                        // match on the short
-                        pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_name) > -1,
+                        pass: ACCEPTED_VIDEO_CODECS.indexOf(videoStream.codec_name) > -1,
                         // pass: videoStream.codec_long_name === "ProRes",
                         message: "Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD."
                     });
