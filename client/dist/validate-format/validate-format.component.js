@@ -38,7 +38,7 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     var ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
                     // the allowed lossy formats will have a bit depth of 0
                     var ACCEPTED_BIT_DEPTHS = [0, 16];
-                    var ACCEPTED_AUDIO_CODECS = ["something like lpcm", "aac"];
+                    var ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
                     // TODO possibly use a reduce function on the streams array...
@@ -75,7 +75,7 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                         value: audioStream.codec_long_name,
                         // pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
                         pass: ACCEPTED_AUDIO_CODECS.indexOf(audioStream.codec_name) > -1,
-                        message: "Audio must be uncompressed (PCM)."
+                        message: "Audio must be either 16 bit PCM or AAC."
                     });
                     // TODO get index of first stream with codec_type === "video",
                     // rather than hard-coding this as index 0

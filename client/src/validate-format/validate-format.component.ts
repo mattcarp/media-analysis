@@ -34,7 +34,7 @@ export class ValidateFormatComponent {
     const ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
     // the allowed lossy formats will have a bit depth of 0
     const ACCEPTED_BIT_DEPTHS = [0, 16];
-    const ACCEPTED_AUDIO_CODECS = ["something like lpcm", "aac"]
+    const ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac"]
 
     const analysisObj = JSON.parse(metadata.analysis);
 
@@ -80,7 +80,7 @@ export class ValidateFormatComponent {
       value: audioStream.codec_long_name,
       // pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
       pass: ACCEPTED_AUDIO_CODECS.indexOf(audioStream.codec_name) > - 1,
-      message: "Audio must be uncompressed (PCM)."
+      message: "Audio must be either 16 bit PCM or AAC."
     });
 
     // TODO get index of first stream with codec_type === "video",
