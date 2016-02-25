@@ -1,5 +1,5 @@
 const gulp = require("gulp");
-var rev = require('gulp-rev-append');
+const rev = require("gulp-rev-append");
 
 
 const PATHS = {
@@ -8,18 +8,17 @@ const PATHS = {
 
 // cache busting task - TODO put on watch path
 gulp.task("rev", function() {
-  gulp.src("./index.html")
+  gulp.src("index.html")
     .pipe(rev())
     .pipe(gulp.dest('.'));
 });
 
-gulp.task('clean', function (done) {
+gulp.task("clean", function (done) {
   gulp.src('./dist/index.html')
   	.pipe(cachebust({
   		type: 'timestamp'
   	}))
   	.pipe(gulp.dest('./dist'));
-
 });
 
 gulp.task('ts2js', function () {

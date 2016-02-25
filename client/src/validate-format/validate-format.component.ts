@@ -122,11 +122,13 @@ export class ValidateFormatComponent {
       });
     }
 
-
+    let operands = videoStream.r_frame_rate.split("/");
+    let framerate = operands[0] / operands[1];
+    console.log("valide-fomate: computed framerate:", framerate);
     this.videoValidations.push({
       name: "Frame Rate",
-      value: parseFloat(videoStream.r_frame_rate),
-      pass: ACCEPTED_FRAME_RATES.indexOf(parseFloat(videoStream.r_frame_rate)) > - 1,
+      value: framerate,
+      pass: ACCEPTED_FRAME_RATES.indexOf(framerate) > - 1,
       message: "Frame rate must be either 23.976, 24, 25, 29.97, or 30."
     });
 
