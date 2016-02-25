@@ -1,10 +1,20 @@
-var gulp = require('gulp');
+const gulp = require("gulp");
+const cachebust = require("gulp-cache-bust");
 
-var PATHS = {
-    src: 'src/**/*.ts'
+const PATHS = {
+  src: "src/**/*.ts"
 };
 
 gulp.task('clean', function (done) {
+  gulp.src('./dist/index.html')
+  	.pipe(cachebust({
+  		type: 'timestamp'
+  	}))
+  	.pipe(gulp.dest('./dist'));
+
+});
+
+gulp.task('bustcache', function (done) {
     var del = require('del');
     del(['dist'], done);
 });

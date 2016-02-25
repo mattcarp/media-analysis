@@ -1,4 +1,4 @@
-System.register(['angular2/core', '../extract-metadata/extract-metadata.service'], function(exports_1) {
+System.register(["angular2/core", '../extract-metadata/extract-metadata.service'], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -34,9 +34,10 @@ System.register(['angular2/core', '../extract-metadata/extract-metadata.service'
                     });
                 }
                 ValidateFormatComponent.prototype.validate = function (metadata) {
-                    // TODO we're guessing on the format of the non-29.97 rates
+                    // TODO calculate framrates as floats
                     var ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
                         "50/2", "60/2"];
+                    var ACCEPTED_FILE_FORMATS = ["ProRes", "MPEG-2 video"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
                     // TODO possibly use a reduce function on the streams array...
@@ -84,10 +85,11 @@ System.register(['angular2/core', '../extract-metadata/extract-metadata.service'
                     this.videoValidations.push({
                         name: "Codec",
                         value: videoStream.codec_long_name,
-                        // TODO ProRess is a pass, but h.264 and Avid DNX HD are allowed, with
-                        // a warning message
-                        pass: videoStream.codec_long_name === "ProRes",
-                        message: "Video codec should be ProRes."
+                        // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
+                        // are allowed, with a warning message
+                        pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_long_name) > -1,
+                        // pass: videoStream.codec_long_name === "ProRes",
+                        message: "Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD."
                     });
                     this.videoValidations.push({
                         name: "Height",

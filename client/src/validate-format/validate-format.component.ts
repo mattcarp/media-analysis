@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component} from "angular2/core";
 
 import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
 
@@ -30,9 +30,10 @@ export class ValidateFormatComponent {
   }
 
   validate(metadata: any) {
-    // TODO we're guessing on the format of the non-29.97 rates
+    // TODO calculate framrates as floats
     const ACCEPTED_FRAME_RATES = ["2997/100", "48/2", "2997/125",
-      "50/2", "60/2"]
+      "50/2", "60/2"];
+    const ACCEPTED_FILE_FORMATS = ["ProRes", "MPEG-2 video"]
 
     const analysisObj = JSON.parse(metadata.analysis);
 
@@ -91,10 +92,11 @@ export class ValidateFormatComponent {
     this.videoValidations.push({
       name: "Codec",
       value: videoStream.codec_long_name,
-      // TODO ProRess is a pass, but h.264 and Avid DNX HD are allowed, with
-      // a warning message
-      pass: videoStream.codec_long_name === "ProRes",
-      message: "Video codec should be ProRes."
+      // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
+      // are allowed, with a warning message
+      pass: ACCEPTED_FILE_FORMATS.indexOf(videoStream.codec_long_name) > - 1,
+      // pass: videoStream.codec_long_name === "ProRes",
+      message: "Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD."
     });
 
     this.videoValidations.push({

@@ -42,7 +42,6 @@ deployment:
     cd media-analysis
     git fetch --all
     sudo git reset --hard origin/master
-    NOTE: you have to run `sudo gulp` on media-analysis/client in order to compile ts to js (alternative: don't gitignore the dist folder)
     forever -f npm start
 
     // or to debug, instead of last line:
@@ -52,6 +51,17 @@ NOTE: you may have to run gulp on /client in order to compile to js
 
 debug forever failing on prod server
     nodemon DEBUG=media-analysis:* npm start | bunyan &
+
+## nginx
+
+tail logs on aws:
+
+    sudo tail -f 100 /usr/local/nginx/logs or /var/log/nginx/error.log
+
+restarted aws machine? getting 403 access denied?
+
+    sudo setenforce Permissive
+    sudo nginx -s reload
 
 
 

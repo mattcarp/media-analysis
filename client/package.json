@@ -16,6 +16,7 @@
     "eslint-config-airbnb": "^5.0.0",
     "eslint-plugin-react": "^3.16.1",
     "gulp": "^3.9.0",
+    "gulp-cache-bust": "^1.0.2",
     "gulp-typescript": "^2.8.0",
     "open": "0.0.5",
     "serve-static": "^1.10.0"
