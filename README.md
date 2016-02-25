@@ -36,7 +36,8 @@ run it with `gulp`
 demo hosting on aws http://media-analysis.asburyproto.com/
 
 deployment:
-    push to github
+    cache bust!
+    commit and push to github
 
     ssh upload-demo
     cd media-analysis
@@ -49,7 +50,7 @@ deployment:
 
 NOTE: you may have to run gulp on /client in order to compile to js
 
-debug forever failing on prod server
+debug if forever failing on prod server
     nodemon DEBUG=media-analysis:* npm start | bunyan &
 
 ## nginx
