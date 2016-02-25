@@ -1,5 +1,4 @@
 const gulp = require("gulp");
-const cachebust = require("gulp-cache-bust");
 
 const PATHS = {
   src: "src/**/*.ts"
@@ -12,11 +11,6 @@ gulp.task('clean', function (done) {
   	}))
   	.pipe(gulp.dest('./dist'));
 
-});
-
-gulp.task('bustcache', function (done) {
-    var del = require('del');
-    del(['dist'], done);
 });
 
 gulp.task('ts2js', function () {
