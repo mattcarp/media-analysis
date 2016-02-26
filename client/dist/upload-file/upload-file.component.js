@@ -42,7 +42,7 @@ System.register(["angular2/core", "angular2/router", "../extract-metadata/extrac
                 };
                 UploadFileComponent.prototype.openRequestedPopup = function (mediaFile) {
                     var windowObjectReference;
-                    console.log("you passed this");
+                    console.log("open popup: you requested this file:");
                     console.log(mediaFile);
                     windowObjectReference = window.open("http://blank.org", "DescriptiveWindowName", "width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0");
                     windowObjectReference.foo = "heeeyyyyy";

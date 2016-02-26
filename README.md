@@ -1,7 +1,19 @@
 
+### local server
+
 start express server, from project root:
 
     nodemon DEBUG=media-analysis:* npm start | bunyan
+
+### jenkins
+
+To manually start jenkins daemon:
+
+    sudo launchctl load /Library/LaunchDaemons/org.jenkins-ci.plist
+
+To manually stop jenkins daemon: 
+
+    sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist
 
 ### Bash: Open Chrome and ignore CORS errors
 

@@ -36,7 +36,7 @@ export class UploadFileComponent {
 
   openRequestedPopup(mediaFile: File) {
     let windowObjectReference;
-    console.log("you passed this");
+    console.log("open popup: you requested this file:");
     console.log(mediaFile);
     windowObjectReference = window.open(
       "http://blank.org",

@@ -1,25 +1,26 @@
 /* eslint arrow-body-style: [2, "always"] */
-/* eslint no-var: 0 */
+
+"use strict";
 
 const express = require("express");
 const router = new express.Router();
-var bunyan = require("bunyan");
-var log = bunyan.createLogger({ name: "black" });
+const bunyan = require("bunyan");
+const log = bunyan.createLogger({ name: "black" });
 
 const fs = require("fs");
 const prependFile = require("prepend-file");
 const exec = require("child_process").exec;
-var blackObjs = [];
-var blackObj = {};
-var blackString;
-var blackInStdOut;
+let blackObjs = [];
+let blackObj = {};
+let blackString;
+let blackInStdOut;
 
 module.exports = router;
 
 function processBlack(fileToProcess, callback) {
-  var start;
-  var end;
-  var duration;
+  let start;
+  let end;
+  let duration;
   const ffprobeCmd = `ffprobe -f lavfi -i "movie=${fileToProcess},blackdetect[out0]"` +
     ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
 

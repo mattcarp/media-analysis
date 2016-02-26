@@ -34,7 +34,7 @@ export class ValidateFormatComponent {
     const ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
     // the allowed lossy formats will have a bit depth of 0
     const ACCEPTED_BIT_DEPTHS = [0, 16];
-    const ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac"]
+    const ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac", "mp2"]
 
     const analysisObj = JSON.parse(metadata.analysis);
 
