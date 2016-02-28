@@ -1,4 +1,4 @@
-System.register(['angular2/core', './detect-mono.service'], function(exports_1) {
+System.register(["angular2/core", "./detect-mono.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,43 +22,50 @@ System.register(['angular2/core', './detect-mono.service'], function(exports_1) 
             DetectMonoComponent = (function () {
                 function DetectMonoComponent(detectMonoService) {
                     var _this = this;
+                    this.audioResults = [];
                     this.displayMonoDetails = [];
                     this.PEAK_THRESHOLD = -6;
-                    // this.detectingMono = true;
-                    this.detectStartedEmitter = detectMonoService.detectStartedEmitter; // emitter
-                    this.detectStartedEmitter.subscribe(function (value) {
+                    detectMonoService.detectStartedEmitter.subscribe(function (value) {
                         if (value === true) {
                             console.log("mono detect has begun");
                         }
+                        _this.audioResults = [];
                         _this.detectingMono = value;
                     });
-                    this.monoResultsEmitter = detectMonoService.resultsEmitter; // emitter
-                    this.monoResultsEmitter.subscribe(function (detections) {
+                    detectMonoService.resultsEmitter.subscribe(function (detections) {
                         _this.detectingMono = false;
-                        if (detections[0].isMono && detections[1].isMono && detections[2].isMono) {
-                            _this.shouldWarnMono = true;
-                        }
-                        console.log("the detection array:");
+                        console.log("detect mono component constructor: the detection array:");
                         console.log(detections);
-                        if (detections.length > 2) {
-                            if (detections[0].peakLevel > _this.PEAK_THRESHOLD ||
-                                detections[1].peakLevel > _this.PEAK_THRESHOLD ||
-                                detections[2].peakLevel > _this.PEAK_THRESHOLD) {
-                                _this.peakThresholdExceeded = true;
-                            }
-                        }
-                        _this.audioResults = detections;
-                        console.log("audio results after mono and peak warnings added:");
-                        console.log(_this.audioResults);
+                        _this.validate(detections);
                     });
                 } // constructor
+                DetectMonoComponent.prototype.validate = function (detections) {
+                    // clear the state - TODO this doesn't work - use redux pattern
+                    // this.audioResults = [];
+                    console.log("these are my new detections, welcome!", detections);
+                    if (detections.length > 2) {
+                        if (detections.front.peakLevel > this.PEAK_THRESHOLD ||
+                            detections.middle.peakLevel > this.PEAK_THRESHOLD ||
+                            detections.end.peakLevel > this.PEAK_THRESHOLD) {
+                            this.peakThresholdExceeded = true;
+                        }
+                        if (detections.front.isMono && detections.middle.isMono && detections.end.isMono) {
+                            this.shouldWarnMono = true;
+                        }
+                    }
+                    console.log("gonna hand this to the view:", detections);
+                    // convert object to array so we can iterate in the view
+                    var resultArr = Object.keys(detections).map(function (key) { return detections[key]; });
+                    console.log("audio results as an array", resultArr);
+                    this.audioResults = resultArr;
+                };
                 DetectMonoComponent.prototype.showMonoDetails = function (index) {
                     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
                 };
                 DetectMonoComponent = __decorate([
                     core_1.Component({
-                        selector: 'detect-mono',
-                        templateUrl: 'src/detect-mono/detect-mono.html',
+                        selector: "detect-mono",
+                        templateUrl: "src/detect-mono/detect-mono.html",
                     }), 
                     __metadata('design:paramtypes', [detect_mono_service_1.DetectMonoService])
                 ], DetectMonoComponent);

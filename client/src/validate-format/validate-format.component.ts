@@ -1,12 +1,12 @@
 import {Component} from "angular2/core";
 
-import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
+import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
 
 declare var $: any;
 
 @Component({
-  selector: 'validate-format',
-  templateUrl: 'src/validate-format/validate-format.html',
+  selector: "validate-format",
+  templateUrl: "src/validate-format/validate-format.html",
 })
 
 export class ValidateFormatComponent {
@@ -30,11 +30,15 @@ export class ValidateFormatComponent {
   }
 
   validate(metadata: any) {
+    // clear state - TODO use redux pattern
+    this.audioValidations = [];
+    this.videoValidations = [];
+
     const ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
     const ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
     // the allowed lossy formats will have a bit depth of 0
     const ACCEPTED_BIT_DEPTHS = [0, 16];
-    const ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac", "mp2"]
+    const ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac", "mp2"];
 
     const analysisObj = JSON.parse(metadata.analysis);
 

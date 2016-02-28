@@ -9,7 +9,6 @@ const SLICE_SIZE = 150000;
 
 @Injectable()
 export class ExtractMetadataService {
-  // TODO use the endpoint service
   endpoint: string;
   originalExtension: string;
   metadataStarted = new EventEmitter();

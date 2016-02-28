@@ -24,6 +24,8 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
                     var _this = this;
                     this.showFormat = false;
                     this.showMetadata = false;
+                    // clear state - TODO use a redux store for this
+                    this.metadataResult = null;
                     this.metadataLoading = false;
                     this.metadataStarted = extractMetadataService.metadataStarted;
                     this.metadataStarted.subscribe(function (value) {

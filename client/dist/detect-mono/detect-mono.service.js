@@ -1,4 +1,4 @@
-System.register(["angular2/core", "../handle-endpoints/endpoint.service"], function(exports_1) {
+System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPromise", "../handle-endpoints/endpoint.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,27 +8,32 @@ System.register(["angular2/core", "../handle-endpoints/endpoint.service"], funct
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, endpoint_service_1;
+    var core_1, Observable_1, endpoint_service_1;
     var DetectMonoService;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
+            function (Observable_1_1) {
+                Observable_1 = Observable_1_1;
+            },
+            function (_1) {},
             function (endpoint_service_1_1) {
                 endpoint_service_1 = endpoint_service_1_1;
             }],
         execute: function() {
             DetectMonoService = (function () {
                 function DetectMonoService(endpointService) {
-                    this.audioAnalysis = [];
+                    this.signalAnalysis = [];
                     this.detectStartedEmitter = new core_1.EventEmitter();
                     this.resultsEmitter = new core_1.EventEmitter();
-                    this.results = [];
                     this.endpoint = endpointService.getEndpoint();
                 }
                 DetectMonoService.prototype.detectMono = function (mediaFile, bitrate) {
                     var _this = this;
+                    var result = {};
+                    // this.results = [];
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate || 25000000;
                     // video bitrate is a bit smaller than overall bitrate
@@ -50,33 +55,33 @@ System.register(["angular2/core", "../handle-endpoints/endpoint.service"], funct
                     console.log("mono middle slice starts at", midSliceStart);
                     console.log("mono middle slice ends at", midSliceEnd);
                     console.log("which is based on the video bitrate of", videoBitrate);
-                    this.detectStartedEmitter.emit(false);
-                    $.when(this.requestMono(frontSlice, "front"))
-                        .then(function (data, textStatus, jqXHR) {
-                        console.log("first mono detect call is complete:");
-                        console.log(data);
-                    })
-                        .then(this.requestMono(midSlice, "middle"))
-                        .then(function (data, textStatus, jqXHR) {
-                        console.log("second (middle) mono detect call should be done:");
-                        console.log(data);
-                    })
-                        .then(this.requestMono(endSlice, "end"))
-                        .then(function (data, textStatus, jqXHR) {
-                        console.log("final mono detect call should be done:");
-                        console.log(data);
-                    })
-                        .then(function (finalResults) {
-                        console.log("final mono detect call should be done:");
-                        console.log(finalResults);
+                    // todo use observables wrapping the jquery ajax call
+                    var observeFront = Observable_1.Observable.fromPromise(this.requestMono(frontSlice, "front"));
+                    observeFront.subscribe(function (response) {
+                        result["front"] = response;
+                        console.log("here's my result object after adding from:", result);
+                        _this.resultsEmitter.emit(result);
+                    });
+                    var observeMiddle = Observable_1.Observable.fromPromise(this.requestMono(midSlice, "middle"));
+                    observeMiddle.subscribe(function (response) {
+                        result["middle"] = response;
+                        console.log("here's my result object so after adding middle:", result);
+                        _this.resultsEmitter.emit(result);
+                    });
+                    var observeEnd = Observable_1.Observable.fromPromise(this.requestMono(endSlice, "end"));
+                    observeEnd.subscribe(function (response) {
+                        result["end"] = response;
+                        console.log("here's my result object so after adding end:", result);
+                        // TODO we should execute serially to ensure that by the time we're at the end,
+                        // all other segments are done
                         _this.detectStartedEmitter.emit(false);
-                        _this.resultsEmitter.emit(_this.audioAnalysis);
+                        _this.resultsEmitter.emit(result);
                     });
                 };
                 DetectMonoService.prototype.requestMono = function (slice, chunkPosition) {
                     var _this = this;
                     this.detectStartedEmitter.emit(true);
-                    var self = this;
+                    // this.signalAnalysis = [];
                     var promise = $.ajax({
                         type: "POST",
                         url: this.endpoint + "mono",
@@ -94,9 +99,9 @@ System.register(["angular2/core", "../handle-endpoints/endpoint.service"], funct
                             console.log(err);
                         },
                         success: function (data) {
-                            _this.audioAnalysis.push(data);
-                            console.log("audio analysis array:");
-                            console.dir(_this.audioAnalysis);
+                            console.log("requestMono success function-data:", data);
+                            _this.signalAnalysis.push(data);
+                            console.log("requestMono: signal analysis length:", _this.signalAnalysis.length);
                         }
                     });
                     return promise;

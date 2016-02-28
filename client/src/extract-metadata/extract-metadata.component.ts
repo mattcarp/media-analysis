@@ -23,6 +23,9 @@ export class ExtractMetadataComponent {
 
 
   constructor(extractMetadataService: ExtractMetadataService) {
+    // clear state - TODO use a redux store for this
+    this.metadataResult = null;
+
     this.metadataLoading = false;
     this.metadataStarted = extractMetadataService.metadataStarted;
     this.metadataStarted.subscribe(value => {

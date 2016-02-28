@@ -31,7 +31,7 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
             HandleFilesComponent = (function () {
                 function HandleFilesComponent(eltRef, fileHandlerService, extractMetadataService, detectBlackService, detectMonoService) {
                     var _this = this;
-                    var myDropzone = new Dropzone(eltRef.nativeElement, {
+                    new Dropzone(eltRef.nativeElement, {
                         url: "/file/post",
                         previewTemplate: "\n      <div class=\"dz-preview dz-file-preview ma-file__dz--hidden\">\n        <div class=\"dz-details\">\n          <div class=\"dz-filename\"><h5>file name: <span data-dz-name></span></h5></div>\n          <h5>size: <span data-dz-size></span></h5>\n        </div>\n      </div>\n      "
                     }).on("addedfile", function (file) {
@@ -40,20 +40,24 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
                         fileHandlerService.setMediaFile(file);
                         extractMetadataService.extract(file);
                         extractMetadataService.metadataResult.subscribe(function (metadata) {
-                            var analysisObj = JSON.parse(metadata.analysis);
-                            detectBlackService.recursiveBlackDetect(file, "head");
-                            detectBlackService.recursiveBlackDetect(file, "tail");
-                            // TODO pass bitrate from to detectMono as second param
+                            // const analysisObj = JSON.parse(metadata.analysis);
+                            // TODO only if video, detect black and detect mono
+                            // detectBlackService.recursiveBlackDetect(file, "head");
+                            // detectBlackService.recursiveBlackDetect(file, "tail");
+                            // attempt to clear previous state - TODO not working
+                            // detectMonoService.results = [];
+                            // detectMonoService.signalAnalysis = [];
+                            // TODO pass bitrate from analysisObj to detectMono as second param
                             detectMonoService.detectMono(file);
                         });
                     });
-                }
+                } // constructor
                 HandleFilesComponent.prototype.bytesToSize = function (bytes) {
-                    var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-                    if (bytes == 0)
-                        return '0 Byte';
+                    var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+                    if (bytes === 0)
+                        return "0 Byte";
                     var i = Math.floor(Math.log(bytes) / Math.log(1024));
-                    return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+                    return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
                 };
                 ;
                 HandleFilesComponent = __decorate([

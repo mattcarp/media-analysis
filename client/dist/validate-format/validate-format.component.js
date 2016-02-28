@@ -1,4 +1,4 @@
-System.register(["angular2/core", '../extract-metadata/extract-metadata.service'], function(exports_1) {
+System.register(["angular2/core", "../extract-metadata/extract-metadata.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -34,6 +34,9 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     });
                 }
                 ValidateFormatComponent.prototype.validate = function (metadata) {
+                    // clear state - TODO use redux pattern
+                    this.audioValidations = [];
+                    this.videoValidations = [];
                     var ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
                     var ACCEPTED_VIDEO_CODECS = ["prores", "mpeg2video", "h264"];
                     // the allowed lossy formats will have a bit depth of 0
@@ -124,8 +127,8 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                 };
                 ValidateFormatComponent = __decorate([
                     core_1.Component({
-                        selector: 'validate-format',
-                        templateUrl: 'src/validate-format/validate-format.html',
+                        selector: "validate-format",
+                        templateUrl: "src/validate-format/validate-format.html",
                     }), 
                     __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
                 ], ValidateFormatComponent);

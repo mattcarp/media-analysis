@@ -1,9 +1,8 @@
 import {Component} from "angular2/core";
-import {Pipe, PipeTransform} from "angular2/core";
+// import {Pipe, PipeTransform} from "angular2/core";
 
 import {DetectBlackService} from "./detect-black.service";
 
-declare var $: any;
 
 @Component({
   selector: "detect-black",

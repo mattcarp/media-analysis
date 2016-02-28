@@ -22,7 +22,7 @@ export class HandleFilesComponent {
     detectBlackService: DetectBlackService,
     detectMonoService: DetectMonoService) {
 
-    let myDropzone = new Dropzone(eltRef.nativeElement, {
+    new Dropzone(eltRef.nativeElement, {
       url: "/file/post",
       previewTemplate: `
       <div class="dz-preview dz-file-preview ma-file__dz--hidden">
@@ -39,20 +39,24 @@ export class HandleFilesComponent {
       extractMetadataService.extract(file);
 
       extractMetadataService.metadataResult.subscribe(metadata => {
-        const analysisObj = JSON.parse(metadata.analysis);
-          detectBlackService.recursiveBlackDetect(file, "head");
-          detectBlackService.recursiveBlackDetect(file, "tail");
-          // TODO pass bitrate from to detectMono as second param
-          detectMonoService.detectMono(file);
+        // const analysisObj = JSON.parse(metadata.analysis);
+        // TODO only if video, detect black and detect mono
+          // detectBlackService.recursiveBlackDetect(file, "head");
+          // detectBlackService.recursiveBlackDetect(file, "tail");
 
+          // attempt to clear previous state - TODO not working
+          // detectMonoService.results = [];
+          // detectMonoService.signalAnalysis = [];
+          // TODO pass bitrate from analysisObj to detectMono as second param
+          detectMonoService.detectMono(file);
       });
     });
-  }
+  } // constructor
 
   bytesToSize(bytes: number) {
-   let sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-   if (bytes == 0) return '0 Byte';
+   let sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+   if (bytes === 0) return "0 Byte";
    let i = Math.floor(Math.log(bytes) / Math.log(1024));
-   return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+   return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
  };
 } // class
