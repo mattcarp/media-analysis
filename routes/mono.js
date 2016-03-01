@@ -1,5 +1,5 @@
-/* eslint no-var: 0 */
 /* eslint arrow-body-style: [2, "always"]*/
+"use strict";
 
 const express = require("express");
 const router = new express.Router();
@@ -79,9 +79,8 @@ function monoDetect(wavFile, callback) {
 }
 
 function stereoPeakDetect(wavFile, callback) {
-  var stereoResult = {};
-  var soxCmd = `sox ${wavFile} -n stats`;
-  const PEAK_THRESHOLD = -6;
+  let stereoResult = {};
+  const soxCmd = `sox ${wavFile} -n stats`;
 
   exec(soxCmd, (error, stdout, stderr) => {
     log.info("STDOUT:", stdout);

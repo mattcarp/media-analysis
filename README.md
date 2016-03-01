@@ -11,7 +11,7 @@ To manually start jenkins daemon:
 
     sudo launchctl load /Library/LaunchDaemons/org.jenkins-ci.plist
 
-To manually stop jenkins daemon: 
+To manually stop jenkins daemon:
 
     sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist
 
@@ -123,3 +123,8 @@ and concat the header onto a binary slice
 then you stick stick header onto the end of the file
 
     cat file1 file2 file3 file4 file5 file6 > out.txt
+
+### ProRes
+  Each ProRes 422 frame begins with a pattern of 8 bytes:
+  aabbccdd 69637066 ....icpf
+  where aabbccdd encodes the length of the frame (length includes those 8 header bytes).

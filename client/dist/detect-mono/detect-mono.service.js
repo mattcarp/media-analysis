@@ -1,4 +1,4 @@
-System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPromise", "../handle-endpoints/endpoint.service"], function(exports_1) {
+System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPromise", "rxjs/add/observable/forkJoin", "../handle-endpoints/endpoint.service"], function(exports_1) {
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19,6 +19,7 @@ System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPr
                 Observable_1 = Observable_1_1;
             },
             function (_1) {},
+            function (_2) {},
             function (endpoint_service_1_1) {
                 endpoint_service_1 = endpoint_service_1_1;
             }],
@@ -32,7 +33,7 @@ System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPr
                 }
                 DetectMonoService.prototype.detectMono = function (mediaFile, bitrate) {
                     var _this = this;
-                    var result = {};
+                    var result = [];
                     // this.results = [];
                     // if bitrate is undefined, assume 25mbps
                     var videoBitrate = bitrate || 25000000;
@@ -55,27 +56,43 @@ System.register(["angular2/core", "rxjs/Observable", "rxjs/add/observable/fromPr
                     console.log("mono middle slice starts at", midSliceStart);
                     console.log("mono middle slice ends at", midSliceEnd);
                     console.log("which is based on the video bitrate of", videoBitrate);
-                    // todo use observables wrapping the jquery ajax call
                     var observeFront = Observable_1.Observable.fromPromise(this.requestMono(frontSlice, "front"));
-                    observeFront.subscribe(function (response) {
-                        result["front"] = response;
-                        console.log("here's my result object after adding from:", result);
-                        _this.resultsEmitter.emit(result);
-                    });
                     var observeMiddle = Observable_1.Observable.fromPromise(this.requestMono(midSlice, "middle"));
-                    observeMiddle.subscribe(function (response) {
-                        result["middle"] = response;
-                        console.log("here's my result object so after adding middle:", result);
-                        _this.resultsEmitter.emit(result);
-                    });
                     var observeEnd = Observable_1.Observable.fromPromise(this.requestMono(endSlice, "end"));
+                    // let observeForkJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
+                    // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, "front"));
+                    // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, "middle"));
+                    // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, "end"));
+                    var observeJoined = Observable_1.Observable.forkJoin(observeFront, observeMiddle, observeEnd);
+                    observeJoined.subscribe(function (data) {
+                        console.log("huggy 2:");
+                        console.log(data); // => [frontOb, middleObj, endObj]
+                        _this.resultsEmitter.emit(data);
+                    });
+                    // Observable.forkJoin([observeFront, observeMiddle, observeEnd]).subscribe(data => {
+                    //   console.log("fork joined", data);
+                    // });
+                    // observeForkJoined.subscribe((data) => {
+                    //   console.log("huggy bear");
+                    //   this.resultsEmitter.emit(data);
+                    //   console.log(data); });
+                    // ;
+                    observeFront.subscribe(function (response) {
+                        result[0] = response;
+                        console.log("front response:", response);
+                    });
+                    observeMiddle.subscribe(function (response) {
+                        result[1] = response;
+                        console.log("middle response:", response);
+                        // this.resultsEmitter.emit(result);
+                    });
                     observeEnd.subscribe(function (response) {
-                        result["end"] = response;
-                        console.log("here's my result object so after adding end:", result);
+                        result[2] = response;
+                        console.log("end response:", response);
                         // TODO we should execute serially to ensure that by the time we're at the end,
                         // all other segments are done
                         _this.detectStartedEmitter.emit(false);
-                        _this.resultsEmitter.emit(result);
+                        // this.resultsEmitter.emit(result);
                     });
                 };
                 DetectMonoService.prototype.requestMono = function (slice, chunkPosition) {

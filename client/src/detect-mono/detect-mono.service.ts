@@ -1,6 +1,7 @@
 import {EventEmitter, Injectable} from "angular2/core";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/observable/fromPromise";
+import "rxjs/add/observable/forkJoin";
 
 
 import {EndpointService} from "../handle-endpoints/endpoint.service";
@@ -24,7 +25,7 @@ export class DetectMonoService {
   }
 
   detectMono(mediaFile: File, bitrate?: number) {
-    let result: Object = {};
+    let result: Object[] = [];
     // this.results = [];
     // if bitrate is undefined, assume 25mbps
     let videoBitrate = bitrate || 25000000;
@@ -53,27 +54,52 @@ export class DetectMonoService {
     console.log("mono middle slice ends at", midSliceEnd);
     console.log("which is based on the video bitrate of", videoBitrate);
 
-    // todo use observables wrapping the jquery ajax call
     let observeFront = Observable.fromPromise(this.requestMono(frontSlice, "front"));
-    observeFront.subscribe(response => {
-      result["front"] = response;
-      console.log("here's my result object after adding from:", result);
-      this.resultsEmitter.emit(result);
-    });
     let observeMiddle = Observable.fromPromise(this.requestMono(midSlice, "middle"));
-    observeMiddle.subscribe(response => {
-      result["middle"] = response;
-      console.log("here's my result object so after adding middle:", result);
-      this.resultsEmitter.emit(result);
-    });
     let observeEnd = Observable.fromPromise(this.requestMono(endSlice, "end"));
+    // let observeForkJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
+
+
+    // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, "front"));
+    // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, "middle"));
+    // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, "end"));
+
+    let observeJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
+
+    observeJoined.subscribe(data => {
+      console.log("huggy 2:")
+      console.log(data); // => [frontOb, middleObj, endObj]
+      this.resultsEmitter.emit(data)
+    });
+
+
+    // Observable.forkJoin([observeFront, observeMiddle, observeEnd]).subscribe(data => {
+    //   console.log("fork joined", data);
+    // });
+    // observeForkJoined.subscribe((data) => {
+    //   console.log("huggy bear");
+    //   this.resultsEmitter.emit(data);
+    //   console.log(data); });
+    // ;
+
+    observeFront.subscribe(response => {
+      result[0] = response;
+      console.log("front response:", response);
+    });
+
+    observeMiddle.subscribe(response => {
+      result[1] = response;
+      console.log("middle response:", response);
+      // this.resultsEmitter.emit(result);
+    });
+
     observeEnd.subscribe(response => {
-      result["end"] = response;
-      console.log("here's my result object so after adding end:", result);
+      result[2] = response;
+      console.log("end response:", response);
       // TODO we should execute serially to ensure that by the time we're at the end,
       // all other segments are done
       this.detectStartedEmitter.emit(false);
-      this.resultsEmitter.emit(result);
+      // this.resultsEmitter.emit(result);
     });
   }
 

@@ -42,22 +42,21 @@ System.register(["angular2/core", "./detect-mono.service"], function(exports_1) 
                 DetectMonoComponent.prototype.validate = function (detections) {
                     // clear the state - TODO this doesn't work - use redux pattern
                     // this.audioResults = [];
-                    console.log("these are my new detections, welcome!", detections);
                     if (detections.length > 2) {
-                        if (detections.front.peakLevel > this.PEAK_THRESHOLD ||
-                            detections.middle.peakLevel > this.PEAK_THRESHOLD ||
-                            detections.end.peakLevel > this.PEAK_THRESHOLD) {
+                        if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
+                            detections[1].peakLevel > this.PEAK_THRESHOLD ||
+                            detections[2].peakLevel > this.PEAK_THRESHOLD) {
                             this.peakThresholdExceeded = true;
                         }
-                        if (detections.front.isMono && detections.middle.isMono && detections.end.isMono) {
+                        if (detections[0].isMono && detections[1].isMono && detections[2].isMono) {
                             this.shouldWarnMono = true;
                         }
                     }
                     console.log("gonna hand this to the view:", detections);
                     // convert object to array so we can iterate in the view
-                    var resultArr = Object.keys(detections).map(function (key) { return detections[key]; });
-                    console.log("audio results as an array", resultArr);
-                    this.audioResults = resultArr;
+                    // let resultArr = Object.keys(detections).map(key => detections[key]);
+                    console.log("audio results as an array", detections);
+                    this.audioResults = detections;
                 };
                 DetectMonoComponent.prototype.showMonoDetails = function (index) {
                     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
