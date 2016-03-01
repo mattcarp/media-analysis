@@ -1,5 +1,7 @@
 ///<reference path="../node_modules/angular2/typings/browser.d.ts"/>
-System.register(["angular2/core", "angular2/platform/browser", "angular2/router", "./handle-files/handle-files.component", "./detect-black/detect-black.component", "./extract-metadata/extract-metadata.component", "./detect-mono/detect-mono.component", "./validate-format/validate-format.component", "./player/player.component", "./upload-file/upload-file.component", "./detect-black/detect-black.service", "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service", "./detect-mono/detect-mono.service", "./handle-endpoints/endpoint.service"], function(exports_1) {
+System.register(["angular2/core", "angular2/platform/browser", "angular2/router", "./handle-files/handle-files.component", "./detect-black/detect-black.component", "./extract-metadata/extract-metadata.component", "./detect-mono/detect-mono.component", "./validate-format/validate-format.component", "./player/player.component", "./upload-file/upload-file.component", "./detect-black/detect-black.service", "./handle-files/handle-files.service", "./extract-metadata/extract-metadata.service", "./detect-mono/detect-mono.service", "./handle-endpoints/endpoint.service"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -82,7 +84,7 @@ System.register(["angular2/core", "angular2/platform/browser", "angular2/router"
                     __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
                 ], AnalysisApp);
                 return AnalysisApp;
-            })();
+            }());
             exports_1("AnalysisApp", AnalysisApp);
             browser_1.bootstrap(AnalysisApp, [router_1.ROUTER_PROVIDERS]);
         }

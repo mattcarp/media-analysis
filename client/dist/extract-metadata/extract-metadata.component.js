@@ -1,4 +1,6 @@
-System.register(['angular2/core', './extract-metadata.service'], function(exports_1) {
+System.register(['angular2/core', './extract-metadata.service'], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -60,13 +62,13 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
                         }
                     }
                     if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-                        var collectedStreams = [];
+                        var collectedStreams_1 = [];
                         var inputStreams = analysisObj.streams;
                         inputStreams.forEach(function (currentStream) {
                             console.log("i am a stream");
-                            collectedStreams.push(_this.processObject(currentStream));
+                            collectedStreams_1.push(_this.processObject(currentStream));
                         });
-                        this.streams = collectedStreams;
+                        this.streams = collectedStreams_1;
                         // show the panel
                         this.metadata = true;
                     }
@@ -101,7 +103,7 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
                     __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
                 ], ExtractMetadataComponent);
                 return ExtractMetadataComponent;
-            })();
+            }());
             exports_1("ExtractMetadataComponent", ExtractMetadataComponent); // class
         }
     }

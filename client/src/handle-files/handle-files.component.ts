@@ -41,8 +41,8 @@ export class HandleFilesComponent {
       extractMetadataService.metadataResult.subscribe(metadata => {
         // const analysisObj = JSON.parse(metadata.analysis);
         // TODO only if video, detect black and detect mono
-          // detectBlackService.recursiveBlackDetect(file, "head");
-          // detectBlackService.recursiveBlackDetect(file, "tail");
+          detectBlackService.recursiveBlackDetect(file, "head");
+          detectBlackService.recursiveBlackDetect(file, "tail");
 
           // attempt to clear previous state - TODO not working
           // detectMonoService.results = [];

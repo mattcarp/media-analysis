@@ -44,12 +44,13 @@ export class ValidateFormatComponent {
 
 
     // build audio validations array
-    // TODO possibly use a reduce function on the streams array...
-    // if   "codec_type": "audio", etc
-
-    // TODO get index number of stream with codec_type === "audio",
-    // rather than hard-codiing
-    const audioStream = analysisObj.streams[1];
+    let streams: any = analysisObj.streams;
+    // TODO use the functional equivalent of this for loop
+    let audioStream: any;
+    for (let i =0; i < streams.length; i++) {
+      if (streams[i].codec_type === "audio") { audioStream = streams[i]; }
+    }
+    console.log("hey what's the audio stream?", audioStream);
 
     this.audioValidations.push({
       name: "Bit Depth",
@@ -89,7 +90,12 @@ export class ValidateFormatComponent {
 
     // TODO get index of first stream with codec_type === "video",
     // rather than hard-coding this as index 0
-    const videoStream = analysisObj.streams[0];
+    // const videoStream = analysisObj.streams[0];
+    let videoStream: any;
+    for (let i =0; i < streams.length; i++) {
+      if (streams[i].codec_type === "video") { videoStream = streams[i]; }
+    }
+    console.log("hey what's the video stream?", videoStream);
     this.isProRes = videoStream.codec_long_name === "ProRes";
     this.videoFormat = videoStream.codec_name;
 

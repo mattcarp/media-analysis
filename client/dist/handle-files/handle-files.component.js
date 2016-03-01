@@ -1,4 +1,6 @@
-System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../detect-mono/detect-mono.service"], function(exports_1) {
+System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../detect-mono/detect-mono.service"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -42,8 +44,8 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
                         extractMetadataService.metadataResult.subscribe(function (metadata) {
                             // const analysisObj = JSON.parse(metadata.analysis);
                             // TODO only if video, detect black and detect mono
-                            // detectBlackService.recursiveBlackDetect(file, "head");
-                            // detectBlackService.recursiveBlackDetect(file, "tail");
+                            detectBlackService.recursiveBlackDetect(file, "head");
+                            detectBlackService.recursiveBlackDetect(file, "tail");
                             // attempt to clear previous state - TODO not working
                             // detectMonoService.results = [];
                             // detectMonoService.signalAnalysis = [];
@@ -68,7 +70,7 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
                     __metadata('design:paramtypes', [core_1.ElementRef, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService, detect_black_service_1.DetectBlackService, detect_mono_service_1.DetectMonoService])
                 ], HandleFilesComponent);
                 return HandleFilesComponent;
-            })();
+            }());
             exports_1("HandleFilesComponent", HandleFilesComponent); // class
         }
     }

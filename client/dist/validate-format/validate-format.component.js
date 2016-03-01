@@ -1,4 +1,6 @@
-System.register(["angular2/core", "../extract-metadata/extract-metadata.service"], function(exports_1) {
+System.register(["angular2/core", "../extract-metadata/extract-metadata.service"], function(exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -44,11 +46,15 @@ System.register(["angular2/core", "../extract-metadata/extract-metadata.service"
                     var ACCEPTED_AUDIO_CODECS = ["pcm_s16be", "aac", "mp2"];
                     var analysisObj = JSON.parse(metadata.analysis);
                     // build audio validations array
-                    // TODO possibly use a reduce function on the streams array...
-                    // if   "codec_type": "audio", etc
-                    // TODO get index number of stream with codec_type === "audio",
-                    // rather than hard-codiing
-                    var audioStream = analysisObj.streams[1];
+                    var streams = analysisObj.streams;
+                    // TODO use the functional equivalent of this for loop
+                    var audioStream;
+                    for (var i = 0; i < streams.length; i++) {
+                        if (streams[i].codec_type === "audio") {
+                            audioStream = streams[i];
+                        }
+                    }
+                    console.log("hey what's the audio stream?", audioStream);
                     this.audioValidations.push({
                         name: "Bit Depth",
                         value: audioStream.bits_per_sample,
@@ -82,7 +88,14 @@ System.register(["angular2/core", "../extract-metadata/extract-metadata.service"
                     });
                     // TODO get index of first stream with codec_type === "video",
                     // rather than hard-coding this as index 0
-                    var videoStream = analysisObj.streams[0];
+                    // const videoStream = analysisObj.streams[0];
+                    var videoStream;
+                    for (var i = 0; i < streams.length; i++) {
+                        if (streams[i].codec_type === "video") {
+                            videoStream = streams[i];
+                        }
+                    }
+                    console.log("hey what's the video stream?", videoStream);
                     this.isProRes = videoStream.codec_long_name === "ProRes";
                     this.videoFormat = videoStream.codec_name;
                     this.videoValidations.push({
@@ -133,7 +146,7 @@ System.register(["angular2/core", "../extract-metadata/extract-metadata.service"
                     __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
                 ], ValidateFormatComponent);
                 return ValidateFormatComponent;
-            })();
+            }());
             exports_1("ValidateFormatComponent", ValidateFormatComponent);
         }
     }
