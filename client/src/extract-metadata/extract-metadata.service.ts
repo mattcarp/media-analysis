@@ -50,13 +50,12 @@ export class ExtractMetadataService {
             this.metadataStarted.emit(false);
             this.metadataResult.emit(data);
 
-
             // TODO in main.processVideo, subscribe to the result event, then fire:
             let analysisObj = JSON.parse(data.analysis);
             let videoBitrate = analysisObj.streams[0].bit_rate;
             let type = analysisObj.streams[0].codec_type;
             if (type === "video") {
-              console.log("we got a video, hoss, now we gotta fire processVideo()");
+              console.log("TODO we got a video, now we should fire processVideo()");
               // this.processVideo(this.mediaFile, analysisObj);
             }
           }

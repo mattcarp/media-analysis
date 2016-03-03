@@ -15,7 +15,7 @@
     <h5>
       <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
       <span [hidden]="item.duration >= 3">less than 3 seconds of black found in head
-        ({{item.duration}} found)</span>
+        ({{item.duration | number:'1.1-4'}} seconds found)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
       <span [hidden]="item.duration < 3">3 seconds or more found in head</span>
     </h5>
@@ -32,7 +32,7 @@
     <h5>
       <i [hidden]="item.duration >= 3" class="fa fa-times-circle"></i>
       <span [hidden]="item.duration >= 3">less than 3 seconds of black found in tail
-            ({{item.duration}} found)</span>
+            ({{item.duration | number:'1.1-4'}} seconds found)</span>
       <i [hidden]="item.duration < 3" class="fa fa-check-circle"></i>
       <span [hidden]="item.duration < 3">3 seconds or more found in tail</span>
     </h5>

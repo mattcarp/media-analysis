@@ -13,7 +13,7 @@ router.post("/", function (req, res, next) {
   bufferStream.end(req.body);
 
   console.log("content type:");
-  console.log(req.headers['content-type']);
+  console.log(req.headers["content-type"]);
 
   console.log("req.body and length:");
   console.log(req.body);
@@ -30,6 +30,7 @@ router.post("/", function (req, res, next) {
 
     console.log("call ffprobe with exec:");
     child = exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
+
       function (error, stdout, stderr) {
         var result = {}
         console.log("STDOUT: ", stdout);

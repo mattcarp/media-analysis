@@ -120,7 +120,7 @@ and concat the header onto a binary slice
 
     head -c 2000000 input_file.mov > prores_first_2_megs.mov
 
-then you stick stick header onto the end of the file
+then you stick header onto the end of the file
 
     cat file1 file2 file3 file4 file5 file6 > out.txt
 
