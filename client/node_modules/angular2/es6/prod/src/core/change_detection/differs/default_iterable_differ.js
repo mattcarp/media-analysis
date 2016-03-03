@@ -301,6 +301,9 @@ export class DefaultIterableDiffer {
         if (this._removalsTail !== null) {
             this._removalsTail._nextRemoved = null;
         }
+        if (this._identityChangesTail !== null) {
+            this._identityChangesTail._nextIdentityChange = null;
+        }
     }
     /** @internal */
     _reinsertAfter(record, prevRecord, index) {
