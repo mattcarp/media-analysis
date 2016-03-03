@@ -9,7 +9,8 @@
     "moduleResolution": "node",
     "removeComments": false,
     "noImplicitAny": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "../dist"
   },
   "exclude": [
     "node_modules"

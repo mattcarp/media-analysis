@@ -16,6 +16,7 @@ import {UploadFileComponent} from "./upload-file/upload-file.component";
 import {DetectBlackService} from "./detect-black/detect-black.service";
 import {FileHandlerService} from "./handle-files/handle-files.service";
 import {ExtractMetadataService} from "./extract-metadata/extract-metadata.service";
+import {QuicktimeService} from "./shared/services/quicktime.service";
 import {DetectMonoService} from "./detect-mono/detect-mono.service";
 import {EndpointService} from "./handle-endpoints/endpoint.service";
 
@@ -28,7 +29,7 @@ import {EndpointService} from "./handle-endpoints/endpoint.service";
     ROUTER_DIRECTIVES
   ],
   providers: [DetectBlackService, FileHandlerService,
-    ExtractMetadataService, DetectMonoService, EndpointService]
+    ExtractMetadataService, DetectMonoService, EndpointService, QuicktimeService]
 })
 @RouteConfig([
   // { path: "/", name: "root", redirectTo: ["Home"] },
