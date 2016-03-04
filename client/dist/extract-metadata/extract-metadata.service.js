@@ -45,10 +45,18 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                             // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
                             // TODOmc if moov extension is not found,
                             if (_this.originalExtension === 'mov') {
+                                // TODO if moov not in head, check tail
                                 console.log('this is a mov file, so we should call the qt service');
                                 // console.log('evt result is:');
                                 // console.dir(evt.target.result);
-                                _this.qtService.getMoovStats(evt.target.result);
+                                var headerBuf = evt.target.result;
+                                var moovStats = _this.qtService.getMoovStats(headerBuf);
+                                var moov = _this.qtService.getMoov(moovStats.moovStart, moovStats.moovLength, headerBuf);
+                                console.log('getMoov gave me this DataView:');
+                                console.dir(moov);
+                                var moovMetadata = _this.qtService.parseMoov(moov);
+                                console.log('moov metatadata:');
+                                console.log(moovMetadata);
                             }
                             // angular Http doesn't yet support raw binary POSTs
                             // see line 62 at

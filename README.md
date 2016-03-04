@@ -15,10 +15,6 @@ To manually stop jenkins daemon:
 
     sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist
 
-### Bash: Open Chrome and ignore CORS errors
-
-    open -a Google\ Chrome --args --disable-web-security
-
 start ui server from media-analysis/client
 
     gulp

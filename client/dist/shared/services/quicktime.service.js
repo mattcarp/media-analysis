@@ -26,7 +26,6 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                     var result = {};
                     var chunkView = new jDataView(buf);
                     var chunkString = chunkView.getString(chunkView.length, 0);
-                    // 4 bytes preceding 'moov' indicate the moov length
                     var moovIndex = chunkString.indexOf('moov');
                     if (moovIndex < 0) {
                         result.moovExists = false;
@@ -36,16 +35,36 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                     else {
                         result.moovExists = true;
                     }
+                    // 4 bytes preceding 'moov' indicate the moov length
                     var moovLocation = chunkString.indexOf('moov') - 4;
                     chunkView.seek(moovLocation);
                     var moovLength = chunkView.getUint32();
-                    console.log('start of moov including length:', moovLocation);
-                    console.log('length of moov:', moovLength);
                     result.moovStart = moovLocation;
                     result.moovLength = moovLength;
-                    console.log('getMoovStats result object:');
-                    console.dir(result);
                     return result;
+                };
+                QuicktimeService.prototype.getMoov = function (moovStart, moovLength, buf) {
+                    var moovBuf = buf.slice(moovStart, moovStart + moovLength);
+                    // console.log('the moov buf:');
+                    // console.dir(moovBuf);
+                    // let moovView: DataView = new DataView(moovBuf);
+                    // console.log('and, the moovView:');
+                    // console.dir(moovView);
+                    return moovBuf;
+                };
+                // TODO the returned object should match format of ffmpeg json
+                QuicktimeService.prototype.parseMoov = function (moovBuf) {
+                    var movRaw = new jDataView(moovBuf);
+                    var movString = movRaw.getString(movRaw.length, 0);
+                    // known moov subatoms: cmov, dcom, cmvd
+                    var cmovPos = movString.indexOf('cmov');
+                    var dcomPos = movString.indexOf('dcom');
+                    var dmvdPos = movString.indexOf('cmvd');
+                    console.log('positions, everyone:', cmovPos, dcomPos, dmvdPos);
+                    console.log('this shold be a string containing only the moov data:');
+                    console.log(movString);
+                    // known moov subatoms: cmov, dcom, cmvd
+                    return { bubbaGump: 'shrimp co' };
                 };
                 QuicktimeService = __decorate([
                     core_1.Injectable(), 

@@ -16,7 +16,6 @@ export class QuicktimeService {
     let result: any = {};
     let chunkView = new jDataView(buf);
     let chunkString = chunkView.getString(chunkView.length, 0);
-    // 4 bytes preceding 'moov' indicate the moov length
     let moovIndex = chunkString.indexOf('moov');
     if (moovIndex < 0) {
       result.moovExists = false;
@@ -25,20 +24,38 @@ export class QuicktimeService {
     } else {
       result.moovExists = true;
     }
+    // 4 bytes preceding 'moov' indicate the moov length
     let moovLocation: number = chunkString.indexOf('moov') - 4;
     chunkView.seek(moovLocation);
     let moovLength: number = chunkView.getUint32();
-    console.log('start of moov including length:', moovLocation);
-    console.log('length of moov:', moovLength);
-
     result.moovStart = moovLocation;
     result.moovLength = moovLength;
-    console.log('getMoovStats result object:');
-    console.dir(result);
     return result;
   }
 
-  // getMoov(moovStart: number, moovLength: number) {
-  //
-  // }
+  getMoov(moovStart: number, moovLength: number, buf: ArrayBuffer): ArrayBuffer {
+    let moovBuf = buf.slice(moovStart, moovStart + moovLength);
+    // console.log('the moov buf:');
+    // console.dir(moovBuf);
+    // let moovView: DataView = new DataView(moovBuf);
+    // console.log('and, the moovView:');
+    // console.dir(moovView);
+    return moovBuf;
+  }
+
+  // TODO the returned object should match format of ffmpeg json
+  parseMoov(moovBuf: ArrayBuffer): Object {
+    let movRaw = new jDataView(moovBuf);
+    let movString = movRaw.getString(movRaw.length, 0);
+    // known moov subatoms: cmov, dcom, cmvd
+    let cmovPos = movString.indexOf('cmov');
+    let dcomPos = movString.indexOf('dcom');
+    let dmvdPos = movString.indexOf('cmvd');
+    console.log('positions, everyone:', cmovPos, dcomPos, dmvdPos);
+
+    console.log('this shold be a string containing only the moov data:');
+    console.log(movString);
+    // known moov subatoms: cmov, dcom, cmvd
+    return {bubbaGump: 'shrimp co'};
+  }
 }

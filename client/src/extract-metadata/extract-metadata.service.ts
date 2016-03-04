@@ -35,10 +35,19 @@ export class ExtractMetadataService {
         // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
         // TODOmc if moov extension is not found,
         if (this.originalExtension === 'mov') {
+          // TODO if moov not in head, check tail
           console.log('this is a mov file, so we should call the qt service');
           // console.log('evt result is:');
           // console.dir(evt.target.result);
-          this.qtService.getMoovStats(evt.target.result);
+          let headerBuf: ArrayBuffer = evt.target.result;
+          let moovStats: any = this.qtService.getMoovStats(headerBuf);
+          let moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
+            moovStats.moovLength, headerBuf);
+          console.log('getMoov gave me this DataView:');
+          console.dir(moov);
+          let moovMetadata = this.qtService.parseMoov(moov);
+          console.log('moov metatadata:');
+          console.log(moovMetadata);
         }
         // angular Http doesn't yet support raw binary POSTs
         // see line 62 at
