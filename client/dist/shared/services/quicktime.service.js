@@ -21,14 +21,30 @@ System.register(['angular2/core'], function(exports_1, context_1) {
             QuicktimeService = (function () {
                 function QuicktimeService() {
                 }
-                // constructor() {}
                 // given a small binary chunk, returns stats on the moov atom, if found
-                QuicktimeService.prototype.getMoovStats = function (buffer) {
+                QuicktimeService.prototype.getMoovStats = function (buf) {
                     var result = {};
-                    var int32View = new Int32Array(buffer);
-                    // new jDataView(buffer, 0, 150000, littleEndian = false);
-                    var view = new jDataView(int32View);
-                    console.log('from the qt service, you got this for the blob:', view);
+                    var chunkView = new jDataView(buf);
+                    var chunkString = chunkView.getString(chunkView.length, 0);
+                    // 4 bytes preceding 'moov' indicate the moov length
+                    var moovIndex = chunkString.indexOf('moov');
+                    if (moovIndex < 0) {
+                        result.moovExists = false;
+                        // short circuit
+                        return result;
+                    }
+                    else {
+                        result.moovExists = true;
+                    }
+                    var moovLocation = chunkString.indexOf('moov') - 4;
+                    chunkView.seek(moovLocation);
+                    var moovLength = chunkView.getUint32();
+                    console.log('start of moov including length:', moovLocation);
+                    console.log('length of moov:', moovLength);
+                    result.moovStart = moovLocation;
+                    result.moovLength = moovLength;
+                    console.log('getMoovStats result object:');
+                    console.dir(result);
                     return result;
                 };
                 QuicktimeService = __decorate([

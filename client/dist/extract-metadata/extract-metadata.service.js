@@ -46,7 +46,9 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                             // TODOmc if moov extension is not found,
                             if (_this.originalExtension === 'mov') {
                                 console.log('this is a mov file, so we should call the qt service');
-                                _this.qtService.getMoovStats(blob);
+                                // console.log('evt result is:');
+                                // console.dir(evt.target.result);
+                                _this.qtService.getMoovStats(evt.target.result);
                             }
                             // angular Http doesn't yet support raw binary POSTs
                             // see line 62 at
@@ -54,7 +56,8 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                             $.ajax({
                                 type: 'POST',
                                 url: _this.endpoint + 'analysis',
-                                data: blob,
+                                // TODOmc isn't this.blob just an empty slice?
+                                data: _this.blob,
                                 // don't massage binary to JSON
                                 processData: false,
                                 // content type that we are sending
@@ -83,8 +86,8 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                     // this.mediaFile = file;
                     this.originalExtension = mediaFile.name.split('.').pop();
                     console.log('original file extension:', this.originalExtension);
-                    var blob = mediaFile.slice(0, SLICE_SIZE);
-                    reader.readAsArrayBuffer(blob);
+                    this.blob = mediaFile.slice(0, SLICE_SIZE);
+                    reader.readAsArrayBuffer(this.blob);
                 };
                 ExtractMetadataService = __decorate([
                     core_1.Injectable(), 

@@ -10,7 +10,7 @@ const SLICE_SIZE = 150000;
 
 @Injectable()
 export class ExtractMetadataService {
-  blob: ArrayBuffer;
+  blob: Blob;
   endpoint: string;
   originalExtension: string;
   qtService;
@@ -36,7 +36,9 @@ export class ExtractMetadataService {
         // TODOmc if moov extension is not found,
         if (this.originalExtension === 'mov') {
           console.log('this is a mov file, so we should call the qt service');
-          this.qtService.getMoovStats(blob);
+          // console.log('evt result is:');
+          // console.dir(evt.target.result);
+          this.qtService.getMoovStats(evt.target.result);
         }
         // angular Http doesn't yet support raw binary POSTs
         // see line 62 at
@@ -44,7 +46,8 @@ export class ExtractMetadataService {
         $.ajax({
           type: 'POST',
           url: this.endpoint + 'analysis',
-          data: blob,
+          // TODOmc isn't this.blob just an empty slice?
+          data: this.blob,
           // don't massage binary to JSON
           processData: false,
           // content type that we are sending
@@ -76,7 +79,7 @@ export class ExtractMetadataService {
     // this.mediaFile = file;
     this.originalExtension = mediaFile.name.split('.').pop();
     console.log('original file extension:', this.originalExtension);
-    let blob = mediaFile.slice(0, SLICE_SIZE);
-    reader.readAsArrayBuffer(blob);
+    this.blob = mediaFile.slice(0, SLICE_SIZE);
+    reader.readAsArrayBuffer(this.blob);
   }
 }
