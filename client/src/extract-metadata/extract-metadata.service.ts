@@ -29,25 +29,23 @@ export class ExtractMetadataService {
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
       if (evt.target.readyState === FileReader.DONE) { // DONE == 2
-        console.log('we should now be emitting metadata started = true');
         this.metadataStarted.emit(true);
 
         // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
-        // TODOmc if moov extension is not found,
         if (this.originalExtension === 'mov') {
           // TODO if moov not in head, check tail
           console.log('this is a mov file, so we should call the qt service');
-          // console.log('evt result is:');
-          // console.dir(evt.target.result);
           let headerBuf: ArrayBuffer = evt.target.result;
           let moovStats: any = this.qtService.getMoovStats(headerBuf);
-          let moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
-            moovStats.moovLength, headerBuf);
-          console.log('getMoov gave me this DataView:');
-          console.dir(moov);
-          let moovMetadata = this.qtService.parseMoov(moov);
-          console.log('moov metatadata:');
-          console.log(moovMetadata);
+          if (moovStats.moovExists === true) {
+            this.handleMov(moovStats, headerBuf);
+          } else {
+            console.log('don\'t send this to the backend, because we got no moov atom');
+            console.log('this is a mov file, but the moov atom wasn\'t found in the header' +
+              '. I really should look in the tail of the file now');
+            return;
+          }
+
         }
         // angular Http doesn't yet support raw binary POSTs
         // see line 62 at
@@ -90,5 +88,16 @@ export class ExtractMetadataService {
     console.log('original file extension:', this.originalExtension);
     this.blob = mediaFile.slice(0, SLICE_SIZE);
     reader.readAsArrayBuffer(this.blob);
+  }
+
+  // called if file extension is mov, check for moov atom in head, then tail
+  handleMov(moovStats: any, movBuf: ArrayBuffer) {
+    let moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
+    moovStats.moovLength, movBuf);
+    console.log('handleMov gave me this DataView:');
+    console.dir(moov);
+    let moovMetadata = this.qtService.parseMoov(moov);
+    console.log('moov metatadata:');
+    console.log(moovMetadata);
   }
 }

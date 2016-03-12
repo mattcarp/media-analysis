@@ -35,11 +35,6 @@ export class QuicktimeService {
 
   getMoov(moovStart: number, moovLength: number, buf: ArrayBuffer): ArrayBuffer {
     let moovBuf = buf.slice(moovStart, moovStart + moovLength);
-    // console.log('the moov buf:');
-    // console.dir(moovBuf);
-    // let moovView: DataView = new DataView(moovBuf);
-    // console.log('and, the moovView:');
-    // console.dir(moovView);
     return moovBuf;
   }
 
@@ -47,7 +42,8 @@ export class QuicktimeService {
   parseMoov(moovBuf: ArrayBuffer): Object {
     let movRaw = new jDataView(moovBuf);
     let movString = movRaw.getString(movRaw.length, 0);
-    // known moov subatoms: cmov, dcom, cmvd
+    // known moov subatoms: cmov (compressed movie),
+    // dcom (data compression algorithm), cmvd (compressed movide data)
     let cmovPos = movString.indexOf('cmov');
     let dcomPos = movString.indexOf('dcom');
     let dmvdPos = movString.indexOf('cmvd');
@@ -55,7 +51,7 @@ export class QuicktimeService {
 
     console.log('this shold be a string containing only the moov data:');
     console.log(movString);
-    // known moov subatoms: cmov, dcom, cmvd
+
     return {bubbaGump: 'shrimp co'};
   }
 }

@@ -45,25 +45,20 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 };
                 QuicktimeService.prototype.getMoov = function (moovStart, moovLength, buf) {
                     var moovBuf = buf.slice(moovStart, moovStart + moovLength);
-                    // console.log('the moov buf:');
-                    // console.dir(moovBuf);
-                    // let moovView: DataView = new DataView(moovBuf);
-                    // console.log('and, the moovView:');
-                    // console.dir(moovView);
                     return moovBuf;
                 };
                 // TODO the returned object should match format of ffmpeg json
                 QuicktimeService.prototype.parseMoov = function (moovBuf) {
                     var movRaw = new jDataView(moovBuf);
                     var movString = movRaw.getString(movRaw.length, 0);
-                    // known moov subatoms: cmov, dcom, cmvd
+                    // known moov subatoms: cmov (compressed movie),
+                    // dcom (data compression algorithm), cmvd (compressed movide data)
                     var cmovPos = movString.indexOf('cmov');
                     var dcomPos = movString.indexOf('dcom');
                     var dmvdPos = movString.indexOf('cmvd');
                     console.log('positions, everyone:', cmovPos, dcomPos, dmvdPos);
                     console.log('this shold be a string containing only the moov data:');
                     console.log(movString);
-                    // known moov subatoms: cmov, dcom, cmvd
                     return { bubbaGump: 'shrimp co' };
                 };
                 QuicktimeService = __decorate([
