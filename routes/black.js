@@ -1,5 +1,4 @@
 /* eslint arrow-body-style: [2, "always"] */
-
 'use strict';
 
 const express = require('express');
@@ -44,7 +43,6 @@ router.post('/', (req, res) => {
   }
 
   if (position === 'tail') {
-    // var processedBytes;
     prependFile(fileToConcat, req.body, 'binary', err => {
       if (err) {
         log.error('error while prepending', err);

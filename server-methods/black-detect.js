@@ -61,7 +61,7 @@ module.exports = {
           start = analysisArr[0].substring(analysisArr[0].lastIndexOf('start=') + 6);
           log.info('black detection found in stdout. start:\n', start);
           end = analysisArr[1].substring(analysisArr[1].lastIndexOf('end=') + 4);
-          log.info('back in stout. end:\n', end);
+          log.info(';back in stout. end:\n', end);
           duration = parseFloat(end) - parseFloat(start);
           blackObj.tempFile = fileToProcess;
           blackObj.start = start;

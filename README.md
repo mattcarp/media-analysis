@@ -124,3 +124,12 @@ then you stick header onto the end of the file
   Each ProRes 422 frame begins with a pattern of 8 bytes:
   aabbccdd 69637066 ....icpf
   where aabbccdd encodes the length of the frame (length includes those 8 header bytes).
+
+## Testing
+Use jasmine-node. Run server-side tests from project root:
+
+    jasmine-node . --
+
+Or to watch the whole project for changes:
+
+    jasmine-node spec --autotest --color --verbose --watch .
