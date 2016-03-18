@@ -7,14 +7,14 @@ const bunyan = require('bunyan');
 const log = bunyan.createLogger({ name: 'black-route' });
 const fs = require('fs');
 const prependFile = require('prepend-file');
-const exec = require('child_process').exec;
+// const exec = require('child_process').exec;
 
 const blackDetect = require('../server-methods/black-detect');
 
-const blackObj = {};
-let blackObjs = [];
-let blackString;
-let blackInStdOut;
+// const blackObj = {};
+// let blackObjs = [];
+// let blackString;
+// let blackInStdOut;
 
 module.exports = router;
 

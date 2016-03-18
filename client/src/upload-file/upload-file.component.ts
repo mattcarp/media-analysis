@@ -1,17 +1,17 @@
-import {Component} from "angular2/core";
+import {Component} from 'angular2/core';
 import {
   Router,
   RouterLink,
   RouteParams,
-} from "angular2/router";
+} from 'angular2/router';
 
-import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
-import {FileHandlerService} from "../handle-files/handle-files.service";
+import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
+import {FileHandlerService} from '../handle-files/handle-files.service';
 
 
 @Component({
-  selector: "upload-file",
-  templateUrl: "src/upload-file/upload-file.html",
+  selector: 'upload-file',
+  templateUrl: 'src/upload-file/upload-file.html',
   directives: [RouterLink]
 })
 export class UploadFileComponent {
@@ -20,7 +20,7 @@ export class UploadFileComponent {
   metadataResult: any;
   fileHandlerService: any;
 
-  constructor(extractMetadataService: ExtractMetadataService,
+  constructor(private _router: Router, extractMetadataService: ExtractMetadataService,
     fileHandlerService: FileHandlerService) {
     this.fileHandlerService = fileHandlerService;
     this.metadataResult = extractMetadataService.metadataResult;
@@ -35,20 +35,25 @@ export class UploadFileComponent {
   }
 
   openRequestedPopup(mediaFile: File) {
+    console.log('open popup: you requested this file:');
     let windowObjectReference;
-    console.log("open popup: you requested this file:");
     console.log(mediaFile);
     windowObjectReference = window.open(
-      "http://blank.org",
-      "DescriptiveWindowName",
-      "width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0"
+      'http://blank.org',
+      'DescriptiveWindowName',
+      'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0'
     );
+    // windowObjectReference = window.open(
+    //   this._router.navigate(['']),
+    //   'DescriptiveWindowName',
+    //   'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0'
+    // );
 
-    windowObjectReference.foo = "heeeyyyyy";
+    windowObjectReference.foo = 'heeeyyyyy';
 
     windowObjectReference.theFile = mediaFile;
     // let mediaFile = this.fileHandlerService.getMediaFile();
-    // windowObjectReference.locationbar.visible = false;
+    windowObjectReference.locationbar.visible = false;
   }
 
   toggleUploadButton() {

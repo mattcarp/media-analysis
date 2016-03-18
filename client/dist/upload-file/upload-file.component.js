@@ -1,4 +1,4 @@
-System.register(["angular2/core", "angular2/router", "../extract-metadata/extract-metadata.service", "../handle-files/handle-files.service"], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/router', '../extract-metadata/extract-metadata.service', '../handle-files/handle-files.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -28,8 +28,9 @@ System.register(["angular2/core", "angular2/router", "../extract-metadata/extrac
             }],
         execute: function() {
             UploadFileComponent = (function () {
-                function UploadFileComponent(extractMetadataService, fileHandlerService) {
+                function UploadFileComponent(_router, extractMetadataService, fileHandlerService) {
                     var _this = this;
+                    this._router = _router;
                     this.showUploadButton = false;
                     this.enableUpload = false;
                     this.fileHandlerService = fileHandlerService;
@@ -43,25 +44,30 @@ System.register(["angular2/core", "angular2/router", "../extract-metadata/extrac
                     this.openRequestedPopup(mediaFile);
                 };
                 UploadFileComponent.prototype.openRequestedPopup = function (mediaFile) {
+                    console.log('open popup: you requested this file:');
                     var windowObjectReference;
-                    console.log("open popup: you requested this file:");
                     console.log(mediaFile);
-                    windowObjectReference = window.open("http://blank.org", "DescriptiveWindowName", "width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0");
-                    windowObjectReference.foo = "heeeyyyyy";
+                    windowObjectReference = window.open('http://blank.org', 'DescriptiveWindowName', 'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0');
+                    // windowObjectReference = window.open(
+                    //   this._router.navigate(['']),
+                    //   'DescriptiveWindowName',
+                    //   'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0'
+                    // );
+                    windowObjectReference.foo = 'heeeyyyyy';
                     windowObjectReference.theFile = mediaFile;
                     // let mediaFile = this.fileHandlerService.getMediaFile();
-                    // windowObjectReference.locationbar.visible = false;
+                    windowObjectReference.locationbar.visible = false;
                 };
                 UploadFileComponent.prototype.toggleUploadButton = function () {
                     this.enableUpload = !this.enableUpload;
                 };
                 UploadFileComponent = __decorate([
                     core_1.Component({
-                        selector: "upload-file",
-                        templateUrl: "src/upload-file/upload-file.html",
+                        selector: 'upload-file',
+                        templateUrl: 'src/upload-file/upload-file.html',
                         directives: [router_1.RouterLink]
                     }), 
-                    __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService, handle_files_service_1.FileHandlerService])
+                    __metadata('design:paramtypes', [router_1.Router, extract_metadata_service_1.ExtractMetadataService, handle_files_service_1.FileHandlerService])
                 ], UploadFileComponent);
                 return UploadFileComponent;
             }());

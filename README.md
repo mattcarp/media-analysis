@@ -51,7 +51,11 @@ deployment:
     cd media-analysis
     git fetch --all
     sudo git reset --hard origin/master
-    forever -f npm start
+    forever -f start ./bin/www
+
+list the forver processes and get log file
+
+    forever list
 
     // or to debug, instead of last line:
     nodemon DEBUG=media-analysis:* npm start | bunyan
@@ -65,7 +69,7 @@ debug if forever failing on prod server
 
 tail logs on aws:
 
-    sudo tail -f 100 /usr/local/nginx/logs or /var/log/nginx/error.log
+    sudo tail -f sudo tail -f /var/log/nginx/error.log
 
 restarted aws machine? getting 403 access denied?
 
@@ -73,8 +77,7 @@ restarted aws machine? getting 403 access denied?
     sudo nginx -s reload
 
 
-
-## ffmpeg
+## ffmpeg tail -f /var/log/nginx/error.log
 
 ### black detection
 this will give you black_duration, but you'll have more text to filter out:
@@ -132,4 +135,4 @@ Use jasmine-node. Run server-side tests from project root:
 
 Or to watch the whole project for changes:
 
-    jasmine-node spec --autotest --color --verbose --watch .
+    jasmine-node spec --autotest --color --verbose --watch . | bunyan
