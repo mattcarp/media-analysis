@@ -1,11 +1,11 @@
-import {Component} from "angular2/core";
+import {Component} from 'angular2/core';
 
-import {DetectMonoService} from "./detect-mono.service";
+import {DetectMonoService} from './detect-mono.service';
 
 
 @Component({
-  selector: "detect-mono",
-  templateUrl: "src/detect-mono/detect-mono.html",
+  selector: 'detect-mono',
+  templateUrl: 'src/detect-mono/detect-mono.html',
 })
 
 export class DetectMonoComponent {
@@ -14,30 +14,28 @@ export class DetectMonoComponent {
   displayMonoDetails: boolean[] = [];
   shouldWarnMono: boolean;
   peakThresholdExceeded: boolean;
+  detections: Object[];
   PEAK_THRESHOLD = -6;
 
 
   constructor(detectMonoService: DetectMonoService) {
     detectMonoService.detectStartedEmitter.subscribe(value => {
-      if (value === true) { console.log("mono detect has begun"); }
+      if (value === true) { console.log('mono detect has begun'); }
       this.audioResults = [];
       this.detectingMono = value;
     });
 
     detectMonoService.resultsEmitter.subscribe(detections => {
       this.detectingMono = false;
-      console.log("detect mono component constructor: the detection array:");
+      console.log('mono detection complete: the detection array:');
       console.log(detections);
+      this.detections = detections;
       this.validate(detections);
     });
 
   } // constructor
 
   validate(detections: any) {
-    // clear the state - TODO this doesn't work - use redux pattern
-    // this.audioResults = [];
-
-
     if (detections.length > 2) {
       if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
         detections[1].peakLevel > this.PEAK_THRESHOLD ||
@@ -50,12 +48,9 @@ export class DetectMonoComponent {
       }
     }
 
-    console.log("gonna hand this to the view:", detections);
-    // convert object to array so we can iterate in the view
-    // let resultArr = Object.keys(detections).map(key => detections[key]);
-    console.log("audio results as an array", detections);
+    console.log('gonna hand this to the view:', detections);
+    // TODOmc results are intermittently ommitted from the view
     this.audioResults = detections;
-
   }
 
   showMonoDetails(index: number) {

@@ -3,7 +3,7 @@
   <h3>mono detection started on three audio segments...</h3>
 </div>
 
-<div [hidden]="!audioResults.length" class="ma-audio__analysis">
+<div *ngIf="detections?.length > 2" class="ma-audio__analysis">
   <h3>Audio Signal Analysis</h3>
   <hr>
   <div class="ma-monodetect">

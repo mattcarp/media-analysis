@@ -1,10 +1,10 @@
-import {EventEmitter, Injectable} from "angular2/core";
-import {Observable} from "rxjs/Observable";
-import "rxjs/add/observable/fromPromise";
-import "rxjs/add/observable/forkJoin";
+import {EventEmitter, Injectable} from 'angular2/core';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/observable/fromPromise';
+import 'rxjs/add/observable/forkJoin';
 
 
-import {EndpointService} from "../handle-endpoints/endpoint.service";
+import {EndpointService} from '../handle-endpoints/endpoint.service';
 
 declare var $: any;
 declare var FileReader: any;
@@ -32,7 +32,7 @@ export class DetectMonoService {
     // video bitrate is a bit smaller than overall bitrate
     // TODO adjust chunk size if file is very short
     const MONO_CHUNK_SIZE = Math.floor((videoBitrate * 1.1) / 8);
-    console.log("mono chunk size", MONO_CHUNK_SIZE);
+    console.log('mono chunk size', MONO_CHUNK_SIZE);
 
     const length = mediaFile.size;
     const frontSliceStart = Math.floor(length / 3);
@@ -48,54 +48,55 @@ export class DetectMonoService {
     const endSlice = mediaFile.slice(endSliceStart, endSliceEnd);
 
 
-    console.log("in detect mono, the source file is this long:", mediaFile.size);
-    console.log("and the front slice is this long:", frontSlice.size);
-    console.log("mono middle slice starts at", midSliceStart);
-    console.log("mono middle slice ends at", midSliceEnd);
-    console.log("which is based on the video bitrate of", videoBitrate);
+    console.log('in detect mono, the source file is this long:', mediaFile.size);
+    console.log('and the front slice is this long:', frontSlice.size);
+    console.log('mono middle slice starts at', midSliceStart);
+    console.log('mono middle slice ends at', midSliceEnd);
+    console.log('which is based on the video bitrate of', videoBitrate);
 
-    let observeFront = Observable.fromPromise(this.requestMono(frontSlice, "front"));
-    let observeMiddle = Observable.fromPromise(this.requestMono(midSlice, "middle"));
-    let observeEnd = Observable.fromPromise(this.requestMono(endSlice, "end"));
+    let observeFront = Observable.fromPromise(this.requestMono(frontSlice, 'front'));
+    let observeMiddle = Observable.fromPromise(this.requestMono(midSlice, 'middle'));
+    let observeEnd = Observable.fromPromise(this.requestMono(endSlice, 'end'));
     // let observeForkJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
 
 
-    // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, "front"));
-    // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, "middle"));
-    // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, "end"));
+    // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, 'front'));
+    // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, 'middle'));
+    // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, 'end'));
 
     let observeJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
 
     observeJoined.subscribe(data => {
-      console.log("huggy 2:")
+      console.log('mono subscribe result:');
       console.log(data); // => [frontOb, middleObj, endObj]
+      // TODOmc this object is intermittently ommited from the UI
       this.resultsEmitter.emit(data)
     });
 
 
     // Observable.forkJoin([observeFront, observeMiddle, observeEnd]).subscribe(data => {
-    //   console.log("fork joined", data);
+    //   console.log('fork joined', data);
     // });
     // observeForkJoined.subscribe((data) => {
-    //   console.log("huggy bear");
+    //   console.log('huggy bear');
     //   this.resultsEmitter.emit(data);
     //   console.log(data); });
     // ;
 
     observeFront.subscribe(response => {
       result[0] = response;
-      console.log("front response:", response);
+      console.log('front response:', response);
     });
 
     observeMiddle.subscribe(response => {
       result[1] = response;
-      console.log("middle response:", response);
+      console.log('middle response:', response);
       // this.resultsEmitter.emit(result);
     });
 
     observeEnd.subscribe(response => {
       result[2] = response;
-      console.log("end response:", response);
+      console.log('end response:', response);
       // TODO we should execute serially to ensure that by the time we're at the end,
       // all other segments are done
       this.detectStartedEmitter.emit(false);
@@ -107,26 +108,26 @@ export class DetectMonoService {
     this.detectStartedEmitter.emit(true);
     // this.signalAnalysis = [];
     let promise =  $.ajax({
-      type: "POST",
-      url: this.endpoint + "mono",
+      type: 'POST',
+      url: this.endpoint + 'mono',
       data: slice,
       // don't massage binary to JSON
       processData: false,
       // content type that we are sending
-      contentType: "application/octet-stream",
+      contentType: 'application/octet-stream',
       // add any custom headers
       beforeSend: function(request) {
-        request.setRequestHeader("xa-chunk-position",
+        request.setRequestHeader('xa-chunk-position',
           chunkPosition);
       },
       error: (err) => {
-        console.log("error on the mono detection ajax request for chunk", chunkPosition);
+        console.log('error on the mono detection ajax request for chunk', chunkPosition);
         console.log(err);
       },
       success: (data) => {
-        console.log("requestMono success function-data:", data);
+        console.log('requestMono success function-data:', data);
         this.signalAnalysis.push(data);
-        console.log("requestMono: signal analysis length:", this.signalAnalysis.length);
+        console.log('requestMono: signal analysis length:', this.signalAnalysis.length);
       }
     });
 

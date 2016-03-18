@@ -57,6 +57,10 @@ list the forver processes and get log file
 
     forever list
 
+get log file location from the above, then
+
+    tail -f  /home/centos/.forever/ZVT8.log | bunyan
+
     // or to debug, instead of last line:
     nodemon DEBUG=media-analysis:* npm start | bunyan
 
@@ -71,13 +75,21 @@ tail logs on aws:
 
     sudo tail -f sudo tail -f /var/log/nginx/error.log
 
+
+    tail -f  /home/centos/.forever/ZVT8.log | bunyan
+
 restarted aws machine? getting 403 access denied?
 
     sudo setenforce Permissive
     sudo nginx -s reload
 
+## Did your local IP address change? Add it in the ec2 inbound security rules
 
-## ffmpeg tail -f /var/log/nginx/error.log
+
+
+## show git history
+
+    git log --pretty=format:"%h - %ar : %s"
 
 ### black detection
 this will give you black_duration, but you'll have more text to filter out:

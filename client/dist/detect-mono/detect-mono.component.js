@@ -1,4 +1,4 @@
-System.register(["angular2/core", "./detect-mono.service"], function(exports_1, context_1) {
+System.register(['angular2/core', './detect-mono.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -29,21 +29,20 @@ System.register(["angular2/core", "./detect-mono.service"], function(exports_1, 
                     this.PEAK_THRESHOLD = -6;
                     detectMonoService.detectStartedEmitter.subscribe(function (value) {
                         if (value === true) {
-                            console.log("mono detect has begun");
+                            console.log('mono detect has begun');
                         }
                         _this.audioResults = [];
                         _this.detectingMono = value;
                     });
                     detectMonoService.resultsEmitter.subscribe(function (detections) {
                         _this.detectingMono = false;
-                        console.log("detect mono component constructor: the detection array:");
+                        console.log('mono detection complete: the detection array:');
                         console.log(detections);
+                        _this.detections = detections;
                         _this.validate(detections);
                     });
                 } // constructor
                 DetectMonoComponent.prototype.validate = function (detections) {
-                    // clear the state - TODO this doesn't work - use redux pattern
-                    // this.audioResults = [];
                     if (detections.length > 2) {
                         if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
                             detections[1].peakLevel > this.PEAK_THRESHOLD ||
@@ -54,10 +53,8 @@ System.register(["angular2/core", "./detect-mono.service"], function(exports_1, 
                             this.shouldWarnMono = true;
                         }
                     }
-                    console.log("gonna hand this to the view:", detections);
-                    // convert object to array so we can iterate in the view
-                    // let resultArr = Object.keys(detections).map(key => detections[key]);
-                    console.log("audio results as an array", detections);
+                    console.log('gonna hand this to the view:', detections);
+                    // TODOmc results are intermittently ommitted from the view
                     this.audioResults = detections;
                 };
                 DetectMonoComponent.prototype.showMonoDetails = function (index) {
@@ -65,8 +62,8 @@ System.register(["angular2/core", "./detect-mono.service"], function(exports_1, 
                 };
                 DetectMonoComponent = __decorate([
                     core_1.Component({
-                        selector: "detect-mono",
-                        templateUrl: "src/detect-mono/detect-mono.html",
+                        selector: 'detect-mono',
+                        templateUrl: 'src/detect-mono/detect-mono.html',
                     }), 
                     __metadata('design:paramtypes', [detect_mono_service_1.DetectMonoService])
                 ], DetectMonoComponent);
