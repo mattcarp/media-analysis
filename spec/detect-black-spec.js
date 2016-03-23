@@ -1,6 +1,7 @@
 /* global describe it expect done */
 /* eslint no-console:0 */
 
+import { expect } from '../node_modules/jasmine-node/lib/jasmine-node/jasmine-1.3';
 const blackDetect = require('../server-methods/black-detect.js');
 const headBlackPath = '/Volumes/Transcend/media_test_files/prores/prores_first_2_megs.mov';
 const tailBlackPath = '/Volumes/Transcend/media_test_files/prores/prores_last_2_megs.mov';

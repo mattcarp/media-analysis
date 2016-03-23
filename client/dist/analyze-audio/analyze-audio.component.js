@@ -1,4 +1,4 @@
-System.register(['angular2/core', './detect-mono.service'], function(exports_1, context_1) {
+System.register(['angular2/core', './analyze-audio.service'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,31 +10,31 @@ System.register(['angular2/core', './detect-mono.service'], function(exports_1, 
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, detect_mono_service_1;
-    var DetectMonoComponent;
+    var core_1, analyze_audio_service_1;
+    var AnalyzeAudioComponent;
     return {
         setters:[
             function (core_1_1) {
                 core_1 = core_1_1;
             },
-            function (detect_mono_service_1_1) {
-                detect_mono_service_1 = detect_mono_service_1_1;
+            function (analyze_audio_service_1_1) {
+                analyze_audio_service_1 = analyze_audio_service_1_1;
             }],
         execute: function() {
-            DetectMonoComponent = (function () {
-                function DetectMonoComponent(detectMonoService) {
+            AnalyzeAudioComponent = (function () {
+                function AnalyzeAudioComponent(analyzeAudioService) {
                     var _this = this;
                     this.audioResults = [];
                     this.displayMonoDetails = [];
                     this.PEAK_THRESHOLD = -6;
-                    detectMonoService.detectStartedEmitter.subscribe(function (value) {
+                    analyzeAudioService.detectStartedEmitter.subscribe(function (value) {
                         if (value === true) {
                             console.log('mono detect has begun');
                         }
                         _this.audioResults = [];
                         _this.detectingMono = value;
                     });
-                    detectMonoService.resultsEmitter.subscribe(function (detections) {
+                    analyzeAudioService.resultsEmitter.subscribe(function (detections) {
                         _this.detectingMono = false;
                         console.log('mono detection complete: the detection array:');
                         console.log(detections);
@@ -42,7 +42,7 @@ System.register(['angular2/core', './detect-mono.service'], function(exports_1, 
                         _this.validate(detections);
                     });
                 } // constructor
-                DetectMonoComponent.prototype.validate = function (detections) {
+                AnalyzeAudioComponent.prototype.validate = function (detections) {
                     if (detections.length > 2) {
                         if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
                             detections[1].peakLevel > this.PEAK_THRESHOLD ||
@@ -56,19 +56,19 @@ System.register(['angular2/core', './detect-mono.service'], function(exports_1, 
                     // TODOmc results are intermittently ommitted from the view
                     this.audioResults = detections;
                 };
-                DetectMonoComponent.prototype.showMonoDetails = function (index) {
+                AnalyzeAudioComponent.prototype.showMonoDetails = function (index) {
                     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
                 };
-                DetectMonoComponent = __decorate([
+                AnalyzeAudioComponent = __decorate([
                     core_1.Component({
                         selector: 'detect-mono',
-                        templateUrl: 'src/detect-mono/detect-mono.html',
+                        templateUrl: 'src/analyze-audio/analyze-audio.html',
                     }), 
-                    __metadata('design:paramtypes', [detect_mono_service_1.DetectMonoService])
-                ], DetectMonoComponent);
-                return DetectMonoComponent;
+                    __metadata('design:paramtypes', [analyze_audio_service_1.AnalyzeAudioService])
+                ], AnalyzeAudioComponent);
+                return AnalyzeAudioComponent;
             }());
-            exports_1("DetectMonoComponent", DetectMonoComponent); // class
+            exports_1("AnalyzeAudioComponent", AnalyzeAudioComponent); // class
         }
     }
 });

@@ -1,4 +1,4 @@
-System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../detect-mono/detect-mono.service"], function(exports_1, context_1) {
+System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../analyze-audio/analyze-audio.service"], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, handle_files_service_1, extract_metadata_service_1, detect_black_service_1, detect_mono_service_1;
+    var core_1, handle_files_service_1, extract_metadata_service_1, detect_black_service_1, analyze_audio_service_1;
     var HandleFilesComponent;
     return {
         setters:[
@@ -26,8 +26,8 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
             function (detect_black_service_1_1) {
                 detect_black_service_1 = detect_black_service_1_1;
             },
-            function (detect_mono_service_1_1) {
-                detect_mono_service_1 = detect_mono_service_1_1;
+            function (analyze_audio_service_1_1) {
+                analyze_audio_service_1 = analyze_audio_service_1_1;
             }],
         execute: function() {
             HandleFilesComponent = (function () {
@@ -67,7 +67,7 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
                         selector: "handle-files",
                         templateUrl: "src/handle-files/handle-files.html"
                     }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService, detect_black_service_1.DetectBlackService, detect_mono_service_1.DetectMonoService])
+                    __metadata('design:paramtypes', [core_1.ElementRef, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService, detect_black_service_1.DetectBlackService, analyze_audio_service_1.AnalyzeAudioService])
                 ], HandleFilesComponent);
                 return HandleFilesComponent;
             }());

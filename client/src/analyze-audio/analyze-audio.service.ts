@@ -11,7 +11,7 @@ declare var FileReader: any;
 
 
 @Injectable()
-export class DetectMonoService {
+export class AnalyzeAudioService {
   endpoint: string;
   originalExtension: string;
   signalAnalysis: Object[] = [];

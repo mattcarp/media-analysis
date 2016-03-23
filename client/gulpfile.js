@@ -1,23 +1,23 @@
-const gulp = require("gulp");
-const rev = require("gulp-rev-append");
+const gulp = require('gulp');
+const rev = require('gulp-rev-append');
 
 
 const PATHS = {
-  src: "src/**/*.ts"
+  src: 'src/**/*.ts',
 };
 
 // cache busting task - TODO put on watch path
-gulp.task("rev", function() {
-  gulp.src("index.html")
+gulp.task('rev', function() {
+  gulp.src('index.html')
     .pipe(rev())
     .pipe(gulp.dest('.'));
 });
 
-gulp.task("clean", function (done) {
+gulp.task('clean', function (done) {
   gulp.src('./dist/index.html')
-  	.pipe(cachebust({
-  		type: 'timestamp'
-  	}))
+    // .pipe(cachebust({
+  	// 	type: 'timestamp'
+  	// }))
   	.pipe(gulp.dest('./dist'));
 });
 

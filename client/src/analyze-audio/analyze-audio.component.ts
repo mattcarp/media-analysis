@@ -1,14 +1,14 @@
 import {Component} from 'angular2/core';
 
-import {DetectMonoService} from './detect-mono.service';
+import {AnalyzeAudioService} from './analyze-audio.service';
 
 
 @Component({
   selector: 'detect-mono',
-  templateUrl: 'src/detect-mono/detect-mono.html',
+  templateUrl: 'src/analyze-audio/analyze-audio.html',
 })
 
-export class DetectMonoComponent {
+export class AnalyzeAudioComponent {
   detectingMono: boolean;
   audioResults: Object[] = [];
   displayMonoDetails: boolean[] = [];
@@ -18,14 +18,14 @@ export class DetectMonoComponent {
   PEAK_THRESHOLD = -6;
 
 
-  constructor(detectMonoService: DetectMonoService) {
-    detectMonoService.detectStartedEmitter.subscribe(value => {
+  constructor(analyzeAudioService: AnalyzeAudioService) {
+    analyzeAudioService.detectStartedEmitter.subscribe(value => {
       if (value === true) { console.log('mono detect has begun'); }
       this.audioResults = [];
       this.detectingMono = value;
     });
 
-    detectMonoService.resultsEmitter.subscribe(detections => {
+    analyzeAudioService.resultsEmitter.subscribe(detections => {
       this.detectingMono = false;
       console.log('mono detection complete: the detection array:');
       console.log(detections);

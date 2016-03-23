@@ -3,7 +3,7 @@ import {Component, ElementRef} from "angular2/core";
 import {FileHandlerService} from "./handle-files.service";
 import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
 import {DetectBlackService} from "../detect-black/detect-black.service";
-import {DetectMonoService} from "../detect-mono/detect-mono.service";
+import {AnalyzeAudioService} from "../analyze-audio/analyze-audio.service";
 
 declare var $: any;
 declare var Dropzone: any;
@@ -20,7 +20,7 @@ export class HandleFilesComponent {
   constructor(eltRef: ElementRef, fileHandlerService: FileHandlerService,
     extractMetadataService: ExtractMetadataService,
     detectBlackService: DetectBlackService,
-    detectMonoService: DetectMonoService) {
+    detectMonoService: AnalyzeAudioService) {
 
     new Dropzone(eltRef.nativeElement, {
       url: "/file/post",

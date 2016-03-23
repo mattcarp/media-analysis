@@ -2,7 +2,7 @@
 //
 // import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
 // import {DetectBlackService} from "../detect-black/detect-black.service";
-// import {DetectMonoService} from "../detect-mono/detect-mono.service";
+// import {DetectMonoService} from "../analyze-audio/analyze-audio.service";
 //
 // @Injectable()
 // export class ValidationsService {

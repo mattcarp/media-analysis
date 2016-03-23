@@ -11,7 +11,7 @@ System.register(['angular2/core', 'rxjs/Observable', 'rxjs/add/observable/fromPr
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, Observable_1, endpoint_service_1;
-    var DetectMonoService;
+    var AnalyzeAudioService;
     return {
         setters:[
             function (core_1_1) {
@@ -26,14 +26,14 @@ System.register(['angular2/core', 'rxjs/Observable', 'rxjs/add/observable/fromPr
                 endpoint_service_1 = endpoint_service_1_1;
             }],
         execute: function() {
-            DetectMonoService = (function () {
-                function DetectMonoService(endpointService) {
+            AnalyzeAudioService = (function () {
+                function AnalyzeAudioService(endpointService) {
                     this.signalAnalysis = [];
                     this.detectStartedEmitter = new core_1.EventEmitter();
                     this.resultsEmitter = new core_1.EventEmitter();
                     this.endpoint = endpointService.getEndpoint();
                 }
-                DetectMonoService.prototype.detectMono = function (mediaFile, bitrate) {
+                AnalyzeAudioService.prototype.detectMono = function (mediaFile, bitrate) {
                     var _this = this;
                     var result = [];
                     // this.results = [];
@@ -85,7 +85,7 @@ System.register(['angular2/core', 'rxjs/Observable', 'rxjs/add/observable/fromPr
                         // this.resultsEmitter.emit(result);
                     });
                 };
-                DetectMonoService.prototype.requestMono = function (slice, chunkPosition) {
+                AnalyzeAudioService.prototype.requestMono = function (slice, chunkPosition) {
                     var _this = this;
                     this.detectStartedEmitter.emit(true);
                     // this.signalAnalysis = [];
@@ -114,13 +114,13 @@ System.register(['angular2/core', 'rxjs/Observable', 'rxjs/add/observable/fromPr
                     return promise;
                     // return Observable.fromPromise(promise);
                 };
-                DetectMonoService = __decorate([
+                AnalyzeAudioService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [endpoint_service_1.EndpointService])
-                ], DetectMonoService);
-                return DetectMonoService;
+                ], AnalyzeAudioService);
+                return AnalyzeAudioService;
             }());
-            exports_1("DetectMonoService", DetectMonoService);
+            exports_1("AnalyzeAudioService", AnalyzeAudioService);
         }
     }
 });
