@@ -28,7 +28,7 @@
             segment {{index + 1}} analysis</a>
         <span [hidden]="!displayMonoDetails[index]" class="ma-fade-in">
 
-            <div *ngFor="#item of segment.data" class="ma-monospace">
+            <div *ngFor="#item of segmentAnalyses[index]" class="ma-monospace">
               <pre>{{item}}</pre>
             </div>
         </span>

@@ -15,8 +15,8 @@ export class AnalyzeAudioComponent {
   shouldWarnMono: boolean;
   peakThresholdExceeded: boolean;
   detections: Object[];
+  segmentAnalyses: String[][];
   PEAK_THRESHOLD = -6;
-
 
   constructor(analyzeAudioService: AnalyzeAudioService) {
     analyzeAudioService.detectStartedEmitter.subscribe(value => {
@@ -29,11 +29,35 @@ export class AnalyzeAudioComponent {
       this.detectingMono = false;
       console.log('mono detection complete: the detection array:');
       console.log(detections);
+      this.formatDetections(detections);
       this.detections = detections;
       this.validate(detections);
     });
 
   } // constructor
+
+  formatDetections(detections) {
+    let resultArr: String[][] = [];
+    detections.map((analysis, index) => {
+      // this.formatAudioData(analysis.data);
+      resultArr[index] = this.formatAudioData(analysis.data);
+    });
+    this.segmentAnalyses = resultArr;
+  }
+
+  formatAudioData(data) {
+    let result = [];
+    data.map((item, index) => {
+      if (index === 0) {
+        result.push('           ' + item);
+      } else {
+        result.push(item);
+      }
+    });
+    console.log('result of formatting the audio analysis:', result);
+    // this.segmtentAnalyses = result;
+    return result;
+  }
 
   validate(detections: any) {
     if (detections.length > 2) {

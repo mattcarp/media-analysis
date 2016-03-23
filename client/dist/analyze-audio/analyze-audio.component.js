@@ -38,10 +38,34 @@ System.register(['angular2/core', './analyze-audio.service'], function(exports_1
                         _this.detectingMono = false;
                         console.log('mono detection complete: the detection array:');
                         console.log(detections);
+                        _this.formatDetections(detections);
                         _this.detections = detections;
                         _this.validate(detections);
                     });
                 } // constructor
+                AnalyzeAudioComponent.prototype.formatDetections = function (detections) {
+                    var _this = this;
+                    var resultArr = [];
+                    detections.map(function (analysis, index) {
+                        // this.formatAudioData(analysis.data);
+                        resultArr[index] = _this.formatAudioData(analysis.data);
+                    });
+                    this.segmentAnalyses = resultArr;
+                };
+                AnalyzeAudioComponent.prototype.formatAudioData = function (data) {
+                    var result = [];
+                    data.map(function (item, index) {
+                        if (index === 0) {
+                            result.push('           ' + item);
+                        }
+                        else {
+                            result.push(item);
+                        }
+                    });
+                    console.log('result of formatting the audio analysis:', result);
+                    // this.segmtentAnalyses = result;
+                    return result;
+                };
                 AnalyzeAudioComponent.prototype.validate = function (detections) {
                     if (detections.length > 2) {
                         if (detections[0].peakLevel > this.PEAK_THRESHOLD ||

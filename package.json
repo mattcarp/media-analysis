@@ -31,6 +31,8 @@
     "eslint-plugin-react": "^3.16.1",
     "gulp-rev-append": "^0.1.6",
     "jasmine-node": "^1.14.5",
-    "node-inspector": "^0.12.6"
+    "node-inspector": "^0.12.6",
+    "tslint": "^3.6.0",
+    "typescript": "^1.8.9"
   }
 }
