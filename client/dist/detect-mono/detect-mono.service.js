@@ -69,31 +69,18 @@ System.register(['angular2/core', 'rxjs/Observable', 'rxjs/add/observable/fromPr
                     observeJoined.subscribe(function (data) {
                         console.log('mono subscribe result:');
                         console.log(data); // => [frontOb, middleObj, endObj]
-                        // TODOmc this object is intermittently ommited from the UI
                         _this.resultsEmitter.emit(data);
                     });
-                    // Observable.forkJoin([observeFront, observeMiddle, observeEnd]).subscribe(data => {
-                    //   console.log('fork joined', data);
-                    // });
-                    // observeForkJoined.subscribe((data) => {
-                    //   console.log('huggy bear');
-                    //   this.resultsEmitter.emit(data);
-                    //   console.log(data); });
-                    // ;
                     observeFront.subscribe(function (response) {
                         result[0] = response;
-                        console.log('front response:', response);
                     });
                     observeMiddle.subscribe(function (response) {
                         result[1] = response;
-                        console.log('middle response:', response);
-                        // this.resultsEmitter.emit(result);
                     });
                     observeEnd.subscribe(function (response) {
                         result[2] = response;
-                        console.log('end response:', response);
                         // TODO we should execute serially to ensure that by the time we're at the end,
-                        // all other segments are done
+                        // all other segments are done -- is this now done via forkJoin?
                         _this.detectStartedEmitter.emit(false);
                         // this.resultsEmitter.emit(result);
                     });

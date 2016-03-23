@@ -22,11 +22,11 @@ System.register(['angular2/core'], function(exports_1, context_1) {
                 function EndpointService() {
                 }
                 EndpointService.prototype.getEndpoint = function () {
-                    if (window.location.hostname === "localhost") {
-                        return "http://localhost:3000/";
+                    if (window.location.hostname === 'localhost') {
+                        return 'http://localhost:3000/';
                     }
                     else {
-                        return "http://52.0.119.124:3000/";
+                        return 'http://52.0.119.124:3000/';
                     }
                 };
                 EndpointService = __decorate([

@@ -59,7 +59,6 @@ export class DetectMonoService {
     let observeEnd = Observable.fromPromise(this.requestMono(endSlice, 'end'));
     // let observeForkJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
 
-
     // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, 'front'));
     // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, 'middle'));
     // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, 'end'));
@@ -69,36 +68,21 @@ export class DetectMonoService {
     observeJoined.subscribe(data => {
       console.log('mono subscribe result:');
       console.log(data); // => [frontOb, middleObj, endObj]
-      // TODOmc this object is intermittently ommited from the UI
-      this.resultsEmitter.emit(data)
+      this.resultsEmitter.emit(data);
     });
-
-
-    // Observable.forkJoin([observeFront, observeMiddle, observeEnd]).subscribe(data => {
-    //   console.log('fork joined', data);
-    // });
-    // observeForkJoined.subscribe((data) => {
-    //   console.log('huggy bear');
-    //   this.resultsEmitter.emit(data);
-    //   console.log(data); });
-    // ;
 
     observeFront.subscribe(response => {
       result[0] = response;
-      console.log('front response:', response);
     });
 
     observeMiddle.subscribe(response => {
       result[1] = response;
-      console.log('middle response:', response);
-      // this.resultsEmitter.emit(result);
     });
 
     observeEnd.subscribe(response => {
       result[2] = response;
-      console.log('end response:', response);
       // TODO we should execute serially to ensure that by the time we're at the end,
-      // all other segments are done
+      // all other segments are done -- is this now done via forkJoin?
       this.detectStartedEmitter.emit(false);
       // this.resultsEmitter.emit(result);
     });

@@ -53,7 +53,6 @@ System.register(['angular2/core', './detect-mono.service'], function(exports_1, 
                             this.shouldWarnMono = true;
                         }
                     }
-                    console.log('gonna hand this to the view:', detections);
                     // TODOmc results are intermittently ommitted from the view
                     this.audioResults = detections;
                 };

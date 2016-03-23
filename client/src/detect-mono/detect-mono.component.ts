@@ -48,7 +48,6 @@ export class DetectMonoComponent {
       }
     }
 
-    console.log('gonna hand this to the view:', detections);
     // TODOmc results are intermittently ommitted from the view
     this.audioResults = detections;
   }
@@ -56,7 +55,5 @@ export class DetectMonoComponent {
   showMonoDetails(index: number) {
     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
   }
-
-
 
 } // class
