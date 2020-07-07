@@ -1,6 +1,5 @@
-System.register(['angular2/core', './extract-metadata.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "./extract-metadata.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,19 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, extract_metadata_service_1;
-    var ExtractMetadataComponent;
+    var core_1, extract_metadata_service_1, ExtractMetadataComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
             function (extract_metadata_service_1_1) {
                 extract_metadata_service_1 = extract_metadata_service_1_1;
-            }],
-        execute: function() {
-            ExtractMetadataComponent = (function () {
+            }
+        ],
+        execute: function () {
+            ExtractMetadataComponent = /** @class */ (function () {
                 function ExtractMetadataComponent(extractMetadataService) {
                     var _this = this;
                     this.showFormat = false;
@@ -79,6 +79,7 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
                 ExtractMetadataComponent.prototype.processObject = function (formatObj) {
                     var keysArr = Object.keys(formatObj);
                     return keysArr
+                        // TODO filter if value for key is object or array, rather than not 'tags'
                         .filter(function (formatKey) { return formatKey !== "tags"; })
                         .map(function (formatKey) {
                         var item = {};
@@ -99,12 +100,13 @@ System.register(['angular2/core', './extract-metadata.service'], function(export
                     core_1.Component({
                         selector: 'extract-metadata',
                         templateUrl: 'src/extract-metadata/extract-metadata.html',
-                    }), 
-                    __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
+                    }),
+                    __metadata("design:paramtypes", [extract_metadata_service_1.ExtractMetadataService])
                 ], ExtractMetadataComponent);
                 return ExtractMetadataComponent;
             }());
-            exports_1("ExtractMetadataComponent", ExtractMetadataComponent); // class
+            exports_1("ExtractMetadataComponent", ExtractMetadataComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=extract-metadata.component.js.map

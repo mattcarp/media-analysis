@@ -1,6 +1,5 @@
-System.register(["angular2/core", "./detect-black.service"], function(exports_1, context_1) {
+System.register(["angular2/core", "./detect-black.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,19 @@ System.register(["angular2/core", "./detect-black.service"], function(exports_1,
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, detect_black_service_1;
-    var DetectBlackComponent;
+    var core_1, detect_black_service_1, DetectBlackComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
             function (detect_black_service_1_1) {
                 detect_black_service_1 = detect_black_service_1_1;
-            }],
-        execute: function() {
-            DetectBlackComponent = (function () {
+            }
+        ],
+        execute: function () {
+            DetectBlackComponent = /** @class */ (function () {
                 function DetectBlackComponent(detectBlackService) {
                     var _this = this;
                     detectBlackService.headBlackStarted.subscribe(function (value) {
@@ -46,6 +46,7 @@ System.register(["angular2/core", "./detect-black.service"], function(exports_1,
                             else {
                                 _this.headBlackResult = value;
                             }
+                            // if (typof )
                         }
                     });
                     detectBlackService.tailBlackResult.subscribe(function (value) {
@@ -56,12 +57,13 @@ System.register(["angular2/core", "./detect-black.service"], function(exports_1,
                     core_1.Component({
                         selector: "detect-black",
                         templateUrl: "src/detect-black/detect-black.html",
-                    }), 
-                    __metadata('design:paramtypes', [detect_black_service_1.DetectBlackService])
+                    }),
+                    __metadata("design:paramtypes", [detect_black_service_1.DetectBlackService])
                 ], DetectBlackComponent);
                 return DetectBlackComponent;
             }());
             exports_1("DetectBlackComponent", DetectBlackComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=detect-black.component.js.map

@@ -1,6 +1,5 @@
-System.register(["angular2/core", "../extract-metadata/extract-metadata.service"], function(exports_1, context_1) {
+System.register(["angular2/core", "../extract-metadata/extract-metadata.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,19 @@ System.register(["angular2/core", "../extract-metadata/extract-metadata.service"
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, extract_metadata_service_1;
-    var ValidateFormatComponent;
+    var core_1, extract_metadata_service_1, ValidateFormatComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
             function (extract_metadata_service_1_1) {
                 extract_metadata_service_1 = extract_metadata_service_1_1;
-            }],
-        execute: function() {
-            ValidateFormatComponent = (function () {
+            }
+        ],
+        execute: function () {
+            ValidateFormatComponent = /** @class */ (function () {
                 function ValidateFormatComponent(extractMetadataService) {
                     var _this = this;
                     this.audioValidations = [];
@@ -142,12 +142,13 @@ System.register(["angular2/core", "../extract-metadata/extract-metadata.service"
                     core_1.Component({
                         selector: "validate-format",
                         templateUrl: "src/validate-format/validate-format.html",
-                    }), 
-                    __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService])
+                    }),
+                    __metadata("design:paramtypes", [extract_metadata_service_1.ExtractMetadataService])
                 ], ValidateFormatComponent);
                 return ValidateFormatComponent;
             }());
             exports_1("ValidateFormatComponent", ValidateFormatComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=validate-format.component.js.map

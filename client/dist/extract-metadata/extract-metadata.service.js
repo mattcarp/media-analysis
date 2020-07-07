@@ -1,6 +1,5 @@
-System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../shared/services/quicktime.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "../handle-endpoints/endpoint.service", "../shared/services/quicktime.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, endpoint_service_1, quicktime_service_1;
-    var SLICE_SIZE, ExtractMetadataService;
+    var core_1, endpoint_service_1, quicktime_service_1, SLICE_SIZE, ExtractMetadataService;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -22,11 +21,12 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
             },
             function (quicktime_service_1_1) {
                 quicktime_service_1 = quicktime_service_1_1;
-            }],
-        execute: function() {
+            }
+        ],
+        execute: function () {
             // initial slice for metadata analysis
             SLICE_SIZE = 150000;
-            ExtractMetadataService = (function () {
+            ExtractMetadataService = /** @class */ (function () {
                 function ExtractMetadataService(endpointService, qtService) {
                     this.metadataStarted = new core_1.EventEmitter();
                     this.metadataResult = new core_1.EventEmitter();
@@ -39,7 +39,7 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                     var reader = new FileReader();
                     // if we use onloadend, we need to check the readyState.
                     reader.onloadend = function (evt) {
-                        if (evt.target.readyState === FileReader.DONE) {
+                        if (evt.target.readyState === FileReader.DONE) { // DONE == 2
                             _this.metadataStarted.emit(true);
                             // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
                             if (_this.originalExtension === 'mov') {
@@ -85,6 +85,7 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                                     var type = analysisObj.streams[0].codec_type;
                                     if (type === 'video') {
                                         console.log('TODO we got a video, now we should fire processVideo()');
+                                        // this.processVideo(this.mediaFile, analysisObj);
                                     }
                                 }
                             });
@@ -106,12 +107,13 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service', '../sh
                     console.log(moovMetadata);
                 };
                 ExtractMetadataService = __decorate([
-                    core_1.Injectable(), 
-                    __metadata('design:paramtypes', [endpoint_service_1.EndpointService, quicktime_service_1.QuicktimeService])
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [endpoint_service_1.EndpointService, quicktime_service_1.QuicktimeService])
                 ], ExtractMetadataService);
                 return ExtractMetadataService;
             }());
             exports_1("ExtractMetadataService", ExtractMetadataService);
         }
-    }
+    };
 });
+//# sourceMappingURL=extract-metadata.service.js.map

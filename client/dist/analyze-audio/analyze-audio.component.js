@@ -1,6 +1,5 @@
-System.register(['angular2/core', './analyze-audio.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "./analyze-audio.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,19 @@ System.register(['angular2/core', './analyze-audio.service'], function(exports_1
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, analyze_audio_service_1;
-    var AnalyzeAudioComponent;
+    var core_1, analyze_audio_service_1, AnalyzeAudioComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
             function (analyze_audio_service_1_1) {
                 analyze_audio_service_1 = analyze_audio_service_1_1;
-            }],
-        execute: function() {
-            AnalyzeAudioComponent = (function () {
+            }
+        ],
+        execute: function () {
+            AnalyzeAudioComponent = /** @class */ (function () {
                 function AnalyzeAudioComponent(analyzeAudioService) {
                     var _this = this;
                     this.audioResults = [];
@@ -87,12 +87,13 @@ System.register(['angular2/core', './analyze-audio.service'], function(exports_1
                     core_1.Component({
                         selector: 'detect-mono',
                         templateUrl: 'src/analyze-audio/analyze-audio.html',
-                    }), 
-                    __metadata('design:paramtypes', [analyze_audio_service_1.AnalyzeAudioService])
+                    }),
+                    __metadata("design:paramtypes", [analyze_audio_service_1.AnalyzeAudioService])
                 ], AnalyzeAudioComponent);
                 return AnalyzeAudioComponent;
             }());
-            exports_1("AnalyzeAudioComponent", AnalyzeAudioComponent); // class
+            exports_1("AnalyzeAudioComponent", AnalyzeAudioComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=analyze-audio.component.js.map

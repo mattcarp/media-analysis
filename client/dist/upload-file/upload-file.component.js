@@ -1,6 +1,5 @@
-System.register(['angular2/core', 'angular2/router', '../extract-metadata/extract-metadata.service', '../handle-files/handle-files.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "angular2/router", "../extract-metadata/extract-metadata.service", "../handle-files/handle-files.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(['angular2/core', 'angular2/router', '../extract-metadata/extrac
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_1, extract_metadata_service_1, handle_files_service_1;
-    var UploadFileComponent;
+    var core_1, router_1, extract_metadata_service_1, handle_files_service_1, UploadFileComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -25,9 +24,10 @@ System.register(['angular2/core', 'angular2/router', '../extract-metadata/extrac
             },
             function (handle_files_service_1_1) {
                 handle_files_service_1 = handle_files_service_1_1;
-            }],
-        execute: function() {
-            UploadFileComponent = (function () {
+            }
+        ],
+        execute: function () {
+            UploadFileComponent = /** @class */ (function () {
                 function UploadFileComponent(_router, extractMetadataService, fileHandlerService) {
                     var _this = this;
                     this._router = _router;
@@ -66,12 +66,14 @@ System.register(['angular2/core', 'angular2/router', '../extract-metadata/extrac
                         selector: 'upload-file',
                         templateUrl: 'src/upload-file/upload-file.html',
                         directives: [router_1.RouterLink]
-                    }), 
-                    __metadata('design:paramtypes', [router_1.Router, extract_metadata_service_1.ExtractMetadataService, handle_files_service_1.FileHandlerService])
+                    }),
+                    __metadata("design:paramtypes", [router_1.Router, extract_metadata_service_1.ExtractMetadataService,
+                        handle_files_service_1.FileHandlerService])
                 ], UploadFileComponent);
                 return UploadFileComponent;
             }());
             exports_1("UploadFileComponent", UploadFileComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=upload-file.component.js.map

@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Install node modules
+        run: npm install
+      - name: run build
+        run: npm run build
+      - name: Deploy to DEV server
+        uses: easingthemes/ssh-deploy@v2.0.7
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "/dist"
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+      - name: Run forever
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            forever stopall
+            forever start dist/main.js
+            forever list
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}

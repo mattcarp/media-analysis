@@ -1,6 +1,5 @@
-System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../analyze-audio/analyze-audio.service"], function(exports_1, context_1) {
+System.register(["angular2/core", "./handle-files.service", "../extract-metadata/extract-metadata.service", "../detect-black/detect-black.service", "../analyze-audio/analyze-audio.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, handle_files_service_1, extract_metadata_service_1, detect_black_service_1, analyze_audio_service_1;
-    var HandleFilesComponent;
+    var core_1, handle_files_service_1, extract_metadata_service_1, detect_black_service_1, analyze_audio_service_1, HandleFilesComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -28,9 +27,10 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
             },
             function (analyze_audio_service_1_1) {
                 analyze_audio_service_1 = analyze_audio_service_1_1;
-            }],
-        execute: function() {
-            HandleFilesComponent = (function () {
+            }
+        ],
+        execute: function () {
+            HandleFilesComponent = /** @class */ (function () {
                 function HandleFilesComponent(eltRef, fileHandlerService, extractMetadataService, detectBlackService, detectMonoService) {
                     var _this = this;
                     new Dropzone(eltRef.nativeElement, {
@@ -66,12 +66,16 @@ System.register(["angular2/core", "./handle-files.service", "../extract-metadata
                     core_1.Component({
                         selector: "handle-files",
                         templateUrl: "src/handle-files/handle-files.html"
-                    }), 
-                    __metadata('design:paramtypes', [core_1.ElementRef, handle_files_service_1.FileHandlerService, extract_metadata_service_1.ExtractMetadataService, detect_black_service_1.DetectBlackService, analyze_audio_service_1.AnalyzeAudioService])
+                    }),
+                    __metadata("design:paramtypes", [core_1.ElementRef, handle_files_service_1.FileHandlerService,
+                        extract_metadata_service_1.ExtractMetadataService,
+                        detect_black_service_1.DetectBlackService,
+                        analyze_audio_service_1.AnalyzeAudioService])
                 ], HandleFilesComponent);
                 return HandleFilesComponent;
             }());
-            exports_1("HandleFilesComponent", HandleFilesComponent); // class
+            exports_1("HandleFilesComponent", HandleFilesComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=handle-files.component.js.map

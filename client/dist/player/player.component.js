@@ -1,6 +1,5 @@
-System.register(["angular2/core", '../extract-metadata/extract-metadata.service', '../handle-files/handle-files.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "../extract-metadata/extract-metadata.service", "../handle-files/handle-files.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,10 +9,10 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, extract_metadata_service_1, handle_files_service_1;
-    var PlayerComponent;
+    var core_1, extract_metadata_service_1, handle_files_service_1, PlayerComponent;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
@@ -22,10 +21,10 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
             },
             function (handle_files_service_1_1) {
                 handle_files_service_1 = handle_files_service_1_1;
-            }],
-        execute: function() {
-            // TODOmc inject the player service
-            PlayerComponent = (function () {
+            }
+        ],
+        execute: function () {
+            PlayerComponent = /** @class */ (function () {
                 // playerService: any;
                 function PlayerComponent(extractMetadataService, fileHandlerService) {
                     var _this = this;
@@ -63,12 +62,14 @@ System.register(["angular2/core", '../extract-metadata/extract-metadata.service'
                     core_1.Component({
                         selector: "player",
                         templateUrl: "src/player/player.html"
-                    }), 
-                    __metadata('design:paramtypes', [extract_metadata_service_1.ExtractMetadataService, handle_files_service_1.FileHandlerService])
+                    }),
+                    __metadata("design:paramtypes", [extract_metadata_service_1.ExtractMetadataService,
+                        handle_files_service_1.FileHandlerService])
                 ], PlayerComponent);
                 return PlayerComponent;
             }());
             exports_1("PlayerComponent", PlayerComponent);
         }
-    }
+    };
 });
+//# sourceMappingURL=player.component.js.map

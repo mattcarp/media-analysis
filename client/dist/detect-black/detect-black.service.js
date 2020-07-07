@@ -1,6 +1,5 @@
-System.register(['angular2/core', '../handle-endpoints/endpoint.service'], function(exports_1, context_1) {
+System.register(["angular2/core", "../handle-endpoints/endpoint.service"], function (exports_1, context_1) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
         var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
         if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10,18 +9,19 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service'], funct
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, endpoint_service_1;
-    var DetectBlackService;
+    var core_1, endpoint_service_1, DetectBlackService;
+    var __moduleName = context_1 && context_1.id;
     return {
-        setters:[
+        setters: [
             function (core_1_1) {
                 core_1 = core_1_1;
             },
             function (endpoint_service_1_1) {
                 endpoint_service_1 = endpoint_service_1_1;
-            }],
-        execute: function() {
-            DetectBlackService = (function () {
+            }
+        ],
+        execute: function () {
+            DetectBlackService = /** @class */ (function () {
                 function DetectBlackService(endpointService) {
                     this.headBlackStarted = new core_1.EventEmitter();
                     this.tailBlackStarted = new core_1.EventEmitter();
@@ -167,12 +167,13 @@ System.register(['angular2/core', '../handle-endpoints/endpoint.service'], funct
                     });
                 }; // requestBlack
                 DetectBlackService = __decorate([
-                    core_1.Injectable(), 
-                    __metadata('design:paramtypes', [endpoint_service_1.EndpointService])
+                    core_1.Injectable(),
+                    __metadata("design:paramtypes", [endpoint_service_1.EndpointService])
                 ], DetectBlackService);
                 return DetectBlackService;
             }());
-            exports_1("DetectBlackService", DetectBlackService); // class
+            exports_1("DetectBlackService", DetectBlackService);
         }
-    }
+    };
 });
+//# sourceMappingURL=detect-black.service.js.map

@@ -1,0 +1,18 @@
+{
+  "version": "1.6.2",
+  "compileOnSave": false,
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "module": "system",
+    "moduleResolution": "node",
+    "removeComments": false,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "outDir": "../dist"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
