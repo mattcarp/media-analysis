@@ -1,13 +1,12 @@
-// "maintainers": [
-//   {
-//     "name": "Garen J. Torikian",
-//     "email": "gjtorikian@gmail.com"
-//   }
-// ],
-// "repository": {
-//   "type": "git",
-//   "url": "git+https://github.com/gjtorikian/isBinaryFile.git"
-// },
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
+/**
+ * @file Common utilities
+ * @project PM2
+ */
 
 /**
  * Module dependencies
@@ -21,7 +20,7 @@ var isBinary  = require('./tools/isbinaryfile.js');
 var Utility   = require('./Utility.js');
 var async     = require('async');
 var cst       = require('../constants.js');
-var extItps   = require('./interpreter.json');
+var extItps   = require('./CLI/interpreter.json');
 var shelljs   = require('shelljs');
 var p         = path;
 var Satan     = require('./Satan.js');
@@ -43,8 +42,6 @@ var Common = module.exports;
  * @return app
  */
 Common.prepareAppConf = function(app, outputter) {
-
-
   /**
    * Minimum validation
    */
@@ -52,7 +49,7 @@ Common.prepareAppConf = function(app, outputter) {
     return new Error('No script path - aborting');
 
   // Forbidden application name
-  if (app.name.indexOf(['push']) > -1)
+  if (app.name == 'push')
     return new Error('Push application name is not allowed');
 
   if (app.automation == false)
@@ -94,13 +91,45 @@ Common.prepareAppConf = function(app, outputter) {
       return new Error('script not found : ' + app.pm_exec_path);
   }
 
+  /**
+   * Auto detect .map file and enable source map support automatically
+   */
+  if (app.disable_source_map_support != true) {
+    try {
+      if (fs.accessSync) {
+        fs.accessSync(app.pm_exec_path + '.map', fs.R_OK);
+        app.source_map_support = true;
+      }
+      else {
+        // Support for Node 0.10.x
+        if (fs.existsSync(app.pm_exec_path + '.map')) {
+          app.source_map_support = true;
+        }
+      }
+    } catch(e) {}
+    delete app.disable_source_map_support;
+  }
+
   delete app.script;
 
   // Set current env by first adding the process environment and then extending/replacing it
   // with env specified on command-line or JSON file.
-  app.env = [{}, process.env, app.env || {}, {pm_cwd: cwd}].reduce(function(e1, e2){
+
+  var env = {};
+
+  /**
+   * Do not copy internal pm2 environment variables if acting on process
+   * is made from a programmatic script started by PM2
+   */
+  if (process.env.PM2_PROGRAMMATIC)
+    Common.safeExtend(env, process.env);
+  else
+    env = process.env;
+
+  app.env = [{}, env, app.env || {}, {pm_cwd: cwd}].reduce(function(e1, e2){
     return util._extend(e1, e2);
   });
+
 
   app.pm_cwd = cwd;
 
@@ -157,6 +186,9 @@ Common.sink.determineCron = function(app) {
   }
 };
 
+/**
+ * Handle alias (fork <=> fork_mode, cluster <=> cluster_mode)
+ */
 Common.sink.determineExecMode = function(app) {
   if (typeof app.instances == 'undefined')
     app.instances = 1;
@@ -199,20 +231,6 @@ Common.deepCopy = Common.serialize = Common.clone = function(obj) {
   if (obj === null || obj === undefined) return {};
 
   return Utility.clone(obj);
-};
-
-/**
- * Return a safe copy of pm2_env
- */
-Common.formatCLU = function(csp) {
-  if (!csp.pm2_env) {
-    return csp;
-  }
-
-  var obj = Common.clone(csp.pm2_env);
-  delete obj.env;
-
-  return obj;
 };
 
 /**
@@ -274,7 +292,7 @@ Common.printError = function(msg) {
  * @return
  */
 Common.printOut = function() {
-  if (process.env.PM2_SILENT || process.env.PM2_PROGRAMMATIC === 'true') return false;
+  if (process.env.PM2_SILENT === 'true' || process.env.PM2_PROGRAMMATIC === 'true') return false;
   return console.log.apply(console, arguments);
 };
 
@@ -313,7 +331,6 @@ Common.getAllProcess = function(cb) {
   });
 };
 
-
 Common.getAllProcessId = function(cb) {
   var found_proc = [];
 
@@ -340,6 +357,9 @@ Common.getProcessIdByName = function(name, force_all, cb) {
     cb = force_all;
     force_all = false;
   }
+
+  if (typeof(name) == 'number')
+    name = name.toString();
 
   Satan.executeRemote('getMonitorData', {}, function(err, list) {
     if (err) {
@@ -379,12 +399,28 @@ Common.getProcessByName = function(name, cb) {
   });
 };
 
-Common.extend = function(origin, add){
-  // Don't do anything if add isn't an object
+/**
+ * Raw extend
+ */
+Common.extend = function(destination, source){
+  if (!source || typeof source != 'object') return destination;
+
+  Object.keys(source).forEach(function(new_key) {
+    if (source[new_key] != '[object Object]')
+      destination[new_key] = source[new_key];
+  });
+
+  return destination;
+};
+
+/**
+ * This is useful when starting script programmatically
+ */
+Common.safeExtend = function(origin, add){
   if (!add || typeof add != 'object') return origin;
 
   //Ignore PM2's set environment variables from the nested env
-  var keysToIgnore = ['name', 'exec_mode', 'env', 'args', 'pm_cwd', 'exec_interpreter', 'pm_exec_path', 'node_args', 'pm_out_log_path', 'pm_err_log_path', 'pm_pid_path', 'pm_id', 'status', 'pm_uptime', 'created_at', 'started_inside', 'unstable_restarts', 'restart_time', 'pm_id', 'axm_actions', 'pmx_module', 'command', 'watch', 'versioning', 'vizion_runing', 'MODULE_DEBUG'];
+  var keysToIgnore = ['name', 'exec_mode', 'env', 'args', 'pm_cwd', 'exec_interpreter', 'pm_exec_path', 'node_args', 'pm_out_log_path', 'pm_err_log_path', 'pm_pid_path', 'pm_id', 'status', 'pm_uptime', 'created_at', 'unstable_restarts', 'restart_time', 'pm_id', 'axm_actions', 'pmx_module', 'command', 'watch', 'versioning', 'vizion_runing', 'MODULE_DEBUG'];
 
   var keys = Object.keys(add);
   var i = keys.length;

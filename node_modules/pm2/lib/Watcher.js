@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 var chokidar = require('chokidar');
 var p        = require('path');
 var util     = require('util');
@@ -26,7 +31,7 @@ module.exports = function ClusterMode(God) {
 
     var watch = pm2_env.watch 
     
-    if(typeof watch == 'boolean')
+    if(typeof watch == 'boolean' || util.isArray(watch) && watch.length === 0)
       watch = pm2_env.pm_cwd;
 
     log('Watching %s', watch);
@@ -45,6 +50,8 @@ module.exports = function ClusterMode(God) {
     log('Watch opts', watch_options);
 
     var watcher = chokidar.watch(watch, watch_options);
+
+    console.log('[Watch] Start watching', pm2_env.pm_id);
 
     watcher.on('all', function(event, path) {
       var self = this;

@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 'use strict';
 
 /**
@@ -9,20 +14,20 @@ var p             = require('path');
 var Common        = require('../Common');
 var treekill      = require('../TreeKill');
 var cst           = require('../../constants.js');
-var debug         = require('debug')('god:methods');
+var debug         = require('debug')('pm2:methods');
 var os            = require('os');
 
 /**
- * Kill process group in a cross platform way
- * @method crossPlatformGroupKill
- * @param int pid
- * @param string sig
+  * Kill process group in a cross platform way
+  * @method crossPlatformGroupKill
+  * @param int pid
+  * @param string sig
  */
 function crossPlatformGroupKill(pid, sig) {
-    // This would have not been needed if node.js were able
-    // to handle group process kill on Windows (pid < -1).
-    if (os.platform() === 'win32') treekill(pid, sig);
-    else process.kill(-pid, sig);
+  // This would have not been needed if node.js were able
+  // to handle group process kill on Windows (pid < -1).
+  if (os.platform() === 'win32') treekill(pid, sig);
+  else process.kill(-pid, sig);
 }
 
 /**
@@ -59,6 +64,17 @@ module.exports = function(God) {
     return God.clusters_db;
   };
 
+  God.getFormatedProcess = function getFormatedProcesses(id) {
+    if (God.clusters_db[id])
+      return {
+        pid     : God.clusters_db[id].process.pid,
+        name    : God.clusters_db[id].pm2_env.name,
+        pm2_env : God.clusters_db[id].pm2_env,
+        pm_id   : God.clusters_db[id].pm2_env.pm_id
+      };
+    return {};
+  };
+
   /**
    * Description
    * @method getFormatedProcesses
@@ -70,12 +86,14 @@ module.exports = function(God) {
 
     for (var key in db) {
       if (db[key]) {
-        arr.push({
-          pid     : db[key].process.pid,
-          name    : db[key].pm2_env.name,
-          pm2_env : db[key].pm2_env,
-          pm_id   : db[key].pm2_env.pm_id
-        });
+        if (!isNaN(db[key].pm2_env.pm_id)) {
+          arr.push({
+            pid     : db[key].process.pid,
+            name    : db[key].pm2_env.name,
+            pm2_env : db[key].pm2_env,
+            pm_id   : db[key].pm2_env.pm_id
+          });
+        }
       }
     }
     db = null;
@@ -118,25 +136,6 @@ module.exports = function(God) {
       }
     }
     return arr;
-  };
-
-  /**
-   * Description
-   * @method findByScript
-   * @param {} script
-   * @param {} cb
-   * @return
-   */
-  God.findByScript = function(script, cb) {
-    var db = Common.clone(God.clusters_db);
-    var arr = [];
-
-    for (var key in db) {
-      if (p.basename(db[key].pm2_env.pm_exec_path) == script) {
-        arr.push(db[key].pm2_env);
-      }
-    }
-    cb(null, arr.length == 0 ? null : arr);
   };
 
   /**
@@ -209,6 +208,7 @@ module.exports = function(God) {
 
     var timeout      = null;
     var kill_timeout = (pm2_env && pm2_env.kill_timeout) ? pm2_env.kill_timeout : cst.KILL_TIMEOUT;
+    var mode         = pm2_env.exec_mode;
 
     var timer = setInterval(function() {
       if (God.checkProcess(pid) === false) {
@@ -228,11 +228,24 @@ module.exports = function(God) {
         return cb({type : 'timeout', msg : 'timeout'});
       }
       else {
-        console.log('Process with pid %d still alive after %sms, sending it SIGKILL now...', pid, cst.KILL_TIMEOUT);
-        try {
-          crossPlatformGroupKill(parseInt(pid), 'SIGKILL');
-        } catch(e) {
-          console.error('Process cannot be killed', e.message || e.stack || e);
+        console.log('Process with pid %d still alive after %sms, sending it SIGKILL now...', pid, kill_timeout);
+
+        if (pm2_env.treekill !== true) {
+          try {
+            process.kill(parseInt(pid), 'SIGKILL');
+          } catch(e) {
+            console.error('[SimpleKill][SIGKILL] %s pid can not be killed', pid, e.stack, e.message);
+          }
+        }
+        else {
+          try {
+            if (mode.indexOf('cluster') === 0)
+              treekill(parseInt(pid), 'SIGKILL');
+            else
+              crossPlatformGroupKill(parseInt(pid), 'SIGKILL');
+          } catch(e) {
+            console.error('[KillProc][SIGKILL] %s pid can not be killed', pid, e.stack, e.message);
+          }
         }
         return God.processIsDead(pid, pm2_env, cb, true);
       }
@@ -253,20 +266,22 @@ module.exports = function(God) {
 
     var mode = pm2_env.exec_mode;
 
-    try {
-      if(pm2_env.treekill !== true) {
+    if (pm2_env.treekill !== true) {
+      try {
         process.kill(parseInt(pid), 'SIGINT');
+      } catch(e) {
+        console.error('[SimpleKill] %s pid can not be killed', pid, e.stack, e.message);
       }
-      else {
-        if (mode.indexOf('cluster') === 0) {
+    }
+    else {
+      try {
+        if (mode.indexOf('cluster') === 0)
           treekill(parseInt(pid), 'SIGINT');
-        }
         else
           crossPlatformGroupKill(parseInt(pid), 'SIGINT');
+      } catch(e) {
+        console.error('[KillProc] %s pid can not be killed', pid, e.stack, e.message);
       }
-    } catch(e) {
-      console.error('%s pid can not be killed', pid, e);
-      return cb(null, 'Cannot be killed');
     }
 
     return God.processIsDead(pid, pm2_env, cb);
@@ -289,17 +304,6 @@ module.exports = function(God) {
    * @return
    */
   God.resetState = function(pm2_env) {
-    pm2_env.created_at = Date.now();
-    pm2_env.unstable_restarts = 0;
-  };
-
-  /**
-   * Description
-   * @method deepReset
-   * @param {} pm2_env
-   * @return
-   */
-  God.deepReset = function(pm2_env) {
     pm2_env.created_at = Date.now();
     pm2_env.unstable_restarts = 0;
   };

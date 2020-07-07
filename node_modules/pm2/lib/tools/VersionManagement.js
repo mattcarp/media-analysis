@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 
 var fs                   = require('fs');
 var async                = require('async');
@@ -7,6 +12,7 @@ var child                = require('child_process');
 var CLI                  = require('../CLI.js');
 var Common               = require('../Common.js');
 var cst                  = require('../../constants.js');
+var Utility              = require('../Utility.js');
 
 var exitCli = Common.exitCli;
 var printError = Common.printError;
@@ -311,8 +317,11 @@ var getPostUpdateCmds = function(repo_path, proc_name, cb) {
     fs.exists(repo_path+file, function(exists) {
       if (exists) {
         try {
-          var data = JSON.parse(fs.readFileSync(repo_path + file).toString());
-        } catch (e) {}
+          var conf_string = fs.readFileSync(repo_path + file);
+          var data = Utility.parseConfig(conf_string, repo_path + file);
+        } catch (e) {
+          console.error(e.message || e);
+        }
 
         if (data && data.apps) {
           async.eachSeries(data.apps, function(item, callb) {

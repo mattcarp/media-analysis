@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 
 var Modularizer = module.exports = {};
 
@@ -12,22 +17,9 @@ var Configuration = require('./Configuration.js');
 var cst           = require('../constants.js');
 var CLI           = require('./CLI.js');
 var Common        = require('./Common');
-var UX            = require('./CliUx.js');
+var UX            = require('./CLI/CliUx.js');
 
 var MODULE_CONF_PREFIX = 'module-db';
-
-// [X] 1# verify that there is a process.json or process.json5 else not a pm2 module
-// [X] 2# Keep separated list for modules when doing pm2 list
-// [X] Avoid dumping module processes
-// [X] Stats process.json process.json5 package.json ecosystem.json
-// [X] 4# pm2 uninstall <probe> = delete folder and stop process
-// [X] Name of app must be the same than the module name
-// [X] At PM2 initialization start all .pm2/node_modules
-// [X] Block all tentatives to stop a module
-// [X] NO NEED pm2 generate module   = Provide a module skeleton
-// [X] pm2 update=install <module> = not deleting the conf file
-// [X] pm2 publish module (increment version, git push, npm publish)
-// [X] API normalization = dont block adoption, find common way to transform current software into propack
 
 function startModule(opts, cb) {
   /** SCRIPT

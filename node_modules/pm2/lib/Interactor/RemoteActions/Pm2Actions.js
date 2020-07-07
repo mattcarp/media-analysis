@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 
 
 var debug          = require('debug')('interface:driver'); // Interface
@@ -320,8 +325,8 @@ var Pm2Actions = module.exports = {
         var ret = JSON.parse(dt);
         if (ret.isFinished != true) return false;
 
-        console.log('Action %s finished (err= %s, dt= %s)',
-                    action_name, ret.err, JSON.stringify(ret.dt));
+        console.log('Action %s finished (err= %s)',
+                    action_name, ret.err);
         return cb(ret.err, ret.dt);
       });
 

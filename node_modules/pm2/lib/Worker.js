@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 var vizion = require('vizion');
 var cst    = require('../constants.js');
 var async  = require('async');
@@ -28,7 +33,9 @@ module.exports = function(God) {
         proc.pm2_env.max_memory_restart < proc_key.monit.memory) {
       console.log('[PM2][WORKER] Process %s restarted because it exceeds --max-memory-restart value',
                   proc.pm2_env.pm_id);
-      God.softReloadProcessId(proc.pm2_env.pm_id, function(err, data) {
+      God.softReloadProcessId({
+        id : proc.pm2_env.pm_id
+      }, function(err, data) {
         if (err)
           console.error(err.stack || err);
         return cb();
@@ -42,8 +49,7 @@ module.exports = function(God) {
       console.log('[PM2][WORKER] Process %s restarted because it uses 0 memory and has ONLINE status',
                   proc.pm2_env.pm_id);
       God.restartProcessId({
-        id: proc.pm2_env.pm_id,
-        env: proc.pm2_env.env
+        id: proc.pm2_env.pm_id
       }, function(err, data) {
         if (err)
           console.error(err.stack || err);
@@ -105,8 +111,6 @@ module.exports = function(God) {
       return false;
     }
     God.Worker.is_running = true;
-
-    // God.forceGc();
 
     God.getMonitorData(null, function(err, data) {
       if (err || !data || typeof(data) !== 'object') {

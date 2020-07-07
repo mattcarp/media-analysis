@@ -1,12 +1,18 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 
-var fs     = require('fs');
-var ipm2   = require('./pm2-interface.js');
-var rpc    = require('pm2-axon-rpc');
-var axon   = require('pm2-axon');
-var debug  = require('debug')('interface:driver'); // Interface
-var chalk  = require('chalk');
-
-var pkg    = require('../../package.json');
+var fs    = require('fs');
+var ipm2  = require('./pm2-interface.js');
+var rpc   = require('pm2-axon-rpc');
+var axon  = require('pm2-axon');
+var debug = require('debug')('interface:driver'); // Interface
+var chalk = require('chalk');
+var Url   = require('url');
+var os    = require('os');
+var pkg   = require('../../package.json');
 
 var cst               = require('../../constants.js');
 var Cipher            = require('./Cipher.js');
@@ -16,19 +22,14 @@ var PushInteractor    = require('./PushInteractor.js');
 var Utility           = require('../Utility.js');
 var WatchDog          = require('./WatchDog.js');
 var Conf              = require('../Configuration.js');
-
-var Url = require('url');
-var os = require('os');
-
 var HttpRequest       = require('./HttpRequest.js');
-
 // Flag to notify presence of password
 global._pm2_password_protected = false;
 
 // Flag for log streaming status
 global._logs = false;
 
-var Daemon = {
+var Daemon = module.exports = {
   connectToPM2 : function() {
     return ipm2({bind_host: 'localhost'});
   },
@@ -115,6 +116,42 @@ var Daemon = {
 
     return ciphered_data;
   },
+  pingKeepAlive : function() {
+    var self = this;
+
+    (function act() {
+      HttpRequest.ping({
+        url  : self.opts.ROOT_URL,
+        port : self.opts.ROOT_PORT
+      }, function(error) {
+        if (error) {
+          if (self.opts._connection_is_up == true)
+            console.error('[CRITICAL] Dameon cannot PING %s', self.opts.ROOT_URL, self.opts.ROOT_PORT);
+          self.opts._connection_is_up = false;
+        }
+        else {
+          if (self.opts._connection_is_up == false) {
+            console.log('[TENTATIVE] Reactivating connection');
+
+            // Force reconnect if ping went from false to true
+            PushInteractor.connectRemote();
+          }
+          self.opts._connection_is_up = true;
+        }
+
+        if (error)
+          debug(error);
+
+        setTimeout(act, 5000);
+      });
+    })();
+  },
+  changeUrls : function(push_url, reverse) {
+    if (push_url)
+      PushInteractor.connectRemote(push_url);
+    if (reverse)
+      ReverseInteractor.changeUrl(reverse);
+  },
   refreshWorker : function() {
     var self = this;
 
@@ -130,8 +167,18 @@ var Daemon = {
         }
       }, function(err, km_data) {
         if (err) return console.error(err);
+
+        /** protect against malformated data **/
+        if (!km_data ||
+            !km_data.endpoints ||
+            !km_data.endpoints.push ||
+            !km_data.endpoints.reverse) {
+          console.error('[CRITICAL] Malformated data received, skipping...');
+          return false;
+        }
+
         if (km_data.disabled == true) {
-          console.error(chalk.cyan('[Keymetrics.io]') + ' Server DISABLED BY ADMINISTRATION contact support contact@keymetrics.io with reference to your public and secret keys)');
+          console.error('Server DISABLED BY ADMINISTRATION contact support contact@keymetrics.io with reference to your public and secret keys)');
           return Daemon.exit();
         }
 
@@ -141,20 +188,21 @@ var Daemon = {
 
         if ((Daemon.current_km_data.endpoints.push != km_data.endpoints.push) ||
             (Daemon.current_km_data.endpoints.reverse != km_data.endpoints.reverse)) {
-          console.log('[Interactor] Urls changed');
-          PushInteractor.changeUrl(km_data.endpoints.push);
-          ReverseInteractor.changeUrl(km_data.endpoints.reverse);
+          self.changeUrls(km_data.endpoints.push, km_data.endpoints.reverse);
           Daemon.current_km_data = km_data;
+        }
+        else {
+          debug('[REFRESH META] No need to update URL (same)', km_data);
         }
         return false;
       });
 
     };
 
-    // Refresh metadata every 3 minutes
+    // Refresh metadata every minutes
     setInterval(function() {
       refreshMetadata();
-    }, 60000 * 3);
+    }, 60000);
   },
   validateData : function() {
     var opts = {};
@@ -233,6 +281,7 @@ var Daemon = {
 
     self.opts      = self.validateData();
     self.opts.ipm2 = null;
+    self.opts._connection_is_up = true;
     self.current_km_data = null;
 
     self._rpc = self.activateRPC();
@@ -268,10 +317,11 @@ var Daemon = {
         url : 'http://127.0.0.1:4322',
         conf : self.opts
       });
-      process.send({
-        success : true,
-        debug : true
-      });
+      if (process.send)
+        process.send({
+          success : true,
+          debug : true
+        });
       return false;
     }
 
@@ -316,6 +366,7 @@ var Daemon = {
           });
         }
         Daemon.refreshWorker();
+        Daemon.pingKeepAlive();
       }
       else {
         console.log('Nothing to do, exiting');
@@ -323,8 +374,6 @@ var Daemon = {
       }
       return false;
     });
-
-
   }
 };
 

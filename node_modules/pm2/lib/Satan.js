@@ -1,12 +1,18 @@
-'use strict';
 /**
- * Satan is the intermediate code between
- * the Daemon and the CLI client
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
  */
+/***********************************
+ *      ______ _______ ______
+ *     |   __ \   |   |__    |
+ *     |    __/       |    __|
+ *     |___|  |__|_|__|______|
+ *
+ * Main Bridge between Daemon and CLI
+ *
+ ***********************************/
 
-/**
- * Dependencies
- */
 var cst         = require('../constants.js');
 var rpc         = require('pm2-axon-rpc');
 var axon        = require('pm2-axon');
@@ -16,6 +22,7 @@ var fs          = require('fs');
 var p           = require('path');
 var Utility     = require('./Utility.js');
 var domain      = require('domain');
+var async       = require('async');
 
 /**
  * Export
@@ -84,7 +91,16 @@ Satan.processStateHandler = function(God) {
     Satan.printOut('pm2 has been killed by signal, dumping process list before exit...');
 
     God.dumpProcessList(function() {
-      God.deleteAll({}, function() {
+
+      var processes = God.getFormatedProcesses();
+
+      async.eachLimit(processes, cst.CONCURRENT_ACTIONS, function(proc, next) {
+        console.log('Deleting process %s', proc.pm2_env.pm_id);
+        God.deleteProcessId(proc.pm2_env.pm_id, function() {
+          return next();
+        });
+        return false;
+      }, function(err) {
         try {
           fs.unlinkSync(cst.PM2_PID_FILE_PATH);
         } catch(e) {}
@@ -199,7 +215,6 @@ Satan.remoteWrapper = function() {
     notifyKillPM2           : God.notifyKillPM2,
     forceGc                 : God.forceGc,
 
-    findByScript            : God.findByScript,
     findByPort              : God.findByPort,
     findByFullPath          : God.findByFullPath,
 
@@ -210,10 +225,7 @@ Satan.remoteWrapper = function() {
 
     ping                    : God.ping,
     getVersion              : God.getVersion,
-    reloadLogs              : God.reloadLogs,
-
-    lock                    : God.lock,
-    unlock                  : God.unlock
+    reloadLogs              : God.reloadLogs
   });
 
   /**
@@ -424,27 +436,6 @@ Satan.launchRPC = function launchRPC(cb) {
   var req      = axon.socket('req');
   Satan.client = new rpc.Client(req);
 
-  // if (process.env.TRAVIS || process.env.NODE_ENV === 'test' || process.env.DEBUG) {
-  //   console.log('------------------- SOCK FILE STATS ------------------');
-  //   fs.stat(cst.DAEMON_RPC_PORT, function(err, stats) {
-  //     if (err) console.error(err.stack || err);
-
-  //     console.log('Sock file: %s', cst.DAEMON_RPC_PORT);
-
-  //     console.log('    size: ' + stats["size"]);
-  //     console.log('    mode: ' + stats["mode"]);
-  //     console.log('    others eXecute: ' + (stats["mode"] & 1 ? 'x' : '-'));
-  //     console.log('    others Write:   ' + (stats["mode"] & 2 ? 'w' : '-'));
-  //     console.log('    others Read:    ' + (stats["mode"] & 4 ? 'r' : '-'));
-  //     console.log('    group eXecute:  ' + (stats["mode"] & 10 ? 'x' : '-'));
-  //     console.log('    group Write:    ' + (stats["mode"] & 20 ? 'w' : '-'));
-  //     console.log('    group Read:     ' + (stats["mode"] & 40 ? 'r' : '-'));
-  //     console.log('    owner eXecute:  ' + (stats["mode"] & 100 ? 'x' : '-'));
-  //     console.log('    owner Write:    ' + (stats["mode"] & 200 ? 'w' : '-'));
-  //     console.log('    owner Read:     ' + (stats["mode"] & 400 ? 'r' : '-'));
-  //   });
-  // }
-
   Satan.client.sock.once('connect', function() {
     debug('Connected to Daemon');
     process.emit('satan:client:ready');
@@ -542,6 +533,13 @@ Satan.printOut = function() {
  * @return
  */
 Satan.executeRemote = function executeRemote(method, env, fn) {
+  var env_watch = false;
+
+  if (env.env && env.env.watch)
+    env_watch = env.env.watch;
+
+  env_watch = util.isArray(env_watch) && env_watch.length === 0 ? !!~process.argv.indexOf('--watch') : env_watch;
+
   //stop watching when process is deleted
   if (method.indexOf('delete') !== -1) {
     Satan.stopWatch(method, env);
@@ -552,7 +550,7 @@ Satan.executeRemote = function executeRemote(method, env, fn) {
   } else if (~process.argv.indexOf('--watch') && method.indexOf('stop') !== -1) {
     Satan.stopWatch(method, env);
   //restart watch
-  } else if ((env.watch == true || ~process.argv.indexOf('--watch')) && method.indexOf('restart') !== -1) {
+  } else if (env_watch && method.indexOf('restart') !== -1) {
     Satan.restartWatch(method, env);
   }
 
@@ -637,24 +635,10 @@ Satan.stopWatch = function stopWatch(method, env, fn) {
   });
 };
 
-Satan.lock = function(opts, cb) {
-  if (!opts.name)
-    return cb({msg:'You must pass a name to .lock method'});
-
-  Satan.executeRemote('lock', opts, cb);
-};
-
-Satan.unlock = function(opts, cb) {
-  if (!opts.name)
-    return cb({msg:'You must pass a name to .unlock method'});
-
-  Satan.executeRemote('unlock', opts, cb);
-};
-
-//
-// If this file is a main process, it means that
-// this process is being forked by pm2 itself
-//
+/**
+ * If this file is a main process, it means that
+ * this process is being forked by pm2 itself
+ */
 if (require.main === module) {
 
   var pkg = require('../package.json');

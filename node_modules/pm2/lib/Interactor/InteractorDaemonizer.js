@@ -1,3 +1,8 @@
+/**
+ * Copyright 2013 the PM2 project authors. All rights reserved.
+ * Use of this source code is governed by a license that
+ * can be found in the LICENSE file.
+ */
 
 'use strict';
 
@@ -47,6 +52,8 @@ InteractorDaemonizer.ping = function(cb) {
 };
 
 InteractorDaemonizer.killDaemon = function(cb) {
+  process.env.PM2_INTERACTOR_PROCESSING = true;
+
   debug('Killing interactor #1 ping');
   InteractorDaemonizer.ping(function(online) {
     debug('Interactor online', online);
@@ -180,7 +187,7 @@ function launchOrAttach(infos, cb) {
  * @return
  */
 
-var UX = require('../CliUx.js');
+var UX = require('../CLI/CliUx.js');
 
 InteractorDaemonizer.daemonize = function(infos, cb) {
   var InteractorJS = path.resolve(path.dirname(module.filename), 'Daemon.js');
@@ -333,6 +340,7 @@ InteractorDaemonizer.getSetKeys = function(secret_key, public_key, machine_name,
     recycle = cpy.recycle || false;
   }
 
+
   try {
     var interaction_conf     = json5.parse(fs.readFileSync(cst.INTERACTION_CONF));
 
@@ -354,17 +362,17 @@ InteractorDaemonizer.getSetKeys = function(secret_key, public_key, machine_name,
     create_file = true;
   }
 
-  if (!secret_key) {
-    if (!process.env.PM2_SECRET_KEY)
-      return cb ? cb({msg:'secret key is not defined'}) : Common.exitCli(cst.ERROR_EXIT);
-    secret_key = process.env.PM2_SECRET_KEY;
-  }
+  if (process.env.PM2_SECRET_KEY || process.env.KEYMETRICS_SECRET)
+    secret_key = process.env.PM2_SECRET_KEY || process.env.KEYMETRICS_SECRET;
 
-  if (!public_key) {
-    if (!process.env.PM2_PUBLIC_KEY)
-      return cb ? cb({msg:'public key is not defined'}) : Common.exitCli(cst.ERROR_EXIT);
-    public_key = process.env.PM2_PUBLIC_KEY;
-  }
+  if (process.env.PM2_PUBLIC_KEY || process.env.KEYMETRICS_PUBLIC)
+    public_key = process.env.PM2_PUBLIC_KEY || process.env.KEYMETRICS_PUBLIC;
+
+  if (!secret_key)
+    return cb ? cb({msg:'secret key is not defined'}) : Common.exitCli(cst.ERROR_EXIT);
+
+  if (!public_key)
+    return cb ? cb({msg:'public key is not defined'}) : Common.exitCli(cst.ERROR_EXIT);
 
   if (!machine_name) {
     machine_name = os.hostname();
@@ -447,6 +455,8 @@ InteractorDaemonizer.launchAndInteract = function(opts, cb) {
     return process.nextTick(cb);
   }
 
+  process.env.PM2_INTERACTOR_PROCESSING = true;
+
   InteractorDaemonizer.getSetKeys(opts, function(err, data)  {
     if (err || !data) {
       return cb ? cb({msg:'Error when getting / setting keys', error : err.stack || err}) : Common.exitCli(cst.ERROR_EXIT);
@@ -458,6 +468,37 @@ InteractorDaemonizer.launchAndInteract = function(opts, cb) {
       if (err)
         return cb ? cb({error : err.stack || err}) : Common.exitCli(cst.ERROR_EXIT);
       return cb ? cb(null, msg, proc) : Common.exitCli(cst.SUCCESS_EXIT);
+    });
+    return false;
+  });
+};
+
+/**
+ * Description
+ * @method getInteractInfo
+ * @param {} cb
+ * @return
+ */
+InteractorDaemonizer.getInteractInfo = function(cb) {
+  debug('Getting interaction info');
+  InteractorDaemonizer.ping(function(online) {
+    if (!online) {
+      return cb({msg : 'offline'});
+    }
+    InteractorDaemonizer.launchRPC(function() {
+      InteractorDaemonizer.rpc.getInfos(function(err, infos) {
+        if (err)
+          return cb(err);
+
+        // Avoid general CLI to interfere with Keymetrics CLI commands
+        if (process.env.PM2_INTERACTOR_PROCESSING)
+          return cb(null, infos);
+
+        InteractorDaemonizer.disconnectRPC(function() {
+          return cb(null, infos);
+        });
+        return false;
+      });
     });
     return false;
   });
