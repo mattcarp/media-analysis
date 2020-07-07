@@ -1,7 +1,8 @@
+
+import {forkJoin as observableForkJoin, from as observableFrom, Observable} from 'rxjs';
 import {EventEmitter, Injectable} from 'angular2/core';
-import {Observable} from 'rxjs/Observable';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/observable/forkJoin';
+
+
 
 
 import {EndpointService} from '../handle-endpoints/endpoint.service';
@@ -54,16 +55,16 @@ export class AnalyzeAudioService {
     console.log('mono middle slice ends at', midSliceEnd);
     console.log('which is based on the video bitrate of', videoBitrate);
 
-    let observeFront = Observable.fromPromise(this.requestMono(frontSlice, 'front'));
-    let observeMiddle = Observable.fromPromise(this.requestMono(midSlice, 'middle'));
-    let observeEnd = Observable.fromPromise(this.requestMono(endSlice, 'end'));
+    let observeFront = observableFrom(this.requestMono(frontSlice, 'front'));
+    let observeMiddle = observableFrom(this.requestMono(midSlice, 'middle'));
+    let observeEnd = observableFrom(this.requestMono(endSlice, 'end'));
     // let observeForkJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
 
     // let observeFront = Observable.fromPromise(this.requestAsync(frontSlice, 'front'));
     // let observeMiddle = Observable.fromPromise(this.requestAsync(midSlice, 'middle'));
     // let observeEnd = Observable.fromPromise(this.requestAsync(endSlice, 'end'));
 
-    let observeJoined = Observable.forkJoin(observeFront, observeMiddle, observeEnd);
+    let observeJoined = observableForkJoin(observeFront, observeMiddle, observeEnd);
 
     observeJoined.subscribe(data => {
       console.log('mono subscribe result:');
