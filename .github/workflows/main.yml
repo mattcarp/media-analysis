@@ -8,12 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: switch Node.js to 4.9.1
-        uses: actions/setup-node@v1
-        with:
-          node-version: '4.9.1'
-      - name: install node modules for express
-        run: npm install
       - name: switch Node.js to 12.16.1
         uses: actions/setup-node@v1
         with:
@@ -23,6 +17,12 @@ jobs:
       - run: pwd && ls -la
       - name: build angular app
         run: cd client && npm run build
+      - name: switch Node.js to 4.9.1
+        uses: actions/setup-node@v1
+        with:
+          node-version: '4.9.1'
+      - name: install node modules for express
+        run: npm install
       - name: Deploy to DEV server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
