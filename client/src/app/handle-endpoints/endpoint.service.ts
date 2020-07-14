@@ -8,7 +8,7 @@ export class EndpointService {
     if (window.location.hostname === 'localhost') {
       return 'http://localhost:3000/';
     } else {
-      return 'http://52.0.119.124:3000/';
+      return '/';
     }
   }
 
