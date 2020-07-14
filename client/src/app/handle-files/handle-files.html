@@ -1,0 +1,29 @@
+<!--<div id="demo-upload" class="dropzone needsclick dz-clickable ma-file__panel">-->
+<!--  &lt;!&ndash; <form action="/upload" class="dropzone needsclick dz-clickable" id="demo-upload"> &ndash;&gt;-->
+
+<!--    <div class="dz-message needsclick">-->
+<!--      drop a video file here or <strong>click to select....</strong>-->
+<!--      <br>-->
+<!--      <span class="note needsclick">your file will be checked for compatibility</span>-->
+<!--    </div>-->
+
+<!--  &lt;!&ndash; </form> &ndash;&gt;-->
+<!--  <h6 [hidden]="!filename">name: {{filename}}</h6>-->
+<!--  <h6 [hidden]="!fileSize">size: {{fileSize}}</h6>-->
+<!--</div>-->
+
+<ngx-dropzone (change)="onSelect($event)" id="demo-upload" class="dropzone needsclick dz-clickable ma-file__panel">
+  <ngx-dropzone-label>
+    <div class="dz-message needsclick">
+      drop a video file here or <strong>click to select....</strong>
+      <br>
+      <span class="note needsclick">your file will be checked for compatibility</span>
+    </div>
+  </ngx-dropzone-label>
+  <ngx-dropzone-preview *ngFor="let f of files" [removable]="true" (removed)="onRemove(f)">
+    <ngx-dropzone-label>
+      <h6 [hidden]="!filename">name: {{filename}}</h6>
+      <h6 [hidden]="!fileSize">size: {{fileSize}}</h6>
+    </ngx-dropzone-label>
+  </ngx-dropzone-preview>
+</ngx-dropzone>

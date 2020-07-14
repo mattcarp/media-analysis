@@ -1,0 +1,52 @@
+<br>
+<div [hidden]="!detectingMono">
+  <h3>mono detection started on three audio segments...</h3>
+</div>
+
+<div *ngIf="detections?.length > 2" class="ma-audio__analysis">
+  <h3>Audio Signal Analysis</h3>
+  <hr>
+  <div class="ma-monodetect">
+    <div class="col-xs-4" *ngFor="let segment of audioResults; let index = index">
+      <!-- <div [hidden]="detectingMono && segment.data">
+        i will show you this if we have stopped detecting mono and there is still no segment data
+      </div> -->
+      <div class="ma-mono__segments" [hidden]="!segment.data">
+        <h5>segment {{index + 1}} is
+          <strong>
+            <span [hidden]="segment.isMono">stereo</span>
+            <span [hidden]="!segment.isMono">mono</span>
+          </strong>
+        </h5>
+
+          <h5>segment {{index + 1}} peak:
+            <strong>{{segment.peakLevel}}</strong>
+          </h5>
+        <a (click)="showMonoDetails(index)" class="ma-mono__segment--link">
+          <span [hidden]="!displayMonoDetails[index]">hide</span>
+          <span [hidden]="displayMonoDetails[index]">show</span>
+            segment {{index + 1}} analysis</a>
+        <span [hidden]="!displayMonoDetails[index]" class="ma-fade-in">
+
+            <div *ngFor="let item of segmentAnalyses[index]" class="ma-monospace">
+              <pre>{{item}}</pre>
+            </div>
+        </span>
+      </div>
+
+    </div>
+
+    <div [hidden]="!shouldWarnMono" class="ma-mono__message col-xs-12">
+      <span class="fa fa-warning"></span>
+      <i>All three tested audio segments are mono.
+         Before uploading, please make sure this is intentional.</i>
+    </div>
+    <div [hidden]="!peakThresholdExceeded" class="ma-mono__message col-xs-12">
+      <span class="fa fa-warning"></span>
+      <i>The audio in this file peaks above -6 dB, and is too loud. This file can't be uploaded.</i>
+    </div>
+  </div>
+  <!-- /.ma-monodetect -->
+<br><br>
+</div>
+<!-- audio results -->
