@@ -20,8 +20,9 @@ jobs:
           node-version: '12.16.1'
       - name: install node modules for angular
         run: cd client && npm install --unsafe-perm
+      - run: pwd && ls -la
       - name: build angular app
-        run: npm run build
+        run: cd client && npm run build
       - name: Deploy to DEV server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
