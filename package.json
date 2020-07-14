@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "array-flatten": "^3.0.0",
     "binary": "^0.3.0",
     "body-parser": "^1.13.3",
     "bunyan": "^1.6.0",
