@@ -38,7 +38,7 @@ jobs:
           command: |
             cd ${{ secrets.REMOTE_TARGET }}
             forever stopall
-            forever start data/www
+            forever start bin/www
             forever list
           host: ${{ secrets.REMOTE_HOST }}
           user: ${{ secrets.REMOTE_USER }}
