@@ -1,0 +1,42 @@
+<div [hidden]="!metadataStarted">
+  <h3>validating format metadata...</h3>
+</div>
+
+<div class="row"  [hidden]="!showResults">
+
+  <h3>Format Verification</h3>
+  <h2>{{proResMsg}}</h2>
+  <hr>
+  <div class="col-xs-6">
+    <h4>audio</h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"
+        *ngFor="let item of audioValidations">
+        <span [hidden]="!item.pass" class="fa fa-check-circle"></span>
+        <span [hidden]="item.pass" class="fa fa-times-circle"></span>
+        <span [hidden]="!item.warn" class="fa fa-warning"></span>
+        <span><strong>{{item.name}}</strong></span>
+        <span class="pull-xs-right">{{item.value}}</span>
+        <div [hidden]="item.pass" class="ma-format__message">{{item.message}}</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="col-xs-6">
+    <h4>video
+      <i [hidden]="videoFormat !== 'prores'" class="icon-ma-icon__prores"></i>
+      <i [hidden]="videoFormat !== 'mpeg2video'" class="icon-ma-icon__mpeg2"></i>
+    </h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item" *ngFor="let item of videoValidations">
+        <span [hidden]="!item.pass" class="fa fa-check-circle"></span>
+        <span [hidden]="item.pass" class="fa fa-times-circle"></span>
+        <span [hidden]="!item.warn" class="fa fa-warning"></span>
+        <span><strong>{{item.name}}</strong></span>
+        <span class="pull-xs-right">{{item.value}}</span>
+        <div [hidden]="item.pass" class="ma-format__message">{{item.message}}</div>
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- /results  -->
