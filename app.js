@@ -24,6 +24,7 @@ const app = express();
 app.set('views', path.join(__dirname, 'client'));
 // app.set('view engine', 'hbs');
 app.set('view engine', 'html');
+app.set('etag', false);
 
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -34,7 +35,7 @@ app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, ' +
     'xa-file-to-concat, xa-black-position, xa-chunk-position');
-
+  res.set('Cache-Control', 'no-store');
   next();
 });
 
