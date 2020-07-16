@@ -23,7 +23,6 @@ jobs:
           node-version: '4.9.1'
       - name: install node modules for express
         run: npm install
-      - run: cd upload-demo && npm install
       - name: Deploy to DEV server
         uses: easingthemes/ssh-deploy@v2.0.7
         env:
@@ -32,14 +31,14 @@ jobs:
           SOURCE: ""
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}/media-nanalysis
       - name: Run forever
         uses: fifsky/ssh-action@master
         with:
           command: |
             cd ${{ secrets.REMOTE_TARGET }}
             forever stopall
-            forever start bin/www
+            forever start media-nanalysis/bin/www
             forever list
           host: ${{ secrets.REMOTE_HOST }}
           user: ${{ secrets.REMOTE_USER }}
