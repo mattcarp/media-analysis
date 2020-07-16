@@ -16,6 +16,7 @@ const users = require('./routes/users');
 const analysis = require('./routes/media-analysis');
 const black = require('./routes/black');
 const mono = require('./routes/mono');
+const uploader = require('./routes/uploader');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/users', users);
 app.use('/analysis', analysis);
 app.use('/black', black);
 app.use('/mono', mono);
+app.use('/uploader', uploader);
 app.use('/', routes);
 
 // catch 404 and forward to error handler
