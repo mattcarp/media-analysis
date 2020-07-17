@@ -5,6 +5,12 @@ const path = require('path');
 // static files
 router.get('*.*', express.static(path.join(__dirname, '/../client/dist/client/')));
 
+// version of the app
+router.get('/uploader/version', function(req, res, next) {
+  const version = require('../../upload-demo/package.json').version;
+  res.send(version);
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname + '/../client/dist/client/index.html'));
