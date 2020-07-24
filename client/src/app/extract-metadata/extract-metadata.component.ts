@@ -18,7 +18,7 @@ export class ExtractMetadataComponent {
   format: Object[];
   formatTags: Object[];
   showFormat: boolean = false;
-  streams: Object[][]; // an array of arrays of stream objects
+  streams: any[]; // an array of arrays of stream objects
   showMetadata: boolean = false;
 
 
@@ -79,6 +79,13 @@ export class ExtractMetadataComponent {
   // an array of objects: {key: value}
   // this is handy for ffprobe's format and tags objects
   processObject(formatObj): Object[] {
+    if (Array.isArray(formatObj)) {
+      const newObj: any = {};
+      formatObj.map(item => Object.keys(item).map((key: string) => {
+        newObj[key] = item[key];
+      }));
+      formatObj = newObj;
+    }
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
     // TODO filter if value for key is object or array, rather than not 'tags'
@@ -89,7 +96,7 @@ export class ExtractMetadataComponent {
         item.key = formatKey.replace(/_/g, " ")
         .replace(/(?:^|\s)[a-z]/g, function (m) {
           return m.toUpperCase();
-        }).replace("Nb ", "Number of ");;
+        }).replace("Nb ", "Number of ");
         item.value = formatObj[formatKey];
         return item;
     })
@@ -97,6 +104,10 @@ export class ExtractMetadataComponent {
 
   toggleMetadata() {
     this.showMetadata = !this.showMetadata;
+  }
+
+  isItemWithLinearValue(value: any): boolean {
+    return typeof value === 'string' || typeof value === 'number';
   }
 
 
