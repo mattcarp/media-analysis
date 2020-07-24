@@ -49,16 +49,24 @@
       </div>
 
 
-      <div class="col-xs-10" [hidden]="!streams">
+      <div class="col-xs-10" [hidden]="!streams?.length">
         <ul class="list-group ma-metadata__block" *ngFor="let stream of streams; let idx = index">
           <li class="list-group-item">
             <h4 class="list-group-item-heading">stream {{idx}}</h4>
           </li>
 
           <li class="list-group-item" *ngFor="let item of stream">
-            <span class="col-xs-5"><b>{{item.key}}</b></span>
-            <span>{{item.value}}</span>
-            <div [hidden]="item.key !== 'Disposition'">disp, hoss: {{item.value}}</div>
+            <ng-container *ngIf="isItemWithLinearValue(item?.value); else disposition">
+              <span class="col-xs-5"><b>{{item.key}}</b></span>
+              <span>{{item.value}}</span>
+            </ng-container>
+            <ng-template #disposition>
+              <div *ngFor="let childItem of processObject(item.value); let first = first">
+                <div *ngIf="first"><b>{{item?.key}}</b></div>
+                <span class="col-xs-5"><b>{{childItem?.key}}</b></span>
+                <span>{{childItem?.value}}</span>
+              </div>
+            </ng-template>
           </li>
         </ul>
       </div>
