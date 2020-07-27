@@ -5,22 +5,6 @@ start express server, from project root:
 
     nodemon DEBUG=media-analysis:* npm start | bunyan
 
-### jenkins
-
-To manually start jenkins daemon:
-
-    sudo launchctl load /Library/LaunchDaemons/org.jenkins-ci.plist
-
-To manually stop jenkins daemon:
-
-    sudo launchctl unload /Library/LaunchDaemons/org.jenkins-ci.plist
-
-start ui server from media-analysis/client
-
-    gulp
-
-then hit the ui on localhost:9000
-
 ffprobe on command line
 
     ffprobe -of json -show_streams -show_format /path/to/file
@@ -41,7 +25,7 @@ you'll need to manually restart the server to see the new endpoint
 angular version (not working yet b/c of http sending too much data) is in /client
 run it with `gulp`
 
-demo hosting on aws http://media-analysis.asburyproto.com/
+demo hosting on awshttp://18.213.229.220:3000/
 
 deployment:
     cache bust!
