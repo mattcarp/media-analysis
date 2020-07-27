@@ -17,6 +17,7 @@ const analysis = require('./routes/media-analysis');
 const black = require('./routes/black');
 const mono = require('./routes/mono');
 const uploader = require('./routes/uploader');
+// const uploader = require('./routes/extract-frame');
 
 const app = express();
 

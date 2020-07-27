@@ -3,7 +3,9 @@
 
 start express server, from project root:
 
-    nodemon DEBUG=media-analysis:* npm start | bunyan
+    npm start
+
+the above will run the express file in ./bin/www in DEBUG mode
 
 ffprobe on command line
 
