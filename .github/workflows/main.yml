@@ -15,7 +15,7 @@ jobs:
       - name: install node modules for angular
         run: cd client && npm install --unsafe-perm
       - run: pwd && ls -la
-      - name: build angular app
+      - name: build angular app for dev
         run: cd client && npm run build
       - name: switch Node.js to 4.9.1
         uses: actions/setup-node@v1

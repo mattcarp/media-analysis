@@ -25,7 +25,7 @@ you'll need to manually restart the server to see the new endpoint
 angular version (not working yet b/c of http sending too much data) is in /client
 run it with `gulp`
 
-demo hosting on awshttp://18.213.229.220:3000/
+demo hosting on aws http://18.213.229.220:3000/
 
 deployment:
     cache bust!
