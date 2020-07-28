@@ -24,20 +24,15 @@ in app.js, add the route, e.g.:
 make a file in the `routes` folder called `black.js`
 you'll need to manually restart the server to see the new endpoint
 
-angular version (not working yet b/c of http sending too much data) is in /client
-run it with `gulp`
-
 demo hosting on aws http://18.213.229.220:3000/
 
 deployment:
-    cache bust!
-    commit and push to github
+    this is now down via github actions
 
-    ssh upload-demo
-    cd media-analysis
-    git fetch --all
-    sudo git reset --hard origin/master
-    forever -f start ./bin/www
+run expressjs locally, from root:
+
+    DEBUG=express:* node ./bin/www
+    // forever -f start ./bin/www
 
 list the forver processes and get log file
 

@@ -1,13 +1,14 @@
 /* ===== base ===== */
 
 body {
-  font-family: 'Mulish', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: Mulish, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #48637c;
 }
 
 h1, h2, h3, h4, h5 {
   font-weight: 100;
   color: #4F87BB;
+  font-family: Mulish;
 }
 
 h5 {
