@@ -17,7 +17,7 @@ const analysis = require('./routes/media-analysis');
 const black = require('./routes/black');
 const mono = require('./routes/mono');
 const uploader = require('./routes/uploader');
-// const uploader = require('./routes/extract-frame');
+const extract = require('./routes/extract-frame');
 
 const app = express();
 
@@ -55,6 +55,7 @@ app.use('/users', users);
 app.use('/analysis', analysis);
 app.use('/black', black);
 app.use('/mono', mono);
+app.use('/extract-frame', extract);
 app.use('/uploader', uploader);
 app.use('/', routes);
 
