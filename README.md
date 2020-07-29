@@ -11,6 +11,12 @@ ffprobe on command line
 
     ffprobe -of json -show_streams -show_format /path/to/file
 
+### API TDD - test driven development
+write a test first - uses `jest`
+run all tests (from root):
+
+    npm run test:watch
+
 ### make a rest endpoint
 
 in app.js, add the route, e.g.:
