@@ -1,14 +1,14 @@
 // TODO test will fail (hey, it's TDD after all)
 const request = require('supertest')
-const app = require('../server')
+const app = require('../app')
+
 describe('Image Extraction Endpoints', () => {
-    it('should extract image from video', async () => {
+    it('should be the right endpoint', async () => {
         const res = await request(app)
-            .post('/extract')
+            .post('/extract-frame')
             .send({
-                videoUri: 'put a link to a test video on s3 here',
+                videoUri: 'stubUriForVideo',
             })
-        expect(res.statusCode).toEqual(201)
-        expect(res.body).toHaveProperty('post')
+        expect(res.body.key).toEqual('hello')
     })
 })
