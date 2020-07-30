@@ -3,26 +3,34 @@
 
 const express = require('express');
 const router = new express.Router();
-const bunyan = require('bunyan');
-const log = bunyan.createLogger({ name: 'frame-extract-route' });
-const fs = require('fs');
-const prependFile = require('prepend-file');
-// const exec = require('child_process').exec;
+const exec = require("child_process").exec;
+const randomstring = require("randomstring");
 
-// const frameExtract = require('../server-methods/extract-frame');
-module.exports = router;
+// TODO temp hard-coded paths - move to the jest test (pass filepath from test)
+const tempVidPath = 'test_assets/file_example_MP4_1920_18MG.mp4';
+// TODO use template string
+const outputDir = 'test_assets/test_output/' + randomstring.generate(12)  + 'output.jpg';
 
-router.post('/', (req, res) => {
-    // TODO this is just a stub
+router.post('/', (req, res, next) => {
+    // TODO take a file path and send back a 
     const headers = req.headers;
-    const prefix = '/tmp/';
-    const fileToConcat = prefix + headers['xa-file-to-concat'];
-    const position = headers['xa-black-position'];
-    log.info('headers sent to extractFrame endpoint:');
-    log.info(headers);
-    log.info(req.body);
-    log.info(req.body.length);
+    console.info('you called the extract endpoint');
+    console.info(`this is what was received from the extract req`, req.body);
+    // TODO this ffmpeg path works on matt local, but won't work on server
+    // TODO uses temp files
+    let child = exec(`/usr/bin/ffmpeg -ss 2 -i ${tempVidPath} -qscale:v 2 -vframes 1 ${outputDir}`,
 
+        function (error, stdout, stderr) {
+            var result = {}
+            console.log("STDOUT: ", stdout);
+            console.log("STDERR: ", stderr);
+            if (error !== null) {
+                console.log("here is the exec error from ffmpeg:", error);
+            }
+            result.error = stderr;
+            result.analysis = stdout;
+            res.json(result);
+         });
 });
 
 module.exports = router;

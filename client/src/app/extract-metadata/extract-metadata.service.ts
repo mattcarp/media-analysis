@@ -49,7 +49,7 @@ export class ExtractMetadataService {
           }
 
         }
-        // angular Http doesn't yet support raw binary POSTs
+        // angular Http doesn't yet support raw binary POSTs - aha! hey @sergei - this is why i used $.ajax!
         // see line 62 at
         // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
         $.ajax({
