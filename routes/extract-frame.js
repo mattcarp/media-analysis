@@ -12,7 +12,7 @@ const tempVidPath = 'test_assets/file_example_MP4_1920_18MG.mp4';
 const outputDir = 'test_assets/test_output/' + randomstring.generate(12)  + 'output.jpg';
 
 router.post('/', (req, res, next) => {
-    // TODO take a file pat, and a time location in ms, and send back an object which includes an image
+    // TODO take a file path, and a time location in ms, and send back an object which includes an image
     const headers = req.headers;
     // console.info(`this is what was received from the extract req`, req.body);
     // console.error(`you passed me this for temp vid ur`, req.body.videoUri)
