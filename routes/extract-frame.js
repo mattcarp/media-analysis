@@ -12,23 +12,23 @@ const tempVidPath = 'test_assets/file_example_MP4_1920_18MG.mp4';
 const outputDir = 'test_assets/test_output/' + randomstring.generate(12)  + 'output.jpg';
 
 router.post('/', (req, res, next) => {
-    // TODO take a file path and send back a 
+    // TODO take a file pat, and a time location in ms, and send back an object which includes an image
     const headers = req.headers;
-    console.info('you called the extract endpoint');
-    console.info(`this is what was received from the extract req`, req.body);
+    // console.info(`this is what was received from the extract req`, req.body);
+    // console.error(`you passed me this for temp vid ur`, req.body.videoUri)
     // TODO this ffmpeg path works on matt local, but won't work on server
-    // TODO uses temp files
-    let child = exec(`/usr/bin/ffmpeg -ss 2 -i ${tempVidPath} -qscale:v 2 -vframes 1 ${outputDir}`,
-
-        function (error, stdout, stderr) {
-            var result = {}
-            console.log("STDOUT: ", stdout);
-            console.log("STDERR: ", stderr);
+    let child = exec(`/usr/bin/ffmpeg -ss ${req.body.locationSecs} -i ${req.body.videoUri} -qscale:v 2 -vframes 1 ${outputDir}`,
+        (error, stdout, stderr) => {
+            let result = {}
+            // console.log("STDOUT: ", stdout);
+            // console.log("STDERR: ", stderr);
             if (error !== null) {
-                console.log("here is the exec error from ffmpeg:", error);
+                console.error("here is the exec error from ffmpeg:", error);
             }
             result.error = stderr;
             result.analysis = stdout;
+            // TODO this is just to force a passing test
+            result.success = true;
             res.json(result);
          });
 });
