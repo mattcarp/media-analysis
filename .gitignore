@@ -1,5 +1,5 @@
 # custom
-test_assets/test_output/*
+/test_assets/test_output/*
 
 # Logs
 logs
