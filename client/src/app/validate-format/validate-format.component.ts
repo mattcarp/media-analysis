@@ -48,8 +48,12 @@ export class ValidateFormatComponent {
     let streams: any = analysisObj.streams;
     // TODO use the functional equivalent of this for loop
     let audioStream: any;
-    for (let i =0; i < streams.length; i++) {
-      if (streams[i].codec_type === "audio") { audioStream = streams[i]; }
+    if (streams && streams.length) {
+      for (let i = 0; i < streams.length; i++) {
+        if (streams[i].codec_type === "audio") {
+          audioStream = streams[i];
+        }
+      }
     }
     console.log("hey what's the audio stream?", audioStream);
 
@@ -95,12 +99,16 @@ export class ValidateFormatComponent {
     // rather than hard-coding this as index 0
     // const videoStream = analysisObj.streams[0];
     let videoStream: any;
-    for (let i =0; i < streams.length; i++) {
-      if (streams[i].codec_type === "video") { videoStream = streams[i]; }
+    if (streams && streams.length) {
+      for (let i = 0; i < streams.length; i++) {
+        if (streams[i].codec_type === "video") {
+          videoStream = streams[i];
+        }
+      }
     }
     console.log("hey what's the video stream?", videoStream);
-    this.isProRes = videoStream.codec_long_name === "ProRes";
-    this.videoFormat = videoStream.codec_name;
+    this.isProRes = videoStream && videoStream.codec_long_name === "ProRes";
+    this.videoFormat = videoStream && videoStream.codec_name;
 
     if (videoStream) {
       this.videoValidations.push({
