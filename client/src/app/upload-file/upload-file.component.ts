@@ -1,26 +1,26 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import {
   Router,
   // RouterLink,
 } from '@angular/router';
 
-import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
-import {FileHandlerService} from '../handle-files/handle-files.service';
+import { ExtractMetadataService } from '../extract-metadata/extract-metadata.service';
+import { FileHandlerService } from '../handle-files/handle-files.service';
 
 
 @Component({
   selector: 'upload-file',
-  templateUrl: './upload-file.html',
+  templateUrl: './upload-file.component.html',
   // directives: [RouterLink]
 })
 export class UploadFileComponent {
-  showUploadButton: boolean = false;
-  enableUpload: boolean = false;
+  showUploadButton = false;
+  enableUpload = false;
   metadataResult: any;
   fileHandlerService: any;
 
   constructor(private _router: Router, extractMetadataService: ExtractMetadataService,
-    fileHandlerService: FileHandlerService) {
+              fileHandlerService: FileHandlerService) {
     this.fileHandlerService = fileHandlerService;
     this.metadataResult = extractMetadataService.metadataResult;
     this.metadataResult.subscribe(value => {
@@ -29,7 +29,7 @@ export class UploadFileComponent {
   }
 
   startUpload() {
-    let mediaFile = this.fileHandlerService.getMediaFile();
+    const mediaFile = this.fileHandlerService.getMediaFile();
     this.openRequestedPopup(mediaFile);
   }
 
@@ -40,7 +40,7 @@ export class UploadFileComponent {
     windowObjectReference = window.open(
       'http://blank.org',
       'DescriptiveWindowName',
-      'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0'
+      'width=420,height=230,resizable,scrollbars=yes,status=0,toolbar=0,menubar=0,location=0',
     );
     // windowObjectReference = window.open(
     //   this._router.navigate(['']),

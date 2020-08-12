@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "airbnb-base/legacy",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "@typescript-eslint/no-empty-function": ["error", { "allow": ["constructors"] }],
+    "@typescript-eslint/no-var-requires": 0,
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "no-restricted-globals": ["error", "event"],
+    "no-console": "off"
+  }
+}

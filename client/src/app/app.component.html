@@ -1,62 +1,52 @@
-<br>
+<header>
+  <i class="logo"></i>
+  <h1>
+    Media Analysis
+    <small>Client Side</small>
+    <span>demo</span>
+  </h1>
+</header>
 
-<div class="row ma-header">
-  <!-- <img class="ma-header__logo--rca col-xs-2" src="/assets/images/rca.svg" alt="RCA Logo"> -->
-  <h1 class="ma-header__title col-xs-10">Client Side Media Analysis - DEMO</h1>
-</div>
+<nav>
+  <section class="header">
+    <div #a1>File will be checked for compatibility</div>
+    <div #a2>History</div>
+  </section>
+  <section>
+    <div #b1>
+      <handle-files></handle-files>
+    </div>
+    <div #b2>
+      <!-- TODO: need add history -- icons of previously inserted files -->
+      <history-files></history-files>
+    </div>
+  </section>
+</nav>
 
-<div class="row ma-body">
-
-  <div class="ma-nav col-xs-2 sidebar">
-    <!-- ===== -->
-     <ul class="nav nav-sidebar">
-      
-      <li><a href="#validations">Validations</a></li>
-      <li class="ma-nav__item-indent"><a href="#format">Format</a></li>
-      <li class="ma-nav__item-indent"><a href="#black">Black</a></li>
-      <li class="ma-nav__item-indent"><a href="#audio">Audio</a></li>
-      <li><a href="#metadata">Metadata</a></li>
-      <li class="ma-nav__item-indent"><a href="#upload">Upload</a></li>
-    </ul>
-    <!-- ===== -->
-
+<main>
+  <div #c1>
+    <!-- TODO: need add player/viewer -->
+    <p class="place">
+      Place for:
+      <br>- player if video file
+      <br>- viewer/slider if image file
+      <br>- viewer if doc/pdf file
+    </p>
   </div>
-  <div class="col-xs-10 ma-panel-center">
-    <handle-files class="col-xs-12"></handle-files>
 
-    <br>
-    <br>
-
-<!--    <div class="card alert alert-danger" [hidden]="!ffprobeErr">-->
-<!--      <h3>Bummer</h3>-->
-<!--      <p>-->
-<!--        The analyzer returned the following error:-->
-<!--      </p>-->
-<!--      <p>-->
-<!--        {{ffprobeErr}}-->
-<!--      </p>-->
-<!--    </div>-->
-
-    <div class="ma-validations" id="validations">
-      <h2 [hidden]="!metadataResult">Validations</h2>
-
-      <validate-format class="row ma-format__module" id="format"></validate-format>
-      <detect-black class="row ma-black__module" id="black"></detect-black>
+  <div #c2>
+    <h2>Validations</h2>
+    <section [hidden]="!metadataResult">
+      <validate-format></validate-format>
+      <detect-black></detect-black>
       <!-- TODO refactor mono to 'audio signal analysis' -->
-      <detect-mono class="row ma-mono__module" id="audo"></detect-mono>
-
-    </div>
-    <!-- /.ma-validations -->
-
-    <div class="ma-metadata" id="metadata">
-      <extract-metadata class="row ma-metadata__module"></extract-metadata>
-    </div>
-    <!-- /.ma-metadata -->
-
-    <!-- <player class="row ma-player" id="player"></player> -->
-    <upload-file class="row ma-upload" id="upload"></upload-file>
-
+      <detect-mono></detect-mono>
+      <extract-metadata></extract-metadata>
+    </section>
+    <section *ngIf="!metadataResult" class="pseudo-data"></section>
   </div>
-  <!-- /.ma-panel-center -->
-</div>
-<!-- /.ma-body -->
+</main>
+
+<footer>
+  <upload-file></upload-file>
+</footer>

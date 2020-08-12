@@ -6,7 +6,7 @@ declare var $: any;
 
 @Component({
   selector: 'extract-metadata',
-  templateUrl: './extract-metadata.html',
+  templateUrl: './extract-metadata.component.html',
 })
 
 export class ExtractMetadataComponent {

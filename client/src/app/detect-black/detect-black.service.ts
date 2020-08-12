@@ -16,8 +16,8 @@ export class DetectBlackService {
   tailBlackResult = new EventEmitter();
   headBlob: any;
   tailBlob: any;
-  headBlackTryCount: number = 0;
-  tailBlackTryCount: number = 0;
+  headBlackTryCount = 0;
+  tailBlackTryCount = 0;
   blackProgressHead: number;
   blackProgressTail: number;
   // the duration of the previous iteration, to see if there was an increase
@@ -107,7 +107,7 @@ export class DetectBlackService {
       .then((data, textStatus, jqXHR) => {
 
       if (data.blackDetect[0]) {
-        let duration = parseFloat(data.blackDetect[0].duration);
+        const duration = parseFloat(data.blackDetect[0].duration);
         console.log('this is my black duration, returned from requestBlack:');
         console.log(duration);
 

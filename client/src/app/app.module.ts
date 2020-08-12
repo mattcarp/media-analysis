@@ -11,6 +11,7 @@ import { AnalyzeAudioComponent } from './analyze-audio/analyze-audio.component';
 import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.component';
 import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { HandleFilesComponent } from './handle-files/handle-files.component';
+import { HistoryFilesComponent } from './history-files/history-files.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { HandleFilesComponent } from './handle-files/handle-files.component';
     ValidateFormatComponent,
     PlayerComponent,
     UploadFileComponent,
+    HistoryFilesComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,6 +31,7 @@ import { HandleFilesComponent } from './handle-files/handle-files.component';
     NgxDropzoneModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {
+}
