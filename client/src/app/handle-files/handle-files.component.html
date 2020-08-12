@@ -1,0 +1,21 @@
+<ngx-dropzone
+  id="demo-upload"
+  (change)="onSelect($event)"
+  class="dropzone needsclick dz-clickable ma-file__panel">
+  <ngx-dropzone-label>
+    <div class="dz-message needsclick">
+      <i class="fas fa-plus-square"></i>
+      Drop a media file here or click to select
+    </div>
+  </ngx-dropzone-label>
+  <ngx-dropzone-preview
+    *ngFor="let f of files"
+    [removable]="true"
+    (removed)="onRemove(f)"
+    class="preview">
+    <ngx-dropzone-label>
+      <h6 [hidden]="!filename">name: {{filename}}</h6>
+      <h6 [hidden]="!fileSize">size: {{fileSize}}</h6>
+    </ngx-dropzone-label>
+  </ngx-dropzone-preview>
+</ngx-dropzone>

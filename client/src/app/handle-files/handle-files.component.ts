@@ -1,18 +1,19 @@
-import { AfterViewInit, Component, ElementRef } from '@angular/core';
+import {AfterViewInit, Component, ElementRef} from '@angular/core';
 
-import {FileHandlerService} from "./handle-files.service";
-import {ExtractMetadataService} from "../extract-metadata/extract-metadata.service";
-import {DetectBlackService} from "../detect-black/detect-black.service";
-import {AnalyzeAudioService} from "../analyze-audio/analyze-audio.service";
-// import './dropzone.min.js';
+import {FileHandlerService} from './handle-files.service';
+import {ExtractMetadataService} from '../extract-metadata/extract-metadata.service';
+import {DetectBlackService} from '../detect-black/detect-black.service';
+import {AnalyzeAudioService} from '../analyze-audio/analyze-audio.service';
+// import '../../assets/lib/dropzone.min.js';
 
-declare var $: any;
-declare var Dropzone: any;
+declare let $: any;
+declare let Dropzone: any;
 
 
 @Component({
-  selector: "handle-files",
-  templateUrl: "./handle-files.html"
+  selector: 'handle-files',
+  templateUrl: './handle-files.component.html',
+  styleUrls: ['./handle-files.component.scss'],
 })
 
 export class HandleFilesComponent implements AfterViewInit {
@@ -28,7 +29,6 @@ export class HandleFilesComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-
     // new Dropzone(this.eltRef.nativeElement, {
     //     url: "/file/post",
     //     previewTemplate: `
@@ -72,8 +72,8 @@ export class HandleFilesComponent implements AfterViewInit {
     this.extractMetadataService.metadataResult.subscribe(metadata => {
       // const analysisObj = JSON.parse(metadata.analysis);
       // TODO only if video, detect black and detect mono
-      this.detectBlackService.recursiveBlackDetect(file, "head");
-      this.detectBlackService.recursiveBlackDetect(file, "tail");
+      this.detectBlackService.recursiveBlackDetect(file, 'head');
+      this.detectBlackService.recursiveBlackDetect(file, 'tail');
 
       // attempt to clear previous state - TODO not working
       // detectMonoService.results = [];
@@ -89,10 +89,11 @@ export class HandleFilesComponent implements AfterViewInit {
   }
 
   bytesToSize(bytes: number) {
-   let sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-   if (bytes === 0) return "0 Byte";
-   let i = Math.floor(Math.log(bytes) / Math.log(1024));
-   // return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
-   return Math.round(bytes / Math.pow(1024, i)) + " " + sizes[i];
- };
-} // class
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+
+    if (bytes === 0) return '0 Byte';
+
+    return Math.round(bytes / Math.pow(1024, i)) + ' ' + sizes[i];
+  };
+}

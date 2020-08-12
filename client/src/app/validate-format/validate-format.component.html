@@ -1,0 +1,39 @@
+<div *ngIf="metadataStarted">
+  <h3>validating format metadata...</h3>
+</div>
+
+<div *ngIf="showResults" class="validate-format">
+  <h3>Format Verification</h3>
+  <h2>{{proResMsg}}</h2>
+
+  <div *ngIf="videoValidations?.length">
+    <h4>Video
+      <span *ngIf="videoFormat === 'prores'" class="icon-prores">ProRes</span>
+      <span *ngIf="videoFormat === 'mpeg2video'" class="icon-mpeg2">MPEG2</span>
+    </h4>
+    <dl *ngFor="let item of videoValidations">
+      <dt>
+        <i class="fas" [ngClass]="setIcon(item)"></i>
+        {{item.name}}
+      </dt>
+      <dd>
+        {{item.value}}
+        <div *ngIf="!item.pass">{{item.message}}</div>
+      </dd>
+    </dl>
+  </div>
+
+  <div *ngIf="audioValidations?.length">
+    <h4>Audio</h4>
+    <dl *ngFor="let item of audioValidations">
+      <dt>
+        <i class="fas" [ngClass]="setIcon(item)"></i>
+        {{item.name}}
+      </dt>
+      <dd>
+        {{item.value}}
+        <div *ngIf="!item.pass">{{item.message}}</div>
+      </dd>
+    </dl>
+  </div>
+</div>

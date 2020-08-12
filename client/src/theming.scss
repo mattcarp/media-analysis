@@ -1,0 +1,183 @@
+// Theming
+// -----------------------------------------
+$main-color: #1c8dd6;
+$green-color: darkgreen;
+$red-color: #f44;
+$yellow-color: yellow;
+
+::-webkit-scrollbar {
+  background-color: #b7dbf3;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $main-color;
+}
+
+body {
+  background-color: rgba(100, 100, 100, 0.2);
+}
+
+header {
+  background-color: white;
+
+  h1 {
+    small {
+      color: $main-color;
+
+      &:before {
+        background-color: grey;
+      }
+    }
+
+    span {
+      color: white;
+      background-color: $green-color;
+    }
+  }
+}
+
+nav {
+  background-color: #ccc;
+}
+
+main {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+footer {
+  background-color: white;
+}
+
+h4 {
+  color: $main-color;
+}
+
+.fas,
+.far,
+.fab {
+  &.fa-check-circle {
+    color: $green-color;
+  }
+
+  &.fa-times-circle {
+    color: $red-color;
+  }
+
+  &.fa-exclamation-triangle {
+    color: $yellow-color;
+  }
+}
+
+.dropzone {
+  .fas {
+    color: $green-color;
+  }
+
+  &:hover {
+    color: white;
+    border-color: white;
+    background-color: $main-color;
+
+    .fas {
+      color: white;
+    }
+  }
+}
+
+.icon-prores,
+.icon-mpeg2 {
+  border-color: grey;
+  background-color: #1A1A1A;
+  color: white;
+}
+
+.icon-mpeg2 {
+  background-color: #219CB2;
+}
+
+dl {
+  dd {
+    div {
+      color: $red-color;
+    }
+  }
+
+  &:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+
+  &:nth-child(odd) {
+    background-color: white;
+  }
+}
+
+.stream,
+.disposition {
+  &:nth-child(even) {
+    dl {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+  }
+
+  &:nth-child(odd) {
+    dl {
+      background-color: white;
+    }
+  }
+}
+
+.progress-bar-container {
+  progress[value] {
+    color: royalblue;
+    background-color: whiteSmoke;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+
+    &::-webkit-progress-bar {
+      background-color: whiteSmoke;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+    }
+
+    &::-webkit-progress-value {
+      background-image: -webkit-linear-gradient(135deg,
+        transparent,
+        transparent 33%,
+        rgba(0, 0, 0, 0.1) 33%,
+        rgba(0, 0, 0, 0.1) 66%,
+        transparent 66%),
+      -webkit-linear-gradient(top,
+          rgba(255, 255, 255, 0.25),
+          rgba(0, 0, 0, 0.2)),
+      -webkit-linear-gradient(left, #09c, $red-color);
+
+      &:after {
+        background-color: white;
+      }
+    }
+
+    &::-moz-progress-bar {
+      background-image: -moz-linear-gradient(135deg,
+        transparent,
+        transparent 33%,
+        rgba(0, 0, 0, 0.1) 33%,
+        rgba(0, 0, 0, 0.1) 66%,
+        transparent 66%),
+      -moz-linear-gradient(top,
+          rgba(255, 255, 255, 0.25),
+          rgba(0, 0, 0, 0.2)),
+      -moz-linear-gradient(left, #09c, $red-color);
+    }
+  }
+
+  .progress-bar {
+    background-color: whiteSmoke;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+
+    span {
+      background-color: royalblue;
+    }
+  }
+}
+
+.alert-danger {
+  color: $red-color;
+}

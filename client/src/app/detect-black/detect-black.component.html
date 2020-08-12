@@ -1,0 +1,53 @@
+<h3 *ngIf="headBlackStarted">Performing Black Detection...</h3>
+
+<div *ngIf="headBlackResult">
+  <h3>Black Detection</h3>
+</div>
+
+<div *ngIf="headBlackStarted" class="progress-bar-container">
+  <p [ngStyle]="{'width': headBlackProgress + '%'}" [attr.data-value]="headBlackProgress">
+    File Head...
+  </p>
+  <progress max="1" value="{{headBlackProgressValue}}">
+    <span class="progress-bar">
+      <span [ngStyle]="{'width': headBlackProgress + '%'}">{{headBlackProgress}}</span>
+    </span>
+  </progress>
+</div>
+
+<div *ngIf="headBlackResult">
+  <div *ngFor="let item of headBlackResult">
+    <h5>
+      <i *ngIf="item.duration < 3" class="fas fa-times-circle"></i>
+      <span *ngIf="item.duration < 3">
+        less than 3 seconds of black found in head
+        ({{item?.duration}} seconds found)
+      </span>
+      <i *ngIf="item.duration >= 3" class="fas fa-check-circle"></i>
+      <span *ngIf="item.duration >= 3">3 seconds or more found in head</span>
+    </h5>
+  </div>
+</div>
+
+<div *ngIf="tailBlackStarted" class="progress-bar-container">
+  <p [ngStyle]="{'width': tailBlackProgress + '%'}" [attr.data-value]="tailBlackProgress">
+    File Tail...
+  </p>
+  <progress max="1" value="{{tailBlackProgress}}">
+    <span class="progress-bar">
+      <span [ngStyle]="{'width': tailBlackProgress + '%'}">{{tailBlackProgress}}</span>
+    </span>
+  </progress>
+</div>
+
+<div *ngIf="tailBlackResult">
+  <div *ngFor="let item of tailBlackResult">
+    <h5>
+      <i *ngIf="item.duration < 3" class="fas fa-times-circle"></i>
+      <span *ngIf="item.duration < 3">less than 3 seconds of black found in tail
+            ({{item?.duration}} seconds found)</span>
+      <i *ngIf="item.duration >= 3" class="fas fa-check-circle"></i>
+      <span *ngIf="item.duration >= 3">3 seconds or more found in tail</span>
+    </h5>
+  </div>
+</div>

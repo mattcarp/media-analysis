@@ -1,10 +1,10 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
-import {EndpointService} from '../handle-endpoints/endpoint.service';
-import {QuicktimeService} from '../shared/services/quicktime.service';
+import { EndpointService } from '../handle-endpoints/endpoint.service';
+import { QuicktimeService } from '../shared/services/quicktime.service';
 
-declare var $: any;
-declare var FileReader: any;
+declare let $: any;
+declare let FileReader: any;
 // initial slice for metadata analysis
 const SLICE_SIZE = 150000;
 
@@ -26,7 +26,7 @@ export class ExtractMetadataService {
   }
 
   extract(mediaFile: File) {
-    let reader = new FileReader();
+    const reader = new FileReader();
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
@@ -37,8 +37,8 @@ export class ExtractMetadataService {
         if (this.originalExtension === 'mov') {
           // TODO if moov not in head, check tail
           console.log('this is a mov file, so we should call the qt service');
-          let headerBuf: ArrayBuffer = evt.target.result;
-          let moovStats: any = this.qtService.getMoovStats(headerBuf);
+          const headerBuf: ArrayBuffer = evt.target.result;
+          const moovStats: any = this.qtService.getMoovStats(headerBuf);
           if (moovStats.moovExists === true) {
             this.handleMov(moovStats, headerBuf);
           } else {
@@ -61,7 +61,7 @@ export class ExtractMetadataService {
           processData: false,
           // content type that we are sending
           contentType: 'application/octet-stream',
-          error: function(err) {
+          error: function (err) {
             console.log('you have an error on the ajax request:');
             console.log(err);
           },
@@ -73,15 +73,15 @@ export class ExtractMetadataService {
             this.metadataResult.emit(data);
 
             // TODO in main.processVideo, subscribe to the result event, then fire:
-            let analysisObj = JSON.parse(data.analysis);
+            const analysisObj = JSON.parse(data.analysis);
             // let videoBitrate = analysisObj.streams[0].bit_rate;
-            let type = analysisObj && analysisObj && analysisObj.streams
+            const type = analysisObj && analysisObj && analysisObj.streams
               && analysisObj.streams.length && analysisObj.streams[0].codec_type;
             if (type === 'video') {
               console.log('TODO we got a video, now we should fire processVideo()');
               // this.processVideo(this.mediaFile, analysisObj);
             }
-          }
+          },
         });
       }
     };
@@ -95,11 +95,11 @@ export class ExtractMetadataService {
 
   // called if file extension is mov, check for moov atom in head, then tail
   handleMov(moovStats: any, movBuf: ArrayBuffer) {
-    let moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
-    moovStats.moovLength, movBuf);
+    const moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
+      moovStats.moovLength, movBuf);
     console.log('handleMov gave me this DataView:');
     console.dir(moov);
-    let moovMetadata = this.qtService.parseMoov(moov);
+    const moovMetadata = this.qtService.parseMoov(moov);
     console.log('moov metatadata:');
     console.log(moovMetadata);
   }

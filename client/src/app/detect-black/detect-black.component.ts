@@ -6,12 +6,14 @@ import {DetectBlackService} from "./detect-black.service";
 
 @Component({
   selector: "detect-black",
-  templateUrl: "./detect-black.html",
+  templateUrl: "./detect-black.component.html",
+  styleUrls: ['./detect-black.component.scss'],
 })
 
 export class DetectBlackComponent {
   headBlackStarted: boolean;
   headBlackProgress: number;
+  headBlackProgressValue: number;
   headBlackResult: any;
 
   tailBlackStarted: boolean;
@@ -26,7 +28,8 @@ export class DetectBlackComponent {
       this.tailBlackStarted = value;
     });
     detectBlackService.headProgress.subscribe(value => {
-      this.headBlackProgress = value;
+      this.headBlackProgress = value * 100;
+      this.headBlackProgressValue = value;
     });
     detectBlackService.tailProgress.subscribe(value => {
       this.tailBlackProgress = value;
