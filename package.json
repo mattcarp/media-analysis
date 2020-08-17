@@ -42,8 +42,6 @@
     "forever": "^0.15.3",
     "gulp-rev-append": "^0.1.6",
     "jasmine-node": "^1.14.5",
-    "jest": "^26.1.0",
-    "supertest": "^4.0.2",
     "typescript": "^1.8.9"
   }
 }
