@@ -14,6 +14,7 @@ const analysis = require('./routes/media-analysis');
 const black = require('./routes/black');
 const mono = require('./routes/mono');
 const uploader = require('./routes/uploader');
+const promoUploader = require('./routes/promo-uploader');
 const extract = require('./routes/extract-frame');
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/black', black);
 app.use('/mono', mono);
 app.use('/extract-frame', extract);
 app.use('/uploader', uploader);
+app.use('/promo-uploader', promoUploader);
 app.use('/', routes);
 
 // catch 404 and forward to error handler
