@@ -29,7 +29,7 @@ router.post("/", function (req, res, next) {
     }
 
     console.log("call ffprobe with exec:");
-    child = exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
+    child = exec(`/usr/local/bin/ffmpeg/ffprobe -of json -show_streams -v error -show_format ${tempName}`,
 
       function (error, stdout, stderr) {
         var result = {}
