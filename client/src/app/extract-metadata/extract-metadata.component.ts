@@ -41,7 +41,9 @@ export class ExtractMetadataComponent {
 
   renderResult(data) {
     if (data.error) {
-      this.ffprobeErr = data.error;
+      if (!data.error.includes('Error splitting the input into NAL units')) {
+        this.ffprobeErr = data.error;
+      }
     }
     let analysisObj = JSON.parse(data.analysis);
     console.log("analysis object, and number of keys:");
