@@ -1,0 +1,167 @@
+<div class="ddp-body">
+
+  <div #dropArea class="ddp-drop-panel" [hidden]="!showDragDrop">
+    <div #browseArea class="ddp-file-select drop-container"><span class="fa fa-plus"></span> Click
+      to select DDP files
+    </div>
+  </div>
+
+  <div class="ddp-player-panel" [hidden]="!showTabs" >
+    <div class="ddp-player">
+      <div class="row">
+        <div class="col-xs-2">
+          <h3 class="ddp-timecode">
+            {{ timecode }}
+          </h3>
+        </div>
+        <div class="col-xs-6">
+          <!-- playback controls -->
+          <button md-button="" class="md-icon-button" (click)="playPause()">
+            <i class="fa fa-play-circle-o" *ngIf="showPlay"></i>
+            <i class="fa fa-pause-circle-o" *ngIf="!showPlay"></i>
+          </button>
+          <button class="btn btn-primary" (click)="playFrom(0)">
+            <i class="fa fa-play-circle-o"></i> play from file start
+          </button>
+          <button class="btn btn-primary" (click)="playFromIdx1()">
+            <i class="fa fa-play-circle-o"></i> play from index 1
+          </button>
+        </div>
+        <div class="row ddp-annotation-wrapper">
+          <div *ngIf="playerAnnotation && !playbackStatus">
+            <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
+            <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
+            <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
+            <p>{{playbackStatus}}</p>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="ddp-waveform-container">
+        <!--<progress *ngIf="wavProgress < 100" class="progress progress-striped progress-info"-->
+        <!--value="{{wavProgress}}" max="100">-->
+        <!--</progress>-->
+
+        <span [hidden]="!wavProgress >= 99">
+                <div id="waveform" class="ddp-waveform"></div>
+                <div id="waveform-timeline"></div>
+              </span>
+      </div>
+
+      <div class="ddp-player">
+        <!--zoom control -->
+        <p class="row">
+        <div class="col-xs-1">
+          <i class="fa fa-search-minus"></i>
+        </div>
+        <div class="col-xs-10">
+          <input id="slider" type="range" min="1" max="46" value="1" style="width: 100%"/>
+        </div>
+        <div class="col-xs-1">
+          <i class="fa fa-search-plus"></i>
+        </div>
+      </div>
+
+
+    </div> <!-- ddp-player -->
+
+    <div class="ddp-playlist">
+      <table class="md-data-table">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Track Name</th>
+          <th>ISRC</th>
+          <th>Pre Gap</th>
+          <th>Duration</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let track of playList; let i = index"
+            [class.selected]="isSelected(i)"
+            (click)="queueTrack(i), $event" class="ddp-track">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ track.file.file.name }}</td>
+          <td>{{ track.isrc }}</td>
+          <td>{{ track.preGap }}</td>
+          <td>{{ track.dur }}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> <!-- ddp-player-panel -->
+
+
+  <div [hidden]="!showTabs" class="ddp-tabs-container">
+
+    <md-tab-group>
+      <md-tab>
+        <template md-tab-label>
+          Playback
+        </template>
+        <template md-tab-content>
+          <p>refactor player into it's own component and put it here (don't lazy load)</p>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          DDP ID
+        </template>
+        <template md-tab-content>
+          <ddp-ddpid></ddp-ddpid>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          Map Stream
+        </template>
+        <template md-tab-content>
+          <ddp-ddpms></ddp-ddpms>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          PQ Subcode
+        </template>
+        <template md-tab-content>
+          <ddp-ddppq></ddp-ddppq>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          Validations
+        </template>
+        <template md-tab-content>
+          <ddp-validations></ddp-validations>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          Hashes
+        </template>
+        <template md-tab-content>
+          <ddp-hashes></ddp-hashes>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          CD Text
+        </template>
+        <template md-tab-content>
+          <ddp-cdtext></ddp-cdtext>
+        </template>
+      </md-tab>
+      <md-tab>
+        <template md-tab-label>
+          Gracenote
+        </template>
+        <template md-tab-content>
+          <p>Show gracenote junk here</p>
+        </template>
+      </md-tab>
+    </md-tab-group>
+  </div> <!-- ddp-tabs-container -->
+
+</div>
