@@ -1,14 +1,14 @@
 /* eslint strict: [0, "function"] */
-"use strict";
+'use strict';
 
-const fs = require("fs");
+const fs = require('fs');
 
 const ProResParser = {};
 
 // given a file, reads first n bytes, returns buffer
 ProResParser.readFileHead = (file, hollaback) => {
   const bufferSize = 150000;
-  fs.open(file, "r", (status, fileToRead) => {
+  fs.open(file, 'r', (status, fileToRead) => {
     if (status) {
       console.log(status.message);
       return;
@@ -16,7 +16,7 @@ ProResParser.readFileHead = (file, hollaback) => {
     const buffer = new Buffer(bufferSize);
     // fs.read(fd, buffer, 0, 100, 0, function(err, num)
     fs.read(fileToRead, buffer, 0, bufferSize, 0, (err) => {
-      console.log("error?", err);
+      console.log('error?', err);
       // console.log(buffer.toString("utf-8", 0));
       hollaback(buffer);
       if (err) console.log(err);
@@ -30,15 +30,15 @@ ProResParser.readFileHead = (file, hollaback) => {
 ProResParser.getHeader = (buf) => {
   // reserved space, file type, etc at beginning of prores
   const magicSize = 31;
-  console.log("bing bang boom you called the hollaback");
-  const moovIdx = buf.indexOf("moov");
-  console.log("moov", moovIdx);
+  console.log('bing bang boom you called the hollaback');
+  const moovIdx = buf.indexOf('moov');
+  console.log('moov', moovIdx);
   // move size if from bytes 32 to 35
   const moovSize = buf.readInt32BE(32);
-  console.log("moov size", moovSize);
-  console.log("ftypqt", buf.indexOf("ftypqt"));
+  console.log('moov size', moovSize);
+  console.log('ftypqt', buf.indexOf('ftypqt'));
   const headerEndIdx = magicSize + moovSize;
-  console.log("end of moov atom is at", headerEndIdx);
+  console.log('end of moov atom is at', headerEndIdx);
   return buf.slice(0, headerEndIdx);
 };
 
@@ -49,12 +49,11 @@ ProResParser.getNextFrameIdx = (file) => {
   const frameSizeLength = 8;
   ProResParser.readFileHead(file, (buffer) => {
     //
-    console.log("from get next frame, buff length", buffer.length);
-    const nextFrameIcpf = buffer.indexOf("icpf");
-    console.log("next frame icpf", nextFrameIcpf);
+    console.log('from get next frame, buff length', buffer.length);
+    const nextFrameIcpf = buffer.indexOf('icpf');
+    console.log('next frame icpf', nextFrameIcpf);
     return nextFrameIcpf - frameSizeLength;
   });
 };
-
 
 module.exports = ProResParser;

@@ -1,0 +1,113 @@
+// Theming
+// -----------------------------------------
+// font faces
+$fontFamily-body: 'PT Root UI', 'Helvetica Neue', Arial, sans-serif;
+$fontFamily-logo: 'PT Root UI', 'Helvetica Neue', Arial, sans-serif;
+$fontFamily-code: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', Courier, monospace;
+
+// font sizes
+$fontSize-body: 16px;
+$fontSize-s: 15px;
+$fontSize-m: 17px;
+$fontSize-l: 24px;
+$fontSize-xl: 28px;
+$fontSize-code: .8em;
+
+// colors
+$color-white: #fff;
+$color-black: #000;
+$color-blue: #2275d7;
+$color-darkblue: #15192a;
+$color-dark: #231f20;
+$color-medium: #646464;
+$color-light: #7f8c8d;
+$color-green: #42b983;
+$color-border: #dddddd;
+$color-codebg: #f8f8f8;
+$color-red: #ff6666;
+$color-gray: #777;
+$color-lightgray: #d9e2e3;
+$color-darkgray: #34393a;
+$color-violet: #492e7c;
+$color-orange: #e96900;
+$color-mint: #02b1ac;
+$color-yellow: #ffd12a;
+$color-pink: #ff3377;
+$color-primary: #ff181f;
+
+// sizes
+$size-radius: 2px;
+$size-headerHeight: 60px;
+$size-consoleHeight: 35vh;
+$size-uploaderWidth: 700px;
+$size-validationWidth: 600px;
+$gridColumnGapWidth: 20px;
+$size-sectionWidth: calc(#{$size-uploaderWidth} + #{$size-validationWidth} + #{$gridColumnGapWidth});
+
+// Media queries
+$screen-medium: 'only screen and (min-width: 1024px)';
+$screen-large: 'only screen and (min-width: 1150px)';
+
+::-webkit-scrollbar {
+  background-color: #eee;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: $color-light;
+  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+body {
+  background-color: $color-white;
+  color: $color-gray;
+}
+
+header {
+  .main-logo-link {
+    small {
+      color: $color-gray;
+
+      &:before {
+        background-color: $color-gray;
+      }
+    }
+
+    span {
+      color: $color-white;
+      background-color: $color-violet;
+    }
+  }
+}
+
+.icon-prores,
+.icon-mpeg2 {
+  border-color: grey;
+  background-color: #1A1A1A;
+  color: white;
+}
+
+.icon-mpeg2 {
+  background-color: #219CB2;
+}
+
+.progress-bar-container {
+  progress[value] {
+    color: royalblue;
+    background-color: whiteSmoke;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+
+    &::-webkit-progress-bar {
+      background-color: whiteSmoke;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+    }
+  }
+
+  .progress-bar {
+    background-color: whiteSmoke;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+
+    span {
+      background-color: royalblue;
+    }
+  }
+}

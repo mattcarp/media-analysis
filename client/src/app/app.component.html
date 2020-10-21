@@ -1,52 +1,75 @@
 <header>
-  <i class="logo"></i>
-  <h1>
-    Media Analysis
-    <small>Client Side</small>
-    <span>demo</span>
-  </h1>
+  <section>
+    <nav>
+      <div class="main-logo">
+        <a href="/" class="main-logo-link">
+          <i class="main-logo-icon"></i>
+          Media Analysis
+          <small>Client Side</small>
+          <span>demo</span>
+        </a>
+      </div>
+
+      <ul class="main-menu">
+        <li>
+          <a href="http://18.213.229.220:3000/uploader/" target="_blank" class="nav-link ext">Uploader</a>
+        </li>
+        <li>
+          <a href="http://18.213.229.220:3000/promo-uploader/" target="_blank" class="nav-link ext">Promo Uploader</a>
+        </li>
+        <li>
+          <a href="https://github.com/mattcarp/media-analysis/" target="_blank" rel="noopener" class="nav-link ext">GitHub</a>
+        </li>
+      </ul>
+    </nav>
+  </section>
 </header>
 
-<nav>
-  <section class="header">
-    <div #a1>File will be checked for compatibility</div>
-    <div #a2>History</div>
-  </section>
-  <section>
-    <div #b1>
-      <handle-files></handle-files>
-    </div>
-    <div #b2>
-      <!-- TODO: need add history -- icons of previously inserted files -->
-      <history-files></history-files>
-    </div>
-  </section>
-</nav>
-
 <main>
-  <div #c1>
-    <!-- TODO: need add player/viewer -->
-    <p class="place">
-      Place for:
-      <br>- player if video file
-      <br>- viewer/slider if image file
-      <br>- viewer if doc/pdf file
-    </p>
-  </div>
+  <aside>
+    <h2>Uploader:</h2>
+    <ng-container *ngIf="isTooLowHeight; else visibleUploader">
+      <h3>Too Low Height</h3>
+    </ng-container>
 
-  <div #c2>
-    <h2>Validations</h2>
-    <section [hidden]="!metadataResult">
-      <validate-format></validate-format>
+    <ng-template #visibleUploader>
+      <handle-files (files)="handleFilesListChange($event)"></handle-files>
+    </ng-template>
+  </aside>
+
+  <article>
+    <h2>Validations:</h2>
+    <section>
       <detect-black></detect-black>
-      <!-- TODO refactor mono to 'audio signal analysis' -->
-      <detect-mono></detect-mono>
-      <extract-metadata></extract-metadata>
+
+      <div *ngFor="let file of files; let id = index">
+        <div class="grid">
+          <div>{{files.length - id}}</div>
+          <div>
+            <i *ngIf="file.status === 'success'" class="fas fa-check-circle"></i>
+            <i *ngIf="file.status === 'error'" class="fas fa-times-circle"></i>
+            <i *ngIf="file.status === 'verify'" class="fas fa-question-circle"></i>
+          </div>
+          <div tooltip="{{file.type}}" placement="top" class="ellipsis" [ngClass]="setTypeClass(file.type)">
+            {{file.type}}
+          </div>
+          <div tooltip="{{file.name}}" placement="top" class="ellipsis">{{file.name}}</div>
+          <div>{{prettierBytes(file.size)}}</div>
+        </div>
+
+        <analyze-image *ngIf="getFileType(file).includes('image')" [imgData] = file></analyze-image>
+        <analyze-video *ngIf="getFileType(file).includes('video')" ></analyze-video>
+        <analyze-audio *ngIf="getFileType(file).includes('audio')"></analyze-audio>
+      </div>
     </section>
-    <section *ngIf="!metadataResult" class="pseudo-data"></section>
-  </div>
+  </article>
 </main>
 
 <footer>
-  <upload-file></upload-file>
+  <section>
+    <h2>Console output:</h2>
+    <textarea #consoleLog [scrollTop]="consoleLog.scrollHeight" class="console-log">
+      {{logger}}
+    </textarea>
+  </section>
 </footer>

@@ -1,4 +1,6 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
+
+import { LoggerService } from '../services/logger.service';
 
 @Injectable({
   providedIn: 'root',
@@ -6,13 +8,18 @@ import {Injectable} from '@angular/core';
 export class FileHandlerService {
   mediaFile: File;
 
-  setMediaFile(mediaFile: File) {
+  constructor(private loggerService: LoggerService) {}
+
+  setMediaFile(mediaFile: File): void {
     this.mediaFile = mediaFile;
-    console.log("you set the file:", mediaFile);
+
+    this.loggerService.info(
+      `Added file: ${mediaFile.name}, \t type: ${mediaFile.type}, \t size: ${mediaFile.size}`,
+      'color: green',
+    );
   }
 
-  getMediaFile() {
+  getMediaFile(): any {
     return this.mediaFile;
   }
-
 }

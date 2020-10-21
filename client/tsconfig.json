@@ -9,9 +9,24 @@
   "references": [
     {
       "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./e2e/tsconfig.e2e.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
+  "baseUrl": "./src",
+  "paths": {
+    "@app/*": [
+      "app/*"
+    ],
+    "@env/*": [
+      "environments/*"
+    ],
+    "@assets/*": [
+      "assets/*"
+    ],
+    "@ext/*": [
+      "ext/*"
+    ]
+  }
 }

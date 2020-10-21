@@ -15,6 +15,7 @@ const black = require('./routes/black');
 const mono = require('./routes/mono');
 const uploader = require('./routes/uploader');
 const promoUploader = require('./routes/promo-uploader');
+const smeUploader = require('./routes/sme-uploader');
 const extract = require('./routes/extract-frame');
 
 const app = express();
@@ -28,7 +29,7 @@ app.set('etag', false);
 // uncomment after placing your favicon in /public
 // app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
-app.use((req, res, next) => {
+app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers',
     'Origin, X-Requested-With, Content-Type, Accept, '
@@ -55,10 +56,11 @@ app.use('/mono', mono);
 app.use('/extract-frame', extract);
 app.use('/uploader', uploader);
 app.use('/promo-uploader', promoUploader);
+app.use('/sme-uploader', smeUploader);
 app.use('/', routes);
 
 // catch 404 and forward to error handler
-app.use((req, res, next) => {
+app.use(function (req, res, next) {
   let err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -69,7 +71,7 @@ app.use((req, res, next) => {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use((err, req, res, next) => {
+  app.use(function (err, req, res, next) {
     console.log('this is my error from dev env:');
     console.log(err);
     res.status(err.status || 500);
@@ -79,7 +81,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use((err, req, res) => {
+app.use(function (err, req, res, next) {
   console.log('this is my error int the prod env:');
   console.log(err);
 

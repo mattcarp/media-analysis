@@ -1,37 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { NgxDropzoneModule } from 'ngx-dropzone';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UploadFileComponent } from './upload-file/upload-file.component';
+import { HandleFilesComponent } from './handle-files/handle-files.component';
 import { PlayerComponent } from './player/player.component';
-import { ValidateFormatComponent } from './validate-format/validate-format.component';
+import { AnalyzeVideoComponent } from './analyze-video/analyze-video.component';
 import { AnalyzeAudioComponent } from './analyze-audio/analyze-audio.component';
 import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.component';
 import { DetectBlackComponent } from './detect-black/detect-black.component';
-import { HandleFilesComponent } from './handle-files/handle-files.component';
-import { HistoryFilesComponent } from './history-files/history-files.component';
+import { LoggerService } from './services/logger.service';
+import { TooltipDirective } from './directives/tooltip.directive';
+import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DetectBlackComponent,
     HandleFilesComponent,
+    DetectBlackComponent,
     ExtractMetadataComponent,
     AnalyzeAudioComponent,
-    ValidateFormatComponent,
+    AnalyzeVideoComponent,
     PlayerComponent,
-    UploadFileComponent,
-    HistoryFilesComponent,
+    TooltipDirective,
+    AnalyzeImageComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    NgxDropzoneModule,
-  ],
-  providers: [],
+  imports: [BrowserModule, AppRoutingModule],
+  providers: [LoggerService],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {
-}
+export class AppModule {}

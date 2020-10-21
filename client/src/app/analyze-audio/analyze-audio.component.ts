@@ -1,26 +1,26 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {AnalyzeAudioService} from './analyze-audio.service';
-
+import { AnalyzeAudioService } from './analyze-audio.service';
 
 @Component({
-  selector: 'detect-mono',
-  templateUrl: './analyze-audio.html',
+  selector: 'analyze-audio',
+  templateUrl: './analyze-audio.component.html',
 })
-
 export class AnalyzeAudioComponent {
   detectingMono: boolean;
-  audioResults: Object[] = [];
+  audioResults: [];
   displayMonoDetails: boolean[] = [];
   shouldWarnMono: boolean;
   peakThresholdExceeded: boolean;
-  detections: Object[];
-  segmentAnalyses: String[][];
+  detections: [];
+  segmentAnalyses: string[][];
   PEAK_THRESHOLD = -6;
 
   constructor(analyzeAudioService: AnalyzeAudioService) {
     analyzeAudioService.detectStartedEmitter.subscribe(value => {
-      if (value === true) { console.log('mono detect has begun'); }
+      if (value === true) {
+        console.log('mono detect has begun');
+      }
       this.audioResults = [];
       this.detectingMono = value;
     });
@@ -33,11 +33,11 @@ export class AnalyzeAudioComponent {
       this.detections = detections;
       this.validate(detections);
     });
-
   } // constructor
 
   formatDetections(detections = []) {
-    let resultArr: String[][] = [];
+    const resultArr: string[][] = [];
+
     detections.map((analysis, index) => {
       // this.formatAudioData(analysis.data);
       resultArr[index] = this.formatAudioData(analysis.data);
@@ -46,7 +46,7 @@ export class AnalyzeAudioComponent {
   }
 
   formatAudioData(data = []) {
-    let result = [];
+    const result = [];
     data.map((item, index) => {
       if (index === 0) {
         result.push('           ' + item);
@@ -61,9 +61,11 @@ export class AnalyzeAudioComponent {
 
   validate(detections: any) {
     if (detections.length > 2) {
-      if (detections[0].peakLevel > this.PEAK_THRESHOLD ||
+      if (
+        detections[0].peakLevel > this.PEAK_THRESHOLD ||
         detections[1].peakLevel > this.PEAK_THRESHOLD ||
-        detections[2].peakLevel > this.PEAK_THRESHOLD) {
+        detections[2].peakLevel > this.PEAK_THRESHOLD
+      ) {
         this.peakThresholdExceeded = true;
       }
 
@@ -79,5 +81,4 @@ export class AnalyzeAudioComponent {
   showMonoDetails(index: number) {
     this.displayMonoDetails[index] = !this.displayMonoDetails[index];
   }
-
-} // class
+}

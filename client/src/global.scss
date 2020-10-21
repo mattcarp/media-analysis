@@ -1,12 +1,19 @@
-@import "~fontsource-mulish/index.css";
+@import '~fontsource-mulish/index.css';
 @import 'theming';
+@import 'icons';
+
+@mixin section() {
+  max-width: $size-sectionWidth;
+  height: 100%;
+  margin: 0 auto;
+}
 
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   border: 0;
   outline: none;
-  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
@@ -20,12 +27,13 @@
 }
 
 html,
-body {
-  height: 100%;
+body,
+app-root {
+  overflow: hidden;
   width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
 }
 
 body {
@@ -38,18 +46,75 @@ body {
   will-change: transform;
 }
 
+// Main Layout
+// -------------------------------
+app-root {
+  display: grid;
+  grid-template-columns: [line1] minmax(320px, auto) [line2];
+  grid-template-rows: [row1] $size-headerHeight [row2] calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight}) [row3] $size-consoleHeight [row4];
+
+  header {
+    grid-column: line1 / line2;
+    grid-row: row1 / row2;
+
+    section {
+      @include section;
+
+      nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 100%;
+      }
+    }
+  }
+
+  main {
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: [line1] minmax(380px, $size-uploaderWidth) [line2] minmax(380px, $size-validationWidth) [line3];
+    grid-column: line1 / line2;
+    grid-row: row2 / row3;
+    margin: 0 auto;
+
+    grid-column-gap: $gridColumnGapWidth;
+
+    aside {
+      grid-column: line1 / line2;
+    }
+
+    article {
+      grid-column: line2 / line3;
+
+      section {
+        overflow-y: auto;
+        height: calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight} - 40px);
+      }
+    }
+  }
+
+  footer {
+    grid-column: line1 / line2;
+    grid-row: row3 / row4;
+
+    section {
+      @include section;
+    }
+  }
+}
+
+
+
+h3,
 h4 {
-  font-size: 22px;
   display: flex;
   align-items: center;
   margin: 5px 0;
+  font-size: 16px;
 }
 
-.fas,
-.far,
-.fab {
-  font-size: 16px;
-  margin: 0 5px 0 0;
+h4 {
+  font-size: 15px;
 }
 
 dl {
@@ -58,11 +123,109 @@ dl {
   grid-gap: 1px;
   align-items: center;
 
-  dt, dd {
-    padding: 5px;
+  dt,
+  dd {
+    display: flex;
+    align-items: center;
+    padding: 2px 5px;
   }
 }
 
 .alert-danger {
   margin: 0 0 10px;
+  padding: 10px;
+  color: red;
+  background-color: #ffecec;
+}
+
+.warn-message {
+  margin: 0 5px;
+  color: red;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5px;
+  cursor: pointer;
+  background-color: #eef4f5;
+
+  span {
+    color: blue;
+  }
+}
+
+
+[tooltip] {
+  display: inline-block;
+  width: 180px;
+  height: 50px;
+  margin: 50px 20px;
+  line-height: 50px;
+  text-align: center;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.ng-tooltip {
+  position: absolute;
+  z-index: 1000;
+  max-width: 150px;
+  padding: 4px 8px;
+  font-size: 14px;
+  text-align: center;
+  opacity: 0;
+  color: #f8f8f2;
+  border-radius: 4px;
+  background: #282a36;
+
+  &:after {
+    position: absolute;
+    content: '';
+    border-style: solid;
+  }
+
+  &-top:after {
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-color: black transparent transparent transparent;
+  }
+
+  &-bottom:after {
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-color: transparent transparent black transparent;
+  }
+
+  &-left:after {
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-color: transparent transparent transparent black;
+  }
+
+  &-right:after {
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-color: transparent black transparent transparent;
+  }
+
+  &-show {
+    opacity: 1;
+  }
+}
+
+pre {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  white-space: pre-wrap;
 }
