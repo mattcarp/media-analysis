@@ -88,12 +88,7 @@ export class ExtractMetadataService {
             // TODO in main.processVideo, subscribe to the result event, then fire:
             const analysisObj = JSON.parse(data.analysis);
             // let videoBitrate = analysisObj.streams[0].bit_rate;
-            const type =
-              analysisObj &&
-              analysisObj &&
-              analysisObj.streams &&
-              analysisObj.streams.length &&
-              analysisObj.streams[0].codec_type;
+            const type = analysisObj?.streams?.length && analysisObj.streams[0].codec_type;
             if (type === 'video') {
               this.loggerService.info(`TODO we got a video, now we should fire processVideo()`, 'color: lime');
               // this.processVideo(this.mediaFile, analysisObj);
