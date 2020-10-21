@@ -9,7 +9,7 @@ declare let EXIF: any;
 export class AnalyzeImageComponent implements AfterViewInit {
   @Input() imgData: any;
   output: string;
-  public imageSrc: string | ArrayBuffer;
+  imageSrc: string | ArrayBuffer;
 
   constructor(private cdr: ChangeDetectorRef) {}
 
