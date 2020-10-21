@@ -1,8 +1,9 @@
-import {EventEmitter, Injectable} from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
-import {EndpointService} from '../handle-endpoints/endpoint.service';
+import { EndpointService } from '../services/endpoint.service';
+import { LoggerService } from '../services/logger.service';
 
-declare var $: any;
+declare let $: any;
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,7 @@ export class DetectBlackService {
   // minimum time, in seconds, for black at head and tail
   MIN_BLACK_TIME = 3;
 
-  constructor(endpointService: EndpointService) {
+  constructor(endpointService: EndpointService, private loggerService: LoggerService) {
     this.endpoint = endpointService.getEndpoint();
   }
 
@@ -52,7 +53,7 @@ export class DetectBlackService {
 
     // initial stop condition:
     if (position === 'head' && this.headBlackTryCount >= this.MAX_TRIES) {
-      console.log('max retries exceeded for head black detection in file', position);
+      this.loggerService.info(`Max retries exceeded for head black detection in file: ${position}`, 'color: orange');
       // TODO add alert to DOM
       this.headBlackResult.emit(this.currentHeadData);
       this.headBlackStarted.emit(false);
@@ -60,7 +61,7 @@ export class DetectBlackService {
       return;
     }
     if (position === 'tail' && this.tailBlackTryCount >= this.MAX_TRIES) {
-      console.log('max retries exceeded for tail black detection in file', position);
+      this.loggerService.info(`Max retries exceeded for tail black detection in file: ${position}`, 'color: orange');
       // TODO add alert to DOM
       this.headBlackResult.emit(this.currentTailData);
       this.tailBlackStarted.emit(false);
@@ -69,53 +70,55 @@ export class DetectBlackService {
 
     if (position === 'head') {
       this.headBlackStarted.emit(true);
-      sliceStart = (this.BLACK_CHUNK_SIZE * this.headBlackTryCount) +
-      this.headBlackTryCount;
+      sliceStart = this.BLACK_CHUNK_SIZE * this.headBlackTryCount + this.headBlackTryCount;
       sliceEnd = sliceStart + this.BLACK_CHUNK_SIZE;
-      console.log('head try count:', this.headBlackTryCount,
-        'slice start:', sliceStart, 'slice end:', sliceEnd);
+      this.loggerService.debug(
+        `Head try count: ${this.headBlackTryCount}, \t slice start: ${sliceStart}, \t slice end: ${sliceEnd}`,
+        'color: grey',
+      );
     }
     if (position === 'tail') {
       this.tailBlackStarted.emit(true);
-      tailSliceEnd = mediaFile.size -
-        (this.BLACK_CHUNK_SIZE * this.tailBlackTryCount) - this.tailBlackTryCount;
+      tailSliceEnd = mediaFile.size - this.BLACK_CHUNK_SIZE * this.tailBlackTryCount - this.tailBlackTryCount;
       tailSliceStart = tailSliceEnd - this.BLACK_CHUNK_SIZE;
       // sliceEnd = sliceStart + BLACK_CHUNK_SIZE;
-      console.log('tail try count:', this.tailBlackTryCount,
-        'tail slice start:', tailSliceStart, 'tail slice end:', tailSliceEnd);
+      this.loggerService.info(
+        `Tail try count: ${this.tailBlackTryCount}, \t tail slice start: ${tailSliceStart}, \t tail slice end: ${tailSliceEnd}`,
+        'color: grey',
+      );
     }
 
     let fileToUse;
     let sliceToUse;
     if (position === 'head') {
       sliceToUse = mediaFile.slice(sliceStart, sliceEnd);
-      console.log('slice for head black detect:');
-      console.log(sliceToUse);
+      this.loggerService.debug(
+        `Slice for head black detect:\t type: ${sliceToUse.type}, \t size: ${sliceToUse.size}`,
+        'color: grey',
+      );
       this.blackProgressHead = this.headBlackTryCount / this.MAX_TRIES;
       this.headProgress.emit(this.blackProgressHead);
       fileToUse = this.headBlackFilename + '.' + this.originalExtension;
     }
     if (position === 'tail') {
       sliceToUse = mediaFile.slice(tailSliceStart, tailSliceEnd);
-      console.log('tail try counter:', this.tailBlackTryCount);
+      // this.loggerService.debug(`Tail try counter: ${this.tailBlackTryCount}`, 'color: grey');
       this.blackProgressTail = this.tailBlackTryCount / this.MAX_TRIES;
       this.tailProgress.emit(this.blackProgressTail);
       fileToUse = this.tailBlackFilename + '.' + this.originalExtension;
     }
 
-    $.when(this.requestBlack(sliceToUse, position, fileToUse))
-      .then((data, textStatus, jqXHR) => {
-
+    $.when(this.requestBlack(sliceToUse, position, fileToUse)).then((data) => {
       if (data.blackDetect[0]) {
         const duration = parseFloat(data.blackDetect[0].duration);
-        console.log('this is my black duration, returned from requestBlack:');
-        console.log(duration);
+
+        this.loggerService.info(`This is my black duration, returned from requestBlack:: ${duration}`, 'color: grey');
 
         if (position === 'head') {
           this.currentHeadData = data;
           if (this.headBlackPrevDuration && this.headBlackPrevDuration <= duration) {
             // duration is not increasing, might as well stop
-            console.log(`black detection: duration isn't getting longer. TODO - stop here`);
+            this.loggerService.info(`Black detection: duration isn't getting longer. TODO - stop here`, 'color: lime');
           }
         }
         if (position === 'tail') {
@@ -124,9 +127,12 @@ export class DetectBlackService {
 
         // stop condition
         if (duration >= this.MIN_BLACK_TIME) {
-          console.log('the detected black duration of', duration,
-            'is greater or equal to the min black time of', this.MIN_BLACK_TIME);
-          console.log('so we can stop recursing');
+          this.loggerService.info(
+            `The detected black duration of: ${duration} is greater or equal to the min black time of: ${this.MIN_BLACK_TIME}`,
+            'color: grey',
+          );
+
+          this.loggerService.info(`So we can stop recursing.`, 'color: darkgrey');
           // TODO set tail dom values
           if (position === 'head') {
             this.headBlackStarted.emit(false);
@@ -139,16 +145,16 @@ export class DetectBlackService {
           return;
         }
       } else {
-        console.log('no blackdetect object on the returned array');
+        this.loggerService.info(`No blackdetect object on the returned array`, 'color: grey');
       }
 
       // TODO additonal stop condition: if duration doesn't increment
       if (position === 'head') {
-        this.headBlackTryCount++;
+        this.headBlackTryCount += 1;
       }
       if (position === 'tail') {
-        console.log('tailBlackTryCount:', this.tailBlackTryCount);
-        this.tailBlackTryCount++;
+        this.loggerService.info(`TailBlackTryCount: ${this.tailBlackTryCount}`, 'color: grey');
+        this.tailBlackTryCount += 1;
       }
 
       // recurse
@@ -165,21 +171,18 @@ export class DetectBlackService {
       processData: false,
       // content type that we are sending
       contentType: 'application/octet-stream',
-      beforeSend: function(request) {
-        request.setRequestHeader('xa-file-to-concat',
-          filename);
-        request.setRequestHeader('xa-black-position',
-          position);
+      beforeSend: function (request) {
+        request.setRequestHeader('xa-file-to-concat', filename);
+        request.setRequestHeader('xa-black-position', position);
       },
       error: (err) => {
-        console.log('error on the black detection ajax request:');
+        this.loggerService.info(`Error on the black detection ajax request:`, 'color: red');
         console.log(err);
       },
       success: (data) => {
-        console.log('from requestBlack, for the', position);
+        this.loggerService.info(`From requestBlack, for the: ${position}`, 'color: green');
         console.dir(data.blackDetect);
-      }
+      },
     });
-  } // requestBlack
-
-} // class
+  }
+}

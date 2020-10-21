@@ -5,8 +5,13 @@
 </div>
 
 <div *ngIf="metadata">
-  <h3>Metadata</h3>
-  <div class="ma-metadata">
+  <div (click)="toggleMetadata()" class="toggle-container">
+    <h3>Metadata</h3>
+    <span *ngIf="!showMetadata">[+]</span>
+    <span *ngIf="showMetadata">[–]</span>
+  </div>
+
+  <div *ngIf="showMetadata" (click)="toggleMetadata()" class="ma-metadata">
     <div *ngIf="format">
       <h4>Format</h4>
       <dl *ngFor="let item of format">

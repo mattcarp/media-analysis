@@ -1,7 +1,9 @@
 import { EventEmitter, Injectable } from '@angular/core';
 
-import { EndpointService } from '../handle-endpoints/endpoint.service';
-import { QuicktimeService } from '../shared/services/quicktime.service';
+import { EndpointService } from '../services/endpoint.service';
+import { QuicktimeService } from '../services/quicktime.service';
+import { IMoovStats } from '../services/quicktime.service';
+import { LoggerService } from '../services/logger.service';
 
 declare let $: any;
 declare let FileReader: any;
@@ -19,35 +21,44 @@ export class ExtractMetadataService {
   metadataStarted = new EventEmitter();
   metadataResult = new EventEmitter();
 
-  constructor(endpointService: EndpointService, qtService: QuicktimeService) {
+  constructor(
+    endpointService: EndpointService,
+    qtService: QuicktimeService,
+    private loggerService: LoggerService,
+  ) {
     this.endpoint = endpointService.getEndpoint();
     this.qtService = qtService;
-    console.log('ExtractMetadataService: EndpointService provided this base path:', this.endpoint);
+    this.loggerService.info(
+      `EndpointService provided this base path: ${this.endpoint}`,
+      'color: lime',
+    );
   }
 
-  extract(mediaFile: File) {
+  extract(mediaFile: File): void {
     const reader = new FileReader();
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt) => {
-      if (evt.target.readyState === FileReader.DONE) { // DONE == 2
+      if (evt.target.readyState === FileReader.DONE) {
+        // DONE == 2
         this.metadataStarted.emit(true);
 
         // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
         if (this.originalExtension === 'mov') {
           // TODO if moov not in head, check tail
-          console.log('this is a mov file, so we should call the qt service');
+          this.loggerService.info(`This is a mov file, so we should call the qt service.`, 'color: grey');
           const headerBuf: ArrayBuffer = evt.target.result;
           const moovStats: any = this.qtService.getMoovStats(headerBuf);
           if (moovStats.moovExists === true) {
             this.handleMov(moovStats, headerBuf);
           } else {
-            console.log('don\'t send this to the backend, because we got no moov atom');
-            console.log('this is a mov file, but the moov atom wasn\'t found in the header' +
-              '. I really should look in the tail of the file now');
+            this.loggerService.info(`Don't send this to the backend, because we got no moov atom.`, 'color: orange');
+            this.loggerService.info(
+              `This is a mov file, but the moov atom wasn't found in the header. I really should look in the tail of the file now.`,
+              'color: grey',
+            );
             return;
           }
-
         }
         // angular Http doesn't yet support raw binary POSTs - aha! hey @sergei - this is why i used $.ajax!
         // see line 62 at
@@ -61,24 +72,25 @@ export class ExtractMetadataService {
           processData: false,
           // content type that we are sending
           contentType: 'application/octet-stream',
-          error: function (err) {
-            console.log('you have an error on the ajax request:');
+          error: (err) => {
+            this.loggerService.info(`You have an error on the ajax request:`, 'color: red');
             console.log(err);
           },
-          success: data => {
+          success: (data) => {
             // error handling
-            console.log('this is what i got from ffprobe metadata:');
-            console.log(data);
+            this.loggerService.info(`This is what I got from ffprobe metadata:`, 'color: darkgrey');
+            this.loggerService.debug(`\t error: ${data.error}`, 'color: red');
+            this.loggerService.debug(`\t analysis: ${data.analysis}`, 'color: grey');
+
             this.metadataStarted.emit(false);
             this.metadataResult.emit(data);
 
             // TODO in main.processVideo, subscribe to the result event, then fire:
             const analysisObj = JSON.parse(data.analysis);
             // let videoBitrate = analysisObj.streams[0].bit_rate;
-            const type = analysisObj && analysisObj && analysisObj.streams
-              && analysisObj.streams.length && analysisObj.streams[0].codec_type;
+            const type = analysisObj?.streams?.length && analysisObj.streams[0].codec_type;
             if (type === 'video') {
-              console.log('TODO we got a video, now we should fire processVideo()');
+              this.loggerService.info(`TODO we got a video, now we should fire processVideo()`, 'color: lime');
               // this.processVideo(this.mediaFile, analysisObj);
             }
           },
@@ -88,19 +100,22 @@ export class ExtractMetadataService {
 
     // this.mediaFile = file;
     this.originalExtension = mediaFile.name.split('.').pop();
-    console.log('original file extension:', this.originalExtension);
+    this.loggerService.info(
+      `Original file extension: ${this.originalExtension}`,
+      'color: lawngreen ',
+    );
     this.blob = mediaFile.slice(0, SLICE_SIZE);
     reader.readAsArrayBuffer(this.blob);
   }
 
   // called if file extension is mov, check for moov atom in head, then tail
-  handleMov(moovStats: any, movBuf: ArrayBuffer) {
-    const moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart,
-      moovStats.moovLength, movBuf);
-    console.log('handleMov gave me this DataView:');
+  handleMov(moovStats: IMoovStats, movBuf: ArrayBuffer): void {
+    const moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart, moovStats.moovLength, movBuf);
+    this.loggerService.info(`HandleMov gave me this DataView:`, 'color: grey');
     console.dir(moov);
+
     const moovMetadata = this.qtService.parseMoov(moov);
-    console.log('moov metatadata:');
+    this.loggerService.info(`Moov metatadata:`, 'color: grey');
     console.log(moovMetadata);
   }
 }

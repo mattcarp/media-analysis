@@ -1,42 +1,42 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 
-import {ExtractMetadataService} from './extract-metadata.service';
+import { ExtractMetadataService } from './extract-metadata.service';
+import { LoggerService } from '../services/logger.service';
 
-declare var $: any;
+declare let $: any;
 
 @Component({
   selector: 'extract-metadata',
   templateUrl: './extract-metadata.component.html',
 })
-
 export class ExtractMetadataComponent {
   metadataStarted: any; // the event emitter
   metadataResult: any;
   metadataLoading: boolean;
-  metadata: Object;
+  metadata: boolean;
   ffprobeErr: string;
-  format: Object[];
-  formatTags: Object[];
-  showFormat: boolean = false;
+  format = [];
+  formatTags = [];
+  showFormat = false;
   streams: any[]; // an array of arrays of stream objects
-  showMetadata: boolean = false;
+  showMetadata = false;
 
-
-  constructor(extractMetadataService: ExtractMetadataService) {
+  constructor(extractMetadataService: ExtractMetadataService, private loggerService: LoggerService) {
     // clear state - TODO use a redux store for this
     this.metadataResult = null;
 
     this.metadataLoading = false;
     this.metadataStarted = extractMetadataService.metadataStarted;
-    this.metadataStarted.subscribe(value => {
-      if (value === true) { console.log("metadata extraction started"); }
+    this.metadataStarted.subscribe((value) => {
+      if (value === true) {
+        this.loggerService.info(`Metadata extraction started`, 'color: darkgrey');
+      }
       this.metadataLoading = value;
     });
     this.metadataResult = extractMetadataService.metadataResult;
-    this.metadataResult.subscribe(value => {
+    this.metadataResult.subscribe((value) => {
       this.renderResult(value);
     });
-
   }
 
   renderResult(data) {
@@ -45,17 +45,20 @@ export class ExtractMetadataComponent {
         this.ffprobeErr = data.error;
       }
     }
-    let analysisObj = JSON.parse(data.analysis);
-    console.log("analysis object, and number of keys:");
+    const analysisObj = JSON.parse(data.analysis);
+    this.loggerService.info(`Analysis object, and number of keys:`, 'color: grey');
     console.log(analysisObj);
     console.log(Object.keys(analysisObj).length);
+
     if (analysisObj && Object.keys(analysisObj).length !== 0) {
-      let formatObj = analysisObj.format;
+      const formatObj = analysisObj.format;
       // zone.run(() => { this.showFormat = true});
       this.showFormat = true;
       this.format = this.processObject(formatObj);
-      console.log("format object, from which we can filter extraneous keys:")
-      console.log(this.format);
+      this.loggerService.info(
+        `Format object, from which we can filter extraneous keys: ${this.format}`,
+        'color: green',
+      );
 
       if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
         this.formatTags = this.processObject(formatObj.tags);
@@ -63,10 +66,11 @@ export class ExtractMetadataComponent {
     }
 
     if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-      let collectedStreams = [];
-      let inputStreams = analysisObj.streams;
-      inputStreams.forEach(currentStream => {
-        console.log("i am a stream");
+      const collectedStreams = [];
+      const inputStreams = analysisObj.streams;
+
+      inputStreams.forEach((currentStream) => {
+        this.loggerService.info(`I'm a stream`, 'color: green');
         collectedStreams.push(this.processObject(currentStream));
       });
 
@@ -74,7 +78,6 @@ export class ExtractMetadataComponent {
       // show the panel
       this.metadata = true;
     }
-
   }
 
   // takes an object, removes any keys with array values, and returns
@@ -84,24 +87,27 @@ export class ExtractMetadataComponent {
     if (Array.isArray(formatObj)) {
       const newObj: any = {};
       formatObj.map(item => Object.keys(item).map((key: string) => {
-        newObj[key] = item[key];
-      }));
+          newObj[key] = item[key];
+        }),
+      );
       formatObj = newObj;
     }
     let keysArr: string[] = Object.keys(formatObj);
     return keysArr
-    // TODO filter if value for key is object or array, rather than not 'tags'
-      .filter(formatKey => formatKey !== "tags")
-      .map(formatKey => {
-        let item: any = {};
-        // replace underscores and format with initial caps
-        item.key = formatKey.replace(/_/g, " ")
-        .replace(/(?:^|\s)[a-z]/g, function (m) {
-          return m.toUpperCase();
-        }).replace("Nb ", "Number of ");
-        item.value = formatObj[formatKey];
-        return item;
-    })
+        // TODO filter if value for key is object or array, rather than not 'tags'
+        .filter((formatKey) => formatKey !== 'tags')
+        .map((formatKey) => {
+          const item: any = {};
+          // replace underscores and format with initial caps
+          item.key = formatKey
+            .replace(/_/g, ' ')
+            .replace(/(?:^|\s)[a-z]/g, function (m) {
+              return m.toUpperCase();
+            })
+            .replace('Nb ', 'Number of ');
+          item.value = formatObj[formatKey];
+          return item;
+        })
   }
 
   toggleMetadata() {
@@ -111,6 +117,4 @@ export class ExtractMetadataComponent {
   isItemWithLinearValue(value: any): boolean {
     return typeof value === 'string' || typeof value === 'number';
   }
-
-
 } // class
