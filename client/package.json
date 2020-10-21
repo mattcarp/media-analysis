@@ -24,6 +24,7 @@
     "dropzone": "^5.7.2",
     "exif-js": "^2.3.0",
     "fontsource-mulish": "^3.0.5",
+    "ngx-dropzone": "^2.2.2",
     "rxjs": "^6.6.3",
     "tslib": "^2.0.1",
     "zone.js": "~0.10.3"
