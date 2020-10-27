@@ -81,7 +81,7 @@
         <tbody>
         <tr *ngFor="let track of playList; let i = index"
             [class.selected]="isSelected(i)"
-            (click)="queueTrack(i), $event" class="ddp-track">
+            (click)="queueTrack(i, $event)" class="ddp-track">
           <th scope="row">{{ i + 1 }}</th>
           <td>{{ track.file.file.name }}</td>
           <td>{{ track.isrc }}</td>

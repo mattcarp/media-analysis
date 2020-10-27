@@ -1,70 +1,74 @@
-import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Rx';
-
+import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-// custom services
-import { DdpmsService } from '../ddpms/ddpms.service';
-import { DdpidService } from '../ddpid/ddpid.service';
-import { DdppqService } from '../ddppq/ddppq.service';
+import { DdpState } from '../reducers/ddp.reducer';
+import { setAudioEntries, setDdpFiles } from '../actions/ddp.actions';
+import { selectPqEntries } from '../selectors/ddp.selectors';
+import { MsEntry, MsState, PqEntry, PqState } from '../models';
 import { DdpService } from './ddp.service';
-import { GracenoteService } from '../gracenote/gracenote.service';
-import { CdTextService } from '../cdtext/cdtext.service';
-import { DdpPqState } from '../reducers/ddppq';
-import { DdpMsState, MsEntries } from '../reducers/ddpms';
-import { AppState } from '../reducers/index';
+import { DdpmsService } from './ddpms.service';
+import { DdpidService } from './ddpid.service';
+import { DdppqService } from './ddppq.service';
+import { GracenoteService } from './gracenote.service';
+import { CdTextService } from './cdtext.service';
 
 
-@Injectable()
-export class DdpFileService {
+@Injectable({
+  providedIn: 'root',
+})
+export class DdpFileService implements OnDestroy {
   parseStartTime: Date;
   waveSurferInstance: any;
-  parsedMs: DdpMsState;
-  parsedPq: DdpPqState;
-  parsedId: Array<Object>;
-  audioEntries: Array<Object>;
+  parsedMs: MsState;
+  parsedPq: PqState;
+  parsedId: any[];
+  audioEntries: any[];
   // playlist is an array of resumable files
-  playList: Array<any>;
+  playList: any[]
   audioSource: any;
-  allResumableFiles: Array<any>;
-  showWaveform: boolean = false;
-
-  private pqFileReadSource = new Subject<DdpPqState>();
+  allResumableFiles: any[];
+  showWaveform = false;
   pqFileRead$ = this.pqFileReadSource.asObservable();
-
-  private allFilesAddedSource = new Subject<Array<Object>>();
   allFilesAdded$ = this.allFilesAddedSource.asObservable();
-
-  private audioEntriesSource = new Subject<Object>();
   audioEntries$ = this.audioEntriesSource.asObservable();
-
-  private annotationSource = new Subject<Object>();
   annotation$ = this.annotationSource.asObservable();
 
-  constructor(private ddpService: DdpService,
-              private ddpmsService: DdpmsService,
-              private ddpidService: DdpidService,
-              private ddppqService: DdppqService,
-              private gracenoteService: GracenoteService,
-              private cdTextService: CdTextService,
-              private store: Store<AppState>) {
+  private destroy$: Subject<any> = new Subject<any>();
+  private pqFileReadSource = new Subject<PqState>();
+  private allFilesAddedSource = new Subject<any[]>();
+  private audioEntriesSource = new Subject<any>();
+  private annotationSource = new Subject<any>();
+
+  constructor(
+    private ddpService: DdpService,
+    private ddpmsService: DdpmsService,
+    private ddpidService: DdpidService,
+    private ddppqService: DdppqService,
+    private gracenoteService: GracenoteService,
+    private cdTextService: CdTextService,
+    private store: Store<DdpState>,
+  ) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-
   handleFiles(waveSurferInstance: any, resumable: any): void {
-    let resumableFiles = resumable.files;
+    const resumableFiles = resumable.files;
     // TODO do we need this:
     this.allResumableFiles = resumable.files;
     this.parseStartTime = new Date();
     console.log('all files have been added');
-    this.store.dispatch({type: 'SET_FILES', payload: {
+    this.store.dispatch(setDdpFiles({
       selectedAt: new Date(),
-      files: resumableFiles
-    }
-    });
+      files: resumableFiles,
+    }));
     this.allFilesAddedSource.next(resumableFiles);
     this.waveSurferInstance = waveSurferInstance;
-    for (let fileObj of resumableFiles) {
+    for (const fileObj of resumableFiles) {
       if (fileObj.fileName.toLowerCase() === 'ddpms') {
         this.readAndParse(fileObj.file, 'ms');
       }
@@ -74,17 +78,17 @@ export class DdpFileService {
     }
   }
 
-  handlePqFile(pqFileInfo: any, resumableFiles: Array<any>) {
+  handlePqFile(pqFileInfo: any, resumableFiles: any[]) {
     // a pq file can have any name given to it by the ms file
-    let fileName: string = pqFileInfo.fileName.trim().toLowerCase();
-    for (let fileObj of resumableFiles) {
+    const fileName: string = pqFileInfo.fileName.trim().toLowerCase();
+    for (const fileObj of resumableFiles) {
       if (fileObj.fileName.toLowerCase() === fileName) {
         this.readAndParse(fileObj.file, 'pq');
         // TODO drop this subscription, subscribe to store
         this.pqFileRead$.subscribe(
-          (parsedPq: DdpPqState) => {
+          (parsedPq: PqState) => {
             this.parsedPq = parsedPq;
-            let toc = this.ddpService.createToc(parsedPq.entries);
+            const toc = this.ddpService.createToc(parsedPq.entries);
             this.gracenoteService.queryByToc(toc);
           });
       }
@@ -112,11 +116,11 @@ export class DdpFileService {
     // clear player annotations
     this.annotationSource.next('');
     const audioCtx = new AudioContext();
-    let encodedWav = DdpFileService.encodeWav(audioBuff);
+    const encodedWav = DdpFileService.encodeWav(audioBuff);
     this.audioSource = audioCtx.createBufferSource();
     // convert ArrayBuffer to Blob, in order to draw waveform
-    let dataView = new DataView(encodedWav);
-    let blob = new Blob([dataView], {type: 'mimeString'});
+    const dataView = new DataView(encodedWav);
+    const blob = new Blob([dataView], { type: 'mimeString' });
     this.createWaveForm(blob);
   } // queueTrack
 
@@ -142,7 +146,7 @@ export class DdpFileService {
   }
 
   showInMsg(region: any) {
-    let msg = {
+    const msg = {
       start: this.ddpService.framesToTime(region.start * 75),
       end: this.ddpService.framesToTime(region.end * 75),
       type: 'in',
@@ -152,7 +156,7 @@ export class DdpFileService {
   }
 
   showOutMsg(region: any) {
-    let msg = {
+    const msg = {
       start: this.ddpService.framesToTime(region.end * 75),
       end: 'end of file',
       type: 'in',
@@ -164,8 +168,8 @@ export class DdpFileService {
   static encodeWav(rawAudio: ArrayBuffer): ArrayBuffer {
     // wav header is 44 bytes
     const HEADER_LENGTH = 44;
-    let buffer = new ArrayBuffer(HEADER_LENGTH);
-    let view = new DataView(buffer);
+    const buffer = new ArrayBuffer(HEADER_LENGTH);
+    const view = new DataView(buffer);
 
     const NUM_CHANNELS = 2;
     const BIT_DEPTH = 16;
@@ -217,20 +221,20 @@ export class DdpFileService {
 
   // concat two ArrayBuffers (e.g. the wav header and audio payload)
   static appendBuffer(buffer1: ArrayBuffer, buffer2: ArrayBuffer): ArrayBuffer {
-    let tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
+    const tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
     tmp.set(new Uint8Array(buffer1), 0);
     tmp.set(new Uint8Array(buffer2), buffer1.byteLength);
     return tmp.buffer;
   } // appendbuffer
 
-  getPqFileInfo(msObj: DdpMsState): Object {
-    let pqFileInfo: any = {};
+  getPqFileInfo(msObj: MsState) {
+    const pqFileInfo: any = {};
     if (msObj === null) {
       return null;
     }
-    let msEntries: MsEntries = msObj.entries;
+    const msEntries: MsEntry[] = msObj.entries;
     for (let i = 0; i < msEntries.length; i++) {
-      let currentEntry = msEntries[i];
+      const currentEntry = msEntries[i];
 
       if (currentEntry.sub.trim().toUpperCase() === 'PQ DESCR') {
         pqFileInfo.fileName = currentEntry.dsi.trim();
@@ -244,14 +248,14 @@ export class DdpFileService {
   } // getPqFileInfo
 
   getCdTextFileInfo(parsedMs) {
-    let cdTextFileInfo: any = {};
+    const cdTextFileInfo: any = {};
 
     if (parsedMs === null || parsedMs === '') {
       return null;
     }
 
     for (let i = 0; i < parsedMs.length; i++) {
-      let currentEntry = parsedMs[i];
+      const currentEntry = parsedMs[i];
 
       if (currentEntry.sub.trim().toUpperCase() === 'CDTEXT') {
         cdTextFileInfo.fileName = currentEntry.dsi;
@@ -273,26 +277,25 @@ export class DdpFileService {
         case 'pq':
           // TODO set in store by calling parse, then get from store
           this.ddppqService.parse(textReader.result);
-          this.store.select('ddpPq').subscribe((parsedPq: DdpPqState) => {
-             console.log('we should have a parsed pq at this point', parsedPq);
-            let audioWithPq: Array<any> = this.ddppqService.
+          this.store.select('ddpPq').subscribe((parsedPq: PqState) => {
+            console.log('we should have a parsed pq at this point', parsedPq);
+            const audioWithPq: Array<any> = this.ddppqService.
             addPqToAudio(this.audioEntries, parsedPq);
             console.log('this is my audio with pq stuff', audioWithPq);
             this.audioEntriesSource.next(audioWithPq);
             // set up the first track for playback
-            let trk1Pregap = parseFloat(audioWithPq[0].preGap) / 75.0;
+            const trk1Pregap = parseFloat(audioWithPq[0].preGap) / 75.0;
             this.addRegion(0, trk1Pregap);
             // TODO set parsedPq using the store
             this.pqFileReadSource.next(parsedPq);
           });
-
           break;
         case 'id':
           this.ddpidService.parse(textReader.result, fileObj);
           break;
         case 'ms':
           this.ddpmsService.parse(textReader.result, fileObj);
-          this.store.select('ddpMs').subscribe((parsedMs: DdpMsState) => {
+          this.store.select('ddpMs').subscribe((parsedMs: MsState) => {
             // TODO drop this 'if', use async pipe in container component
             if (parsedMs) {
               // this.hasMs = true;
@@ -309,7 +312,6 @@ export class DdpFileService {
               console.dir(this.audioEntries);
             }
           });
-
           break;
       }
     };

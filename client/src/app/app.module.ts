@@ -14,11 +14,12 @@ import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { LoggerService } from './services/logger.service';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
+import { reducers } from './shared/store/reducers';
 
 export const ReducerToken = new InjectionToken('Media Analysis Registered Reducers');
 
 export function getReducers() {
-  return {};
+  return reducers;
 }
 
 export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers }];
