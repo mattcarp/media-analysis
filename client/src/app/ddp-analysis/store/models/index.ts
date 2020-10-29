@@ -6,3 +6,6 @@ export * from './pq-state';
 export * from './id-state';
 export * from './files-state';
 export * from './hash-item';
+export * from './hashes-state';
+export * from './validation-entry';
+export * from './validation-state';

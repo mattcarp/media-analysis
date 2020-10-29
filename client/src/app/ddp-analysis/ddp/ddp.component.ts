@@ -1,4 +1,17 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  NgZone,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+
+import { DdpService } from '../store/services/ddp.service';
+import { DdpFileService } from '../store/services/ddp-file.service';
+
+declare const Resumable: any;
+declare const WaveSurfer: any;
 
 @Component({
   selector: 'app-ddp',
@@ -33,9 +46,6 @@ export class DdpComponent implements OnInit, AfterViewInit {
     private ddpService: DdpService,
     private ddpFileService: DdpFileService,
     private zone: NgZone,
-    private ddpmsService: DdpmsService,
-    private validationsService: ValidationsService,
-    private ddppqService: DdppqService,
   ) {}
 
   ngOnInit() {
@@ -180,8 +190,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
       // console.log('were does the waveform disappear?', slider.value);
       this.waveSurfer.zoom(zoomLevel);
     };
-
-  } // afterViewInit
+  }
 
 
   isSelected(index: number): boolean {

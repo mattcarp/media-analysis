@@ -1,0 +1,67 @@
+<br>
+
+<md-card>
+  <md-card-header>
+    <img md-card-avatar src="img/cd.jpeg">
+    <md-card-title>DDP Map Stream</md-card-title>
+
+    <p><md-card-subtitle>file name: {{parsedMs?.fileName}} size: {{parsedMs?.fileSize}}
+      last modified: {{parsedMs?.lastModified}}</md-card-subtitle></p>
+  </md-card-header>
+  <!--<img md-card-image src="img/cd.jpeg">-->
+  <md-card-content>
+    <p><strong>file name:</strong> {{parsedMs?.fileName}}
+      <strong>size:</strong> {{parsedMs?.fileSize}}
+      <strong>last modified:</strong> {{parsedMs?.lastModified}}</p>
+  </md-card-content>
+</md-card>
+
+<div class="ddp-ddpms">
+<a name="map-stream"></a>
+<!--<div *ngIf="!hasMsFile && !idContainsMs"><h3><small>No map stream file was provided.</small></h3></div>-->
+<!--<div *ngIf="hasMs || idContainsMs">-->
+<div *ngIf="hasMs">
+  <h3>DDP Map Stream</h3>
+  <p>file name: {{parsedMs?.fileName}} size: {{parsedMs?.fileSize}}
+    last modified: {{parsedMs?.lastModified}}</p>
+  <p>Based on the map stream data and the spec, the following files must be in the DDP directory.</p>
+  <table class="md-data-table ddp-table">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Sub</th>
+      <th>TRK</th>
+      <th>IDX</th>
+      <th>PRE1</th>
+      <th>PRE2</th>
+      <th>PST</th>
+      <th>DST</th>
+      <th>MPV</th>
+      <th>ISRC</th>
+      <th>Expected Size</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!--TODOmc need to sort order by dsi-->
+    <tr *ngFor="let item of parsedMs?.entries">
+      <td>{{item?.dsi}}</td>
+      <td><span *ngIf="item?.dsi === 'DDPID'">DDP Identification</span><span *ngIf="item?.dsi !== 'DDPID'">
+        {{item?.dst}}
+      </span></td>
+      <td>{{item?.sub}}</td>
+      <td>{{item?.trk}}</td>
+      <td>{{item?.idx}}</td>
+      <td>{{item?.pre1}}</td>
+      <td>{{item?.pre2}}</td>
+      <td>{{item?.pst}}</td>
+      <td>{{item?.dst}}</td>
+      <td>{{item?.mpv}}</td>
+      <td>{{item?.isrc}}</td>
+      <td *ngIf="item?.fileSize && masterFormat?.name.substring(0, 3) !== 'DVD'">{{item?.fileSize | number}} ({{item?.fileSize}})</td>
+      <td *ngIf="masterFormat?.name.substring(0, 3) === 'DVD' ">Not applicable for DVD</td>
+    </tr>
+    </tbody>
+  </table>
+</div> <!-- map stream -->
+</div>

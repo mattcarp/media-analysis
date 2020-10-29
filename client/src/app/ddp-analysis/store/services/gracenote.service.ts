@@ -7,12 +7,10 @@ declare const X2JS: any;
 
 @Injectable()
 export class GracenoteService {
-  headers: HttpHeaders;
-  gracenoteUrl = 'https://c2045878769.web.cddbp.net/webapi/xml/1.0/';
-
-
-  private gracenoteResponseSource = new Subject<any>();
   gracenoteResponse$ = this.gracenoteResponseSource.asObservable();
+
+  private gracenoteUrl = 'https://c2045878769.web.cddbp.net/webapi/xml/1.0/';
+  private gracenoteResponseSource = new Subject<any>();
 
   constructor(private http: HttpClient) {}
 
@@ -46,7 +44,7 @@ export class GracenoteService {
     headers.append('Content-Type', 'application/xml');
     console.log('gracenote service got this toc', toc );
 
-    return this.http.post(this.gracenoteUrl, request, { headers: headers }).pipe(
+    return this.http.post(this.gracenoteUrl, request, { headers }).pipe(
       map((res: any) => {
         this.gracenoteResponseSource.next(x2js.xml_str2json(res.text()));
       }));

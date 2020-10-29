@@ -18,3 +18,23 @@ export const selectPqEntries = createSelector(
   selectJobs,
   (state: fromDdpFiles.DdpState) => state.pq.entries,
 );
+
+export const selectId = createSelector(
+  selectJobs,
+  (state: fromDdpFiles.DdpState) => state.id,
+);
+
+export const selectMs = createSelector(
+  selectJobs,
+  (state: fromDdpFiles.DdpState) => state.ms,
+);
+
+export const selectPq = createSelector(
+  selectJobs,
+  (state: fromDdpFiles.DdpState) => state.pq,
+);
+
+export const selectValidation = createSelector(
+  selectJobs,
+  (state: fromDdpFiles.DdpState) => state.validation,
+);

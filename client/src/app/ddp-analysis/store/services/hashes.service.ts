@@ -12,7 +12,6 @@ declare const SparkMD5: any;
 
 @Injectable()
 export class HashesService implements OnDestroy {
-  hashes$: any; // TODO use Observable<HashesState>
   hashes: any[] = [];
   allResumableFiles: any[];
   hashFilesParsed$ = this.hashFilesParsedSource.asObservable();
@@ -122,4 +121,3 @@ export class HashesService implements OnDestroy {
     }
   }
 }
-

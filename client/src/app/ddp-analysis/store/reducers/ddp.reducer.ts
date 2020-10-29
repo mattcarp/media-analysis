@@ -1,8 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 
 import { setAudioEntries, setDdpFiles, setIdState } from '../actions/ddp.actions';
-import { FilesState, HashItem, IdState, MsState, PqState } from '../models';
-import { HashesState } from '../models/hashes-state';
+import { FilesState, HashesState, IdState, MsState, PqState, ValidationState } from '../models';
 
 export const ddpFilesFeatureKey = 'ddp';
 
@@ -13,6 +12,7 @@ export interface DdpState {
   pq: PqState,
   id: IdState,
   hashes: HashesState;
+  validation: ValidationState;
 }
 
 const initialState: DdpState = {
@@ -58,6 +58,11 @@ const initialState: DdpState = {
     completedAt: null,
     hashes: [],
   },
+  validation: {
+    created: null,
+    failCount: 0,
+    entries: [],
+  }
 };
 
 export const ddpFilesReducer = createReducer(
