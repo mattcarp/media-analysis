@@ -6,7 +6,9 @@ import { DdpService } from './ddp.service';
 import { PqEntry, PqState } from '../models';
 
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DdppqService {
   constructor(private ddpService: DdpService, private store: Store<DdpState>) {}
 

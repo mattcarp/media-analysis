@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatCardModule } from '@angular/material/card'
 
 import { DdpComponent } from './ddp/ddp.component';
 import { ddpFilesFeatureKey, ddpFilesReducer } from './store/reducers/ddp.reducer';
@@ -31,7 +34,23 @@ import { ValidationsComponent } from './validations/validations.component';
   ],
   imports: [
     CommonModule,
+    HttpClientModule,
     StoreModule.forFeature(ddpFilesFeatureKey, ddpFilesReducer),
+    MatTabsModule,
+    MatCardModule,
+  ],
+  exports: [
+    DdpComponent,
+    CdtextComponent,
+    TabComponent,
+    TabsComponent,
+    TooltipComponent,
+    DdpIdComponent,
+    DdpmsComponent,
+    DdppqComponent,
+    GracenoteComponent,
+    HashesComponent,
+    ValidationsComponent,
   ],
 })
 export class DdpAnalysisModule {}

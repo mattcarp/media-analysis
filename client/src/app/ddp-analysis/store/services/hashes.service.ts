@@ -1,21 +1,23 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DdpState } from '../reducers/ddp.reducer';
 import { selectDdpFiles } from '../selectors/ddp.selectors';
-import { DdpFile, FilesState, HashItem } from '../models';
+import { DdpFile, FilesState, HashesState, HashItem } from '../models';
 import { setHashesState } from '../actions/ddp.actions';
 
 declare const SparkMD5: any;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class HashesService implements OnDestroy {
   hashes: any[] = [];
   allResumableFiles: any[];
-  hashFilesParsed$ = this.hashFilesParsedSource.asObservable();
-  allHashingComplete$ = this.allHashingComplete.asObservable();
+  hashFilesParsed$: Observable<any>;
+  allHashingComplete$: Observable<any>;
 
   private hashFilesParsedSource = new Subject<any[]>();
   private allHashingComplete = new Subject<any[]>();
@@ -29,6 +31,8 @@ export class HashesService implements OnDestroy {
       const allFiles: DdpFile[] = ddpFiles.files;
       this.getMd5Arr(allFiles);
     });
+    this.hashFilesParsed$ = this.hashFilesParsedSource.asObservable();
+    this.allHashingComplete$ = this.allHashingComplete.asObservable();
   }
 
   ngOnDestroy(): void {
@@ -37,8 +41,8 @@ export class HashesService implements OnDestroy {
   }
 
   computeHashes(md5Arr) {
-    for (const i = 0; i < md5Arr.length; i++) {
-      for (const j = 0; j < this.allResumableFiles.length; j++) {
+    for (let i = 0; i < md5Arr.length; i++) {
+      for (let j = 0; j < this.allResumableFiles.length; j++) {
         if (this.hashes[i].baseFilename.toUpperCase() ===
           this.allResumableFiles[j].file.name.toUpperCase()) {
 
@@ -90,8 +94,8 @@ export class HashesService implements OnDestroy {
     this.allResumableFiles = allResumableFiles;
     const hashItems: HashItem[] = [];
 
-    for (const i = 0; i < allResumableFiles.length; i++) {
-      const fileObj: File = allResumableFiles[i].file;
+    for (let i = 0; i < allResumableFiles.length; i++) {
+      const fileObj: any = allResumableFiles[i].file;
       const entry: HashItem = { targetFileName: '', hash: ''};
       const extension = fileObj.name.split('.').pop().toUpperCase();
       const baseFilename = fileObj.name.replace(/\.[^/.]+$/, '');
@@ -116,7 +120,8 @@ export class HashesService implements OnDestroy {
       if (i === allResumableFiles.length - 1) {
         // TODO results is an empty array
         console.log('hash files have been gathered:', hashItems);
-        this.store.dispatch(setHashesState({ hashes: hashItems }));
+        const hashes = { hashes: hashItems };
+        this.store.dispatch(setHashesState({ hashes }));
       }
     }
   }

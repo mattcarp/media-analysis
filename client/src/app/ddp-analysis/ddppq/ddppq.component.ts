@@ -5,7 +5,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 import { PqState } from '../store/models';
 import { DdpState } from '../store/reducers/ddp.reducer';
-import { selectMs } from '../store/selectors/ddp.selectors';
+import { selectPq } from '../store/selectors/ddp.selectors';
 
 @Component({
   selector: 'ddp-ddppq',
@@ -22,7 +22,7 @@ export class DdppqComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.pipe(
-      select(selectMs),
+      select(selectPq),
       filter((pq: PqState) => !!pq),
       takeUntil(this.destroy$),
     ).subscribe((pq: PqState) => {

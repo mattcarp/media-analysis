@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { DdpState } from '../reducers/ddp.reducer';
 import { setAudioEntries, setDdpFiles } from '../actions/ddp.actions';
-import { selectPqEntries } from '../selectors/ddp.selectors';
+import { selectMs, selectPq, selectPqEntries } from '../selectors/ddp.selectors';
 import { MsEntry, MsState, PqEntry, PqState } from '../models';
 import { DdpService } from './ddp.service';
 import { DdpmsService } from './ddpms.service';
@@ -19,7 +19,7 @@ import { CdTextService } from './cdtext.service';
   providedIn: 'root',
 })
 export class DdpFileService implements OnDestroy {
-  parseStartTime: Date;
+  parseStartTime: Date = new Date();
   waveSurferInstance: any;
   parsedMs: MsState;
   parsedPq: PqState;
@@ -30,10 +30,10 @@ export class DdpFileService implements OnDestroy {
   audioSource: any;
   allResumableFiles: any[];
   showWaveform = false;
-  pqFileRead$ = this.pqFileReadSource.asObservable();
-  allFilesAdded$ = this.allFilesAddedSource.asObservable();
-  audioEntries$ = this.audioEntriesSource.asObservable();
-  annotation$ = this.annotationSource.asObservable();
+  pqFileRead$: Observable<PqState>;
+  allFilesAdded$: Observable<any[]>;
+  audioEntries$: Observable<any>;
+  annotation$: Observable<any>;
 
   private destroy$: Subject<any> = new Subject<any>();
   private pqFileReadSource = new Subject<PqState>();
@@ -49,7 +49,12 @@ export class DdpFileService implements OnDestroy {
     private gracenoteService: GracenoteService,
     private cdTextService: CdTextService,
     private store: Store<DdpState>,
-  ) {}
+  ) {
+    this.pqFileRead$ = this.pqFileReadSource.asObservable();
+    this.allFilesAdded$ = this.allFilesAddedSource.asObservable();
+    this.audioEntries$ = this.audioEntriesSource.asObservable();
+    this.annotation$ = this.annotationSource.asObservable();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -277,45 +282,48 @@ export class DdpFileService implements OnDestroy {
         case 'pq':
           // TODO set in store by calling parse, then get from store
           this.ddppqService.parse(textReader.result);
-          this.store.select('ddpPq').subscribe((parsedPq: PqState) => {
-            console.log('we should have a parsed pq at this point', parsedPq);
-            const audioWithPq: Array<any> = this.ddppqService.
-            addPqToAudio(this.audioEntries, parsedPq);
+          this.store.pipe(
+            select(selectPq),
+            takeUntil(this.destroy$),
+          ).subscribe((pq: PqState) => {
+            console.log('we should have a parsed pq at this point', pq);
+            const audioWithPq: any[] = this.ddppqService.
+            addPqToAudio(this.audioEntries, pq);
             console.log('this is my audio with pq stuff', audioWithPq);
             this.audioEntriesSource.next(audioWithPq);
             // set up the first track for playback
             const trk1Pregap = parseFloat(audioWithPq[0].preGap) / 75.0;
             this.addRegion(0, trk1Pregap);
             // TODO set parsedPq using the store
-            this.pqFileReadSource.next(parsedPq);
+            this.pqFileReadSource.next(pq);
           });
           break;
         case 'id':
-          this.ddpidService.parse(textReader.result, fileObj);
+          this.ddpidService.parse(textReader.result.toString(), fileObj);
           break;
         case 'ms':
-          this.ddpmsService.parse(textReader.result, fileObj);
-          this.store.select('ddpMs').subscribe((parsedMs: MsState) => {
-            // TODO drop this 'if', use async pipe in container component
-            if (parsedMs) {
-              // this.hasMs = true;
-              // TODO get the parsedMs info from the store, put audio entries in the store
-              this.audioEntries = this.ddpmsService.getAudioEntries(parsedMs);
-              const pqFileInfo: any = this.getPqFileInfo(parsedMs);
-              console.log('parsed ms:', parsedMs);
-              this.handlePqFile(pqFileInfo, this.allResumableFiles);
-              const cdTextFileInfo = this.getCdTextFileInfo(parsedMs);
-              if (cdTextFileInfo) {
-                this.cdTextService.getFile(cdTextFileInfo, this.allResumableFiles);
-              }
-              console.log('audio entries');
-              console.dir(this.audioEntries);
+          this.ddpmsService.parse(textReader.result.toString(), fileObj);
+          this.store.pipe(
+            select(selectMs),
+            filter((ms: MsState) => !!ms),
+            takeUntil(this.destroy$),
+          ).subscribe((ms: MsState) => {
+            // this.hasMs = true;
+            // TODO get the parsedMs info from the store, put audio entries in the store
+            this.audioEntries = this.ddpmsService.getAudioEntries(ms);
+            const pqFileInfo: any = this.getPqFileInfo(ms);
+            console.log('parsed ms:', ms);
+            this.handlePqFile(pqFileInfo, this.allResumableFiles);
+            const cdTextFileInfo = this.getCdTextFileInfo(ms);
+            if (cdTextFileInfo) {
+              this.cdTextService.getFile(cdTextFileInfo, this.allResumableFiles);
             }
+            console.log('audio entries');
+            console.dir(this.audioEntries);
           });
           break;
       }
     };
     textReader.readAsText(fileObj, 'ASCII');
-  } // readAndParse
-
+  }
 }

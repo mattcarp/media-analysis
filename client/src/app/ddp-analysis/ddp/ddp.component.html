@@ -44,7 +44,7 @@
         <!--value="{{wavProgress}}" max="100">-->
         <!--</progress>-->
 
-        <span [hidden]="!wavProgress >= 99">
+        <span [hidden]="wavProgress <= 99">
                 <div id="waveform" class="ddp-waveform"></div>
                 <div id="waveform-timeline"></div>
               </span>
@@ -57,7 +57,7 @@
           <i class="fa fa-search-minus"></i>
         </div>
         <div class="col-xs-10">
-          <input id="slider" type="range" min="1" max="46" value="1" style="width: 100%"/>
+          <input (change)="$event" id="slider" type="range" min="1" max="46" value="1" style="width: 100%"/>
         </div>
         <div class="col-xs-1">
           <i class="fa fa-search-plus"></i>
@@ -82,11 +82,11 @@
         <tr *ngFor="let track of playList; let i = index"
             [class.selected]="isSelected(i)"
             (click)="queueTrack(i, $event)" class="ddp-track">
-          <th scope="row">{{ i + 1 }}</th>
-          <td>{{ track.file.file.name }}</td>
-          <td>{{ track.isrc }}</td>
-          <td>{{ track.preGap }}</td>
-          <td>{{ track.dur }}</td>
+          <th scope="row">{{i + 1}}</th>
+          <td>{{track?.file?.file?.name}}</td>
+          <td>{{track?.isrc}}</td>
+          <td>{{track?.preGap}}</td>
+          <td>{{track?.dur}}</td>
         </tr>
         </tbody>
       </table>
@@ -96,72 +96,32 @@
 
   <div [hidden]="!showTabs" class="ddp-tabs-container">
 
-    <md-tab-group>
-      <md-tab>
-        <template md-tab-label>
-          Playback
-        </template>
-        <template md-tab-content>
-          <p>refactor player into it's own component and put it here (don't lazy load)</p>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          DDP ID
-        </template>
-        <template md-tab-content>
-          <ddp-ddpid></ddp-ddpid>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          Map Stream
-        </template>
-        <template md-tab-content>
-          <ddp-ddpms></ddp-ddpms>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          PQ Subcode
-        </template>
-        <template md-tab-content>
-          <ddp-ddppq></ddp-ddppq>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          Validations
-        </template>
-        <template md-tab-content>
-          <ddp-validations></ddp-validations>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          Hashes
-        </template>
-        <template md-tab-content>
-          <ddp-hashes></ddp-hashes>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          CD Text
-        </template>
-        <template md-tab-content>
-          <ddp-cdtext></ddp-cdtext>
-        </template>
-      </md-tab>
-      <md-tab>
-        <template md-tab-label>
-          Gracenote
-        </template>
-        <template md-tab-content>
-          <p>Show gracenote junk here</p>
-        </template>
-      </md-tab>
-    </md-tab-group>
+    <mat-tab-group>
+      <mat-tab label="Playback">
+        <p>refactor player into it's own component and put it here (don't lazy load)</p>
+      </mat-tab>
+      <mat-tab label="DDP ID">
+        <ddp-ddpid></ddp-ddpid>
+      </mat-tab>
+      <mat-tab label="Map Stream">
+        <ddp-ddpms></ddp-ddpms>
+      </mat-tab>
+      <mat-tab label="PQ Subcode">
+        <ddp-ddppq></ddp-ddppq>
+      </mat-tab>
+      <mat-tab label="Validations">
+        <ddp-validations></ddp-validations>
+      </mat-tab>
+      <mat-tab label="Hashes">
+        <ddp-hashes></ddp-hashes>
+      </mat-tab>
+      <mat-tab label="CD Text">
+        <ddp-cdtext></ddp-cdtext>
+      </mat-tab>
+      <mat-tab label="Gracenote">
+        <p>Show gracenote junk here</p>
+      </mat-tab>
+    </mat-tab-group>
   </div> <!-- ddp-tabs-container -->
 
 </div>

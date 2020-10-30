@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CdTextService {
+  cdTextParsed$: Observable<any>;
+  packsAssembled$: Observable<any>;
   parsedPacks: any[] = []; // raw packs, with 12-character payloads
   parsedCdText: any[] = []; // after parsing raw packs, assemble payload to their true length
   assembledEntries: any[] = [];
@@ -22,13 +26,14 @@ export class CdTextService {
     '8e': 'upcOrIsrc', // UPC of the album and ISRC code of each track
     '8f': 'blockSize' // 'information' (binary)
   };
-  cdTextParsed$ = this.cdTextParsedSource.asObservable();
-  packsAssembled$ = this.packsAssembledSource.asObservable();
 
   private cdTextParsedSource = new Subject<any>();
   private packsAssembledSource = new Subject<any>();
 
-  constructor() {}
+  constructor() {
+    this.cdTextParsed$ = this.cdTextParsedSource.asObservable();
+    this.packsAssembled$ = this.packsAssembledSource.asObservable();
+  }
 
   parseCdText(cdTextBin: ArrayBuffer) {
     const numPacks = Math.floor(cdTextBin.byteLength / this.PACK_LENGTH);
@@ -54,7 +59,7 @@ export class CdTextService {
     let payloadStr = payload;
 
     console.log('the whole deal:', payloadStr);
-    for (const i = 0; i < parsedPacks.length; i++) {
+    for (let i = 0; i < parsedPacks.length; i++) {
       trackChanged = i > 0 && parsedPacks[i].packTrackNo !== parsedPacks[i - 1].packTrackNo;
       if (trackChanged) {
         const entry: any = {};
@@ -97,7 +102,7 @@ export class CdTextService {
     let trackChanged: boolean;
     let priorCharPos: number;
     let nextCharPos: number;
-    for (const i = 0; i < parsedPacks.length; i++) {
+    for (let i = 0; i < parsedPacks.length; i++) {
       i > 0 ? priorCharPos = parsedPacks[i - 1].charPos : priorCharPos = -1;
       const currCharPos = parsedPacks[i].charPos;
       i < (parsedPacks.length - 1) ? nextCharPos = parsedPacks[i + 1].charPos : nextCharPos = -1;

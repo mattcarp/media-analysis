@@ -6,12 +6,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import WaveSurfer from 'wavesurfer.js';
+import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
 import { DdpService } from '../store/services/ddp.service';
 import { DdpFileService } from '../store/services/ddp-file.service';
 
 declare const Resumable: any;
-declare const WaveSurfer: any;
 
 @Component({
   selector: 'app-ddp',
@@ -21,6 +22,7 @@ declare const WaveSurfer: any;
 export class DdpComponent implements OnInit, AfterViewInit {
   @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('browseArea') browseArea: ElementRef;
+  @ViewChild('slider') slider: ElementRef;
   waveSurfer: any;
   showWaveform = false;
   resumable: any;
@@ -38,7 +40,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
   showDragDrop = true;
   showTabs = false;
   queuedPreGap: number;
-  playerAnnotation: string;
+  playerAnnotation: any;
   trackSelected = false;
   currentIndex: number;
 
@@ -49,7 +51,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit() {
-    this.ddpFileService.annotation$.subscribe((msg: string) => {
+    this.ddpFileService.annotation$.subscribe((msg: any) => {
       this.playerAnnotation = msg;
     });
   }
@@ -62,15 +64,15 @@ export class DdpComponent implements OnInit, AfterViewInit {
       height: 100,
       cursorColor: '#A96FE8',
       cursorWidth: 2,
-      minimap: true
-    });
-
-    /* Minimap plugin */
-    this.waveSurfer.initMinimap({
-      height: 30,
-      waveColor: '#ddd',
-      progressColor: '#999',
-      cursorColor: '#999'
+      minimap: true,
+      plugins: [
+        MinimapPlugin.create({
+          height: 30,
+          waveColor: '#ddd',
+          progressColor: '#999',
+          cursorColor: '#999'
+        }),
+      ],
     });
 
     this.waveSurfer.on('loading', (progress: number, target: any) => {
@@ -182,14 +184,12 @@ export class DdpComponent implements OnInit, AfterViewInit {
         }
       });
 
-    }  // if resumable support
+    }
+  }
 
-    const slider = document.querySelector('#slider');
-    slider.oninput = () => {
-      const zoomLevel = Number(slider.value);
-      // console.log('were does the waveform disappear?', slider.value);
-      this.waveSurfer.zoom(zoomLevel);
-    };
+  onSliderChange(value): void {
+    // console.log('were does the waveform disappear?', slider.value);
+    this.waveSurfer.zoom(Number(value));
   }
 
 

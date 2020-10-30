@@ -5,8 +5,11 @@ import { DdpState } from '../reducers/ddp.reducer';
 import { DdpmsService } from './ddpms.service';
 import { DdpService } from './ddp.service';
 import { setValidationState } from '../actions/ddp.actions';
+import { IdState, MsState } from '../models';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ValidationsService {
   TRK_ONE_PREGAP = 150;
   AUDIO_ID_FILE_SIZE = 128;
@@ -64,7 +67,7 @@ export class ValidationsService {
    * @param parsedMs          map Stream entries as objects
    * @param parsedId          DDPID entries as objects
    */
-  getFileStatus(collectedFileInfo: any, parsedMs: DdpMsState, parsedId: DdpIdState) {
+  getFileStatus(collectedFileInfo: any, parsedMs: MsState, parsedId: IdState) {
     const response: any = {};
     let foundFileName;
     let foundFileSize;
@@ -78,12 +81,12 @@ export class ValidationsService {
     const requiredFiles = parsedMs.entries;
     let isValid = false;
 
-    for (const i = 0; i < requiredFiles.length; i++) {
+    for (let i = 0; i < requiredFiles.length; i++) {
       fileExists = false;
       reqFileName = requiredFiles[i].dsi;
       reqFileSize = requiredFiles[i].dsl;
 
-      for (const j = 0; j < collectedFileInfo.length; j++) {
+      for (let j = 0; j < collectedFileInfo.length; j++) {
         foundFileName = collectedFileInfo[j].file.name;
         foundFileSize = collectedFileInfo[j].file.size;
 
@@ -267,7 +270,7 @@ export class ValidationsService {
     const issues: any = [];
     let issue: any = {};
 
-    for (const i = 0; i < msArray.length; i++) {
+    for (let i = 0; i < msArray.length; i++) {
 
       const msIdx = parseInt(msArray[i].idx, 10);
       const msTrk = parseInt(msArray[i].trk, 10);
@@ -275,7 +278,7 @@ export class ValidationsService {
       const msTotalDur = parseInt(msArray[i].dsl, 10);
       const msDur = this.ddpService.framesToTime(msTotalDur - msGap);
 
-      for (const j = 0; j < pqWithGapsArr.length; j++) {
+      for (let j = 0; j < pqWithGapsArr.length; j++) {
         const pqEntry = pqWithGapsArr[j];
         const pqTrk = parseInt(pqEntry.trk, 10);
         const pqIdx = parseInt(pqEntry.idx, 10);

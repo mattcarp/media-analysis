@@ -65,4 +65,9 @@ export class ValidationsComponent implements OnInit, OnDestroy {
       this.totalValidationTime = end - this.ddpFileService.parseStartTime.getTime();
     });
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

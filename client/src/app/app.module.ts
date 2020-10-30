@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { InjectionToken, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { StoreModule } from '@ngrx/store';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,6 +16,7 @@ import { LoggerService } from './services/logger.service';
 import { TooltipDirective } from './directives/tooltip.directive';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 import { reducers } from './shared/store/reducers';
+import { DdpAnalysisModule } from './ddp-analysis/ddp-analysis.module';
 
 export const ReducerToken = new InjectionToken('Media Analysis Registered Reducers');
 
@@ -41,6 +43,8 @@ export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers
     AppRoutingModule,
     NgxDropzoneModule,
     StoreModule.forRoot(ReducerToken, {}),
+    DdpAnalysisModule,
+    NoopAnimationsModule,
   ],
   providers: [
     LoggerService,

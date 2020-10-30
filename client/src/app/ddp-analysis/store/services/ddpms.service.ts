@@ -5,19 +5,20 @@ import { DdpState } from '../reducers/ddp.reducer';
 import { MsEntry, MsState } from '../models';
 import { setMsState } from '../actions/ddp.actions';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DdpmsService {
   BLOCK_SIZE = 128;
 
-  constructor(private store: Store<DdpState>) {
-  }
+  constructor(private store: Store<DdpState>) {}
 
-  parse(ddpmsString: string, fileObj: File) {
+  parse(ddpmsString: string, fileObj: File & any) {
     const msArr: MsEntry[] = [];
     // divide ms content into 128 byte blocks
     const re = new RegExp('.{1,' + this.BLOCK_SIZE + '}', 'g');
     const entriesArr = ddpmsString.match(re);
-    for (const i = 0; i < entriesArr.length; i++) {
+    for (let i = 0; i < entriesArr.length; i++) {
       msArr[i] = this.parseSingleBlock(entriesArr[i]);
     }
     const parsedMs: MsState = {
@@ -118,7 +119,7 @@ export class DdpmsService {
   getPqEntry(ddpmsObjs) {
     const pqObj: any = {};
     pqObj.exists = false;
-    for (const i = 0; i < ddpmsObjs.length; i++) {
+    for (let i = 0; i < ddpmsObjs.length; i++) {
       if (ddpmsObjs[i].sub.trim() === 'PQ DESCR') {
         pqObj.exists = true;
         pqObj.mpv = ddpmsObjs[i].mpv.trim();
@@ -134,7 +135,7 @@ export class DdpmsService {
   getCdTextEntry(ddpmsObjs) {
     const cdTextObj: any = {};
     cdTextObj.exists = false;
-    for (const i = 0; i < ddpmsObjs.length; i++) {
+    for (let i = 0; i < ddpmsObjs.length; i++) {
       if (ddpmsObjs[i].sub.trim() === 'CDTEXT') {
         cdTextObj.exists = true;
         cdTextObj.mpv = ddpmsObjs[i].mpv.trim();

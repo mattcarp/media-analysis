@@ -12,10 +12,12 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "^10.1.6",
+    "@angular/cdk": "^10.2.6",
     "@angular/common": "^10.1.6",
     "@angular/compiler": "^10.1.6",
     "@angular/core": "^10.1.6",
     "@angular/forms": "^10.1.6",
+    "@angular/material": "^10.2.6",
     "@angular/platform-browser": "^10.1.6",
     "@angular/platform-browser-dynamic": "^10.1.6",
     "@angular/router": "^10.1.6",
@@ -25,9 +27,11 @@
     "exif-js": "^2.3.0",
     "fontsource-mulish": "^3.0.5",
     "ngx-dropzone": "^2.2.2",
+    "resumablejs": "^1.1.0",
     "rxjs": "^6.6.3",
     "tslib": "^2.0.1",
-    "zone.js": "~0.10.3"
+    "wavesurfer.js": "^4.2.0",
+    "zone.js": "^0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.1001.4",

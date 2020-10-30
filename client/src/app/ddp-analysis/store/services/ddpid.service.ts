@@ -5,7 +5,9 @@ import { DdpState } from '../reducers/ddp.reducer';
 import { setIdState } from '../actions/ddp.actions';
 import { IdState } from '../models';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class DdpidService {
   constructor(private store: Store<DdpState>) {}
 

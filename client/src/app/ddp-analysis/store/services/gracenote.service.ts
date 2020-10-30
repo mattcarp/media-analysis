@@ -1,18 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 declare const X2JS: any;
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class GracenoteService {
-  gracenoteResponse$ = this.gracenoteResponseSource.asObservable();
+  gracenoteResponse$: Observable<any>;
 
   private gracenoteUrl = 'https://c2045878769.web.cddbp.net/webapi/xml/1.0/';
   private gracenoteResponseSource = new Subject<any>();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.gracenoteResponse$ = this.gracenoteResponseSource.asObservable();
+  }
 
 
   queryByToc(toc?: string) {
