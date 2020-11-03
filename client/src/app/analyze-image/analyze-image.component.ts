@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 
 declare let EXIF: any;
 
@@ -7,9 +7,11 @@ declare let EXIF: any;
   templateUrl: './analyze-image.component.html',
 })
 export class AnalyzeImageComponent implements AfterViewInit {
-  @Input() imgData: any;
+  @Input() metadata: any;
+  @Output() validateResult?: EventEmitter<string> = new EventEmitter();
   output: string;
   imageSrc: string | ArrayBuffer;
+  imageValidations: any[] = [];
 
   constructor(private cdr: ChangeDetectorRef) {}
 
@@ -17,13 +19,22 @@ export class AnalyzeImageComponent implements AfterViewInit {
     setTimeout(() => {
       this.getExif();
     }, 500);
+
+    let result = 'null'; // TODO 'pass'
+    this.imageValidations.forEach((item) => {
+      if (!item.pass) {
+        result = 'error';
+      }
+    });
+
+    this.validateResult.emit(result);
   }
 
   private getExif() {
     const img = new Image();
     let text: string;
 
-    img.src = this.imgData.preview;
+    img.src = this.metadata.preview;
     img.onload = () => {
       URL.revokeObjectURL(img.src);
       let allMetaData: any;

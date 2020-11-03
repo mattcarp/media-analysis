@@ -10,7 +10,7 @@ export class FileHandlerService {
 
   constructor(private loggerService: LoggerService) {}
 
-  setMediaFile(mediaFile: File): void {
+  setMediaFile(mediaFile: any): void {
     this.mediaFile = mediaFile;
 
     this.loggerService.info(

@@ -1,13 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ExtractMetadataService } from '../extract-metadata/extract-metadata.service';
 import { LoggerService } from '../services/logger.service';
+import { VideoRulesConstants } from './video-rules.constants';
 
 @Component({
   selector: 'analyze-video',
   templateUrl: './analyze-video.component.html',
 })
 export class AnalyzeVideoComponent {
+  @Output() validateResult?: EventEmitter<string> = new EventEmitter();
   metadataStarted: boolean;
   metadataResult: any;
   showResults: boolean;
@@ -16,12 +20,17 @@ export class AnalyzeVideoComponent {
   isProRes = false;
   videoFormat: string;
   proResMsg: string;
+  videoRules = VideoRulesConstants.videoStream[0];
+  audioRules = VideoRulesConstants.audioStream[0];
+
+  private destroy$: Subject<any> = new Subject<any>();
 
   constructor(private extractMetadataService: ExtractMetadataService, private loggerService: LoggerService) {
-    extractMetadataService.metadataStarted.subscribe((value) => {
+    this.extractMetadataService.metadataStarted.subscribe((value) => {
       this.metadataStarted = value;
     });
-    extractMetadataService.metadataResult.subscribe((value) => {
+
+    this.extractMetadataService.metadataResult.pipe(takeUntil(this.destroy$)).subscribe((value) => {
       this.metadataStarted = false;
       this.validate(value);
     });
@@ -31,12 +40,6 @@ export class AnalyzeVideoComponent {
     // clear state - TODO use redux pattern
     this.audioValidations = [];
     this.videoValidations = [];
-
-    const ACCEPTED_FRAME_RATES = [29.97, 24, 23.976, 25, 30];
-    const ACCEPTED_VIDEO_CODECS = ['prores', 'mpeg2video', 'h264'];
-    // the allowed lossy formats will have a bit depth of 0
-    const ACCEPTED_BIT_DEPTHS = [0, 16];
-    const ACCEPTED_AUDIO_CODECS = ['pcm_s16be', 'aac', 'mp2'];
 
     const analysisObj = JSON.parse(metadata.analysis);
 
@@ -58,37 +61,36 @@ export class AnalyzeVideoComponent {
       this.audioValidations.push({
         name: 'Bit Depth',
         value: audioStream && audioStream.bits_per_sample,
-        pass: ACCEPTED_BIT_DEPTHS.indexOf(audioStream && audioStream.bits_per_sample) > -1,
-        message: 'Audio bit depth must be 16 bits.',
+        pass: this.audioRules.bitDepths.indexOf(audioStream && audioStream.bits_per_sample) > -1,
+        message: this.audioRules.bitDepthsMessage,
       });
 
       this.audioValidations.push({
         name: 'Sample Rate',
         value: audioStream && audioStream.sample_rate,
-        pass: audioStream && audioStream.sample_rate === '48000',
-        message: 'Audio sample rate must be 48kHz.',
+        pass: audioStream && audioStream.sample_rate === this.audioRules.sampleRate,
+        message: this.audioRules.sampleRateMessage,
       });
 
       this.audioValidations.push({
         name: 'Channel Layout',
         value: audioStream && audioStream.channel_layout,
-        pass: audioStream && audioStream.channel_layout === 'stereo',
-        message: 'Audio channel layout must be stereo.',
+        pass: audioStream && audioStream.channel_layout === this.audioRules.channelLayout,
+        message: this.audioRules.channelLayoutMessage,
       });
 
       this.audioValidations.push({
         name: 'Channel Count',
         value: audioStream && audioStream.channels,
-        pass: audioStream && audioStream.channels === 2,
-        message: 'There must be 2 audio channels.',
+        pass: audioStream && audioStream.channels === this.audioRules.channels,
+        message: this.audioRules.channelsMessage,
       });
 
       this.audioValidations.push({
         name: 'Codec',
         value: audioStream && audioStream.codec_long_name,
-        // pass: audioStream.codec_long_name === "PCM signed 16-bit big-endian",
-        pass: ACCEPTED_AUDIO_CODECS.indexOf(audioStream && audioStream.codec_name) > -1,
-        message: 'Audio must be either 16 bit PCM or AAC.',
+        pass: this.audioRules.codecs.indexOf(audioStream && audioStream.codec_name) > -1,
+        message: this.audioRules.codecsMessage,
       });
     }
 
@@ -117,45 +119,54 @@ export class AnalyzeVideoComponent {
         value: videoStream.codec_long_name.substring(0, 20),
         // TODO ProRess and mpeg2 are a pass, but h.264 and Avid DNX HD
         // are allowed, with a warning message
-        pass: ACCEPTED_VIDEO_CODECS.indexOf(videoStream.codec_name) > -1,
-        // pass: videoStream.codec_long_name === "ProRes",
-        message: 'Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD.',
+        pass: this.videoRules.codecs.indexOf(videoStream.codec_name) > -1,
+        message: this.videoRules.codecsMessage,
       });
 
       this.videoValidations.push({
         name: 'Height',
         value: videoStream.height,
-        pass: videoStream.height === 1080,
-        message: 'Height must be 1080 pixels.',
+        pass: videoStream.height === this.videoRules.height,
+        message: this.videoRules.heightMessage,
       });
 
       this.videoValidations.push({
         name: 'Width',
         value: videoStream.width,
-        pass: videoStream.width === 1920,
-        message: 'Width must be 1920 pixels.',
+        pass: videoStream.width === this.videoRules.width,
+        message: this.videoRules.widthMessage,
       });
 
       if (this.isProRes) {
         this.videoValidations.push({
           name: 'Encoder',
           value: videoStream.tags.encoder,
-          pass: videoStream.tags.encoder === 'Apple ProRes 422 (HQ)',
-          message: 'ProRes must use the Apple 422 HQ encoder',
+          pass: videoStream.tags.encoder === this.videoRules.tagsEncoder,
+          message: this.videoRules.tagsEncoderMessage,
         });
       }
 
       const operands = videoStream.r_frame_rate.split('/');
-      const framerate = operands[0] / operands[1];
+      const framerate = Math.round((operands[0] / operands[1] + Number.EPSILON) * 1000) / 1000;
       console.log('valide-fomate: computed framerate:', framerate);
       this.videoValidations.push({
         name: 'Frame Rate',
         value: framerate,
-        pass: ACCEPTED_FRAME_RATES.indexOf(framerate) > -1,
-        message: 'Frame rate must be either 23.976, 24, 25, 29.97, or 30.',
+        pass: this.videoRules.frameRates.indexOf(framerate) > -1,
+        message: this.videoRules.frameRatesMessage,
       });
     }
 
+    let result = 'pass';
+    this.videoValidations.forEach((item) => {
+      if (!item.pass) {
+        result = 'error';
+      }
+    });
+
+    this.validateResult.emit(result);
     this.showResults = true;
+    this.destroy$.next();
+    this.destroy$.unsubscribe();
   }
 }

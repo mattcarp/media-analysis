@@ -21,20 +21,13 @@ export class ExtractMetadataService {
   metadataStarted = new EventEmitter();
   metadataResult = new EventEmitter();
 
-  constructor(
-    endpointService: EndpointService,
-    qtService: QuicktimeService,
-    private loggerService: LoggerService,
-  ) {
+  constructor(endpointService: EndpointService, qtService: QuicktimeService, private loggerService: LoggerService) {
     this.endpoint = endpointService.getEndpoint();
     this.qtService = qtService;
-    this.loggerService.info(
-      `EndpointService provided this base path: ${this.endpoint}`,
-      'color: lime',
-    );
+    this.loggerService.info(`EndpointService provided this base path: ${this.endpoint}`, 'color: lime');
   }
 
-  extract(mediaFile: File): void {
+  extract(mediaFile: any): void {
     const reader = new FileReader();
 
     // if we use onloadend, we need to check the readyState.
@@ -79,12 +72,13 @@ export class ExtractMetadataService {
           success: (data) => {
             // error handling
             this.loggerService.info(`This is what I got from ffprobe metadata:`, 'color: darkgrey');
-            this.loggerService.debug(`\t error: ${data.error}`, 'color: red');
-            this.loggerService.debug(`\t analysis: ${data.analysis}`, 'color: grey');
+            // this.loggerService.debug(`\t error: ${data.error}`, 'color: red');
+            // this.loggerService.debug(`\t analysis: ${data.analysis}`, 'color: grey');
 
             this.metadataStarted.emit(false);
             this.metadataResult.emit(data);
 
+            /*
             // TODO in main.processVideo, subscribe to the result event, then fire:
             const analysisObj = JSON.parse(data.analysis);
             // let videoBitrate = analysisObj.streams[0].bit_rate;
@@ -93,6 +87,7 @@ export class ExtractMetadataService {
               this.loggerService.info(`TODO we got a video, now we should fire processVideo()`, 'color: lime');
               // this.processVideo(this.mediaFile, analysisObj);
             }
+*/
           },
         });
       }
@@ -100,10 +95,7 @@ export class ExtractMetadataService {
 
     // this.mediaFile = file;
     this.originalExtension = mediaFile.name.split('.').pop();
-    this.loggerService.info(
-      `Original file extension: ${this.originalExtension}`,
-      'color: lawngreen ',
-    );
+    this.loggerService.info(`Original file extension: ${this.originalExtension}`, 'color: lawngreen ');
     this.blob = mediaFile.slice(0, SLICE_SIZE);
     reader.readAsArrayBuffer(this.blob);
   }

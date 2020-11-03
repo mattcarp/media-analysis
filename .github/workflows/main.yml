@@ -8,19 +8,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: switch Node.js to 12.16.1
+      - name: use Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: '12.16.1'
+          node-version: '12.x'
       - name: install node modules for angular
         run: cd client && npm install --unsafe-perm
       - run: pwd && ls -la
       - name: build angular app for dev
         run: cd client && npm run build
-      - name: switch Node.js to 4.9.1
+      - name: switch Node.js to 4.17.1
         uses: actions/setup-node@v1
         with:
-          node-version: '4.9.1'
+          node-version: '4.17.1'
       - name: install node modules for express
         run: npm install
       - name: Deploy to DEV server
