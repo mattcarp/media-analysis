@@ -31,22 +31,18 @@ article {
 
       .file {
         display: grid;
-        grid-template-columns: 22px 20px 28px 1fr 80px;
+        grid-template-columns: 20px 28px 1fr 80px;
         grid-template-rows: auto;
         grid-column-gap: 10px;
         align-items: center;
         height: 32px;
         margin: 4px 0;
-        padding: 0 4px;
+        padding: 0 10px;
         border: 1px solid dimgrey;
         background-color: white;
 
         & > div {
           line-height: 1.4;
-        }
-
-        &-number {
-          text-align: center;
         }
 
         &-state {

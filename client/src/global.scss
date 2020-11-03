@@ -159,76 +159,10 @@ dl {
   }
 }
 
-
-[tooltip] {
-  display: inline-block;
-  width: 180px;
-  height: 50px;
-  margin: 50px 20px;
-  line-height: 50px;
-  text-align: center;
-  border: 1px solid gray;
-  border-radius: 5px;
-}
-
-.ng-tooltip {
-  position: absolute;
-  z-index: 1000;
-  max-width: 150px;
-  padding: 4px 8px;
-  font-size: 14px;
-  text-align: center;
-  opacity: 0;
-  color: #f8f8f2;
-  border-radius: 4px;
-  background: #282a36;
-
-  &:after {
-    position: absolute;
-    content: '';
-    border-style: solid;
-  }
-
-  &-top:after {
-    top: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-color: black transparent transparent transparent;
-  }
-
-  &-bottom:after {
-    bottom: 100%;
-    left: 50%;
-    margin-left: -5px;
-    border-width: 5px;
-    border-color: transparent transparent black transparent;
-  }
-
-  &-left:after {
-    top: 50%;
-    left: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-color: transparent transparent transparent black;
-  }
-
-  &-right:after {
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-color: transparent black transparent transparent;
-  }
-
-  &-show {
-    opacity: 1;
-  }
-}
-
 pre {
   display: block;
   overflow: hidden;
   width: 100%;
   white-space: pre-wrap;
+  margin: 0 0 10px;
 }

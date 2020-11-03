@@ -36,9 +36,8 @@
     <section>
       <detect-black></detect-black>
 
-      <div *ngFor="let file of files; let id = index" class="container">
+      <div *ngFor="let file of files" class="container">
         <div class="file">
-          <div class="file-number">{{id + 1}}</div>
           <div class="file-state">
             <i class="ma-icon question"></i>
             <i *ngIf="file.analysed === 'pass'" class="ma-icon pass"></i>
