@@ -1,4 +1,3 @@
-/* eslint strict: [0, "function"] */
 'use strict';
 
 const fs = require('fs');
@@ -14,6 +13,7 @@ ProResParser.readFileHead = (file, hollaback) => {
       log.info(status.message);
       return;
     }
+
     const buffer = new Buffer(bufferSize);
     // fs.read(fd, buffer, 0, 100, 0, function(err, num)
     fs.read(fileToRead, buffer, 0, bufferSize, 0, (err) => {
@@ -68,6 +68,5 @@ ProResParser.getNextFrameIdx = (file) => {
     return nextFrameIcpf - frameSizeLength;
   });
 };
-
 
 module.exports = ProResParser;

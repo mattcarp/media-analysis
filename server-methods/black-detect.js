@@ -1,15 +1,11 @@
-/* eslint object-shorthand:0 */
-/* eslint func-names:0 */
-/* eslint space-before-function-paren:0 */
-/* eslint prefer-const:0 */
-
 'use strict';
+
 const bunyan = require('bunyan');
 const log = bunyan.createLogger({ name: 'black-detect' });
 const exec = require('child_process').exec;
 
 module.exports = {
-  processBlack: function(fileToProcess, callback) {
+  processBlack: function (fileToProcess, callback) {
     let blackInStdOut;
     let blackString;
     const blackObj = {};
@@ -17,15 +13,15 @@ module.exports = {
     let start;
     let end;
     let duration;
-    const ffprobeCmd = `/usr/local/bin/ffmpeg/ffprobe -f lavfi -i 'movie=${fileToProcess},blackdetect[out0]'` +
-      ` -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1`;
+    const ffprobeCmd = `/usr/local/bin/ffmpeg/ffprobe -f lavfi -i 'movie=${fileToProcess},blackdetect[out0]'`
+      + ' -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1';
 
     log.info('from processBlack, calling ffprobe black detection:');
     exec(ffprobeCmd,
       (error, stdout, stderr) => {
         const result = {};
         log.info('process black: ffprobe STDOUT:\n', stdout);
-        log.info('proces black: ffprobe STDERR:\n', stderr);
+        log.info('process black: ffprobe STDERR:\n', stderr);
         if (error !== null) {
           log.error({ foo: 'bar', err: error }, 'some msg about this error');
         }
@@ -52,10 +48,11 @@ module.exports = {
                 item.indexOf('black_end') - 1),
               end: item.substring(item.lastIndexOf('end:') + 4,
                 item.indexOf('black_duration') - 1),
-              duration: item.substr(item.indexOf('black_duration:') + 15),
+              duration: item.substr(item.indexOf('black_duration:') + 15)
             };
           });
         }
+
         if (blackInStdOut) {
           blackObjs = [];
           start = analysisArr[0].substring(analysisArr[0].lastIndexOf('start=') + 6);
@@ -77,5 +74,5 @@ module.exports = {
         result.blackDetect = blackObjs;
         callback(result);
       }); // exec
-  },
-}
+  }
+};
