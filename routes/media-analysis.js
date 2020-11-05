@@ -1,4 +1,5 @@
-// eslint-disable-next-line strict
+'use strict';
+
 const express = require('express');
 const router = express.Router();
 const fs = require('fs');
@@ -6,7 +7,7 @@ const stream = require('stream');
 const randomstring = require('randomstring');
 const exec = require('child_process').exec;
 
-router.post('/', function (req, res) {
+router.post('/', (req, res) => {
   let bufferStream = new stream.PassThrough();
   bufferStream.end(req.body);
 
@@ -21,15 +22,15 @@ router.post('/', function (req, res) {
   console.log('the temp name:');
   console.log(tempName);
 
-  fs.writeFile(tempName, req.body, function(err) {
+  fs.writeFile(tempName, req.body, function (err) {
     if (err) {
       return console.log(err);
     }
 
     console.log('call ffprobe with exec:');
-    child = exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
+    exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
 
-      function (error, stdout, stderr) {
+      (error, stdout, stderr) => {
         let result = {};
         console.log('STDOUT: ', stdout);
         console.log('STDERR: ', stderr);

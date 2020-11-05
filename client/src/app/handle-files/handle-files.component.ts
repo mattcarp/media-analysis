@@ -6,7 +6,7 @@ import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
   styleUrls: ['./handle-files.component.scss'],
 })
 export class HandleFilesComponent implements AfterViewInit {
-  @Output() files?: EventEmitter<any[]> = new EventEmitter();
+  @Output() addedFiles?: EventEmitter<any[]> = new EventEmitter();
   fileID: string;
 
   ngAfterViewInit(): void {
@@ -18,6 +18,6 @@ export class HandleFilesComponent implements AfterViewInit {
   }
 
   onSelect(event: any): void {
-    this.files.emit(event.detail);
+    this.addedFiles.emit(event.detail);
   }
 }

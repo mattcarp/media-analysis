@@ -1,4 +1,3 @@
-/* eslint arrow-body-style: [2, "always"] */
 'use strict';
 
 const express = require('express');

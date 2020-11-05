@@ -1,6 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { InjectionToken, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { NgxDropzoneModule } from 'ngx-dropzone';
 import { StoreModule } from '@ngrx/store';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -13,16 +12,15 @@ import { AnalyzeAudioComponent } from './analyze-audio/analyze-audio.component';
 import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.component';
 import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { LoggerService } from './services/logger.service';
-import { TooltipDirective } from './directives/tooltip.directive';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 import { reducers } from './shared/store/reducers';
 import { DdpAnalysisModule } from './ddp-analysis/ddp-analysis.module';
 
 export const ReducerToken = new InjectionToken('Media Analysis Registered Reducers');
 
-export function getReducers() {
+export const getReducers = () => {
   return reducers;
-}
+};
 
 export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers }];
 
@@ -35,21 +33,16 @@ export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers
     AnalyzeAudioComponent,
     AnalyzeVideoComponent,
     PlayerComponent,
-    TooltipDirective,
     AnalyzeImageComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgxDropzoneModule,
     StoreModule.forRoot(ReducerToken, {}),
     DdpAnalysisModule,
     NoopAnimationsModule,
   ],
-  providers: [
-    LoggerService,
-    ReducerProvider,
-  ],
+  providers: [LoggerService, ReducerProvider],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

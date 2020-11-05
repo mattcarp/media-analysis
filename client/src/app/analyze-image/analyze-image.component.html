@@ -1,2 +1,2 @@
-<h3>EXIF:</h3>
-<pre>{{output}}</pre>
+<h3>EXIF:&nbsp;<small *ngIf="output === '{}'">empty</small></h3>
+<pre *ngIf="output !== '{}'">{{output}}</pre>

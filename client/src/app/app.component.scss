@@ -21,70 +21,88 @@ aside {
 
 article {
   section {
+    position: relative;
     padding: 5px;
     border: 1px solid $color-lightgray;
     background-color: rgba($color-codebg, 0.5);
 
-    .grid {
-      display: grid;
-      grid-template-columns: 22px 20px 80px 1fr 80px;
-      grid-template-rows: auto;
-      align-items: center;
-      height: 32px;
-      margin: 12px 0 4px;
-      padding: 4px 0;
-      border: 1px solid #eee;
-      background-color: white;
+    .container {
+      margin: 0 0 30px;
 
-      grid-column-gap: 10px;
+      .file {
+        display: grid;
+        grid-template-columns: 20px 28px 1fr 80px;
+        grid-template-rows: auto;
+        grid-column-gap: 10px;
+        align-items: center;
+        height: 32px;
+        margin: 4px 0;
+        padding: 0 10px;
+        border: 1px solid dimgrey;
+        background-color: white;
 
-      & > div {
-        line-height: 1.4;
-
-        &:nth-child(1),
-        &:nth-child(2) {
-          text-align: center;
+        & > div {
+          line-height: 1.4;
         }
 
-        &:nth-child(3) {
-          direction: rtl;
+        &-state {
+          position: relative;
+
+          .ma-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
         }
 
-        &:nth-child(4) {
+        &-type {
+          position: relative;
+          height: 100%;
+          padding: 0 4px;
+          background-color: #cad1dd;
+
+          &.text {
+            background-color: #bec8d2;
+          }
+
+          &.image {
+            background-color: #c2c3e9;
+          }
+
+          &.audio {
+            background-color: #9ec6d7;
+          }
+
+          &.video {
+            background-color: #a7ddc0;
+          }
+
+          &.pdf {
+            background-color: #e3beba;
+          }
+
+          &.archive {
+            background-color: #bdd998;
+          }
+
+          .ma-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            transform: translate(-50%, -50%);
+          }
+        }
+
+        &-name {
           font-weight: bold;
         }
 
-        &:nth-child(3),
-        &:nth-child(5) {
+        &-type,
+        &-size {
           text-align: right;
-        }
-
-        &.image-jpeg {
-          background-color: rgba($color-yellow, 0.3);
-        }
-
-        &.video-mp4,
-        &.video-quicktime {
-          background-color: rgba($color-mint, 0.3);
-        }
-
-        &.video-x-matroska,
-        &.video-x-msvideo {
-          background-color: rgba($color-blue, 0.3);
-        }
-
-        &.video-mp3,
-        &.audio-x-flac,
-        &.audio-mpeg {
-          background-color: rgba($color-orange, 0.3);
-        }
-
-        &.application-pdf {
-          background-color: rgba($color-violet, 0.3);
-        }
-
-        &.text-plain {
-          background-color: $color-white;
         }
       }
     }

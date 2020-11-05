@@ -11,7 +11,7 @@ $fontSize-s: 15px;
 $fontSize-m: 17px;
 $fontSize-l: 24px;
 $fontSize-xl: 28px;
-$fontSize-code: .8em;
+$fontSize-code: 0.8em;
 
 // colors
 $color-white: #fff;
@@ -22,9 +22,9 @@ $color-dark: #231f20;
 $color-medium: #646464;
 $color-light: #7f8c8d;
 $color-green: #42b983;
-$color-border: #dddddd;
+$color-border: #ddd;
 $color-codebg: #f8f8f8;
-$color-red: #ff6666;
+$color-red: #f66;
 $color-gray: #777;
 $color-lightgray: #d9e2e3;
 $color-darkgray: #34393a;
@@ -32,7 +32,7 @@ $color-violet: #492e7c;
 $color-orange: #e96900;
 $color-mint: #02b1ac;
 $color-yellow: #ffd12a;
-$color-pink: #ff3377;
+$color-pink: #f37;
 $color-primary: #ff181f;
 
 // sizes
@@ -58,8 +58,8 @@ $screen-large: 'only screen and (min-width: 1150px)';
 }
 
 body {
-  background-color: $color-white;
   color: $color-gray;
+  background-color: $color-white;
 }
 
 header {
@@ -81,33 +81,30 @@ header {
 
 .icon-prores,
 .icon-mpeg2 {
-  border-color: grey;
-  background-color: #1A1A1A;
   color: white;
+  border-color: grey;
+  background-color: #1a1a1a;
 }
 
 .icon-mpeg2 {
-  background-color: #219CB2;
+  background-color: #219cb2;
 }
 
 .progress-bar-container {
   progress[value] {
-    color: royalblue;
-    background-color: whiteSmoke;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+    color: #1cae68;
+    background-color: #eaeaea;
 
     &::-webkit-progress-bar {
-      background-color: whiteSmoke;
-      box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+      background-color: #eaeaea;
     }
   }
 
   .progress-bar {
-    background-color: whiteSmoke;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) inset;
+    background-color: #eaeaea;
 
     span {
-      background-color: royalblue;
+      background-color: #1cae68;
     }
   }
 }

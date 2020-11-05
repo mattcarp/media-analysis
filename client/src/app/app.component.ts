@@ -1,13 +1,22 @@
 import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-
 import { version } from '../../package.json';
+
 import { ExtractMetadataService } from './extract-metadata/extract-metadata.service';
 import { LoggerService } from './services/logger.service';
 import { PrettierBytesService } from './services/prettier-bytes.service';
 import { FileHandlerService } from './handle-files/handle-files.service';
 import { FileTypeService } from './services/file-type.service';
-import { DetectBlackService } from './detect-black/detect-black.service';
-import { AnalyzeAudioService } from './analyze-audio/analyze-audio.service';
+
+export interface File {
+  analysed: string;
+  id: string;
+  lastModified: number;
+  lastModifiedDate: string;
+  name: string;
+  size: number;
+  status: string;
+  type: string;
+}
 
 @Component({
   selector: 'app-root',
@@ -17,12 +26,12 @@ import { AnalyzeAudioService } from './analyze-audio/analyze-audio.service';
 export class AppComponent implements OnInit {
   @ViewChild('consoleLog') consoleLog: ElementRef;
   title = 'client';
-  metadataResult: any;
+  metadataStarted: boolean;
   verUI = version;
   logger = '';
-  isTooLowHeight = false;
-
   files: File[] = [];
+  audioValidations: any[] = [];
+  videoValidations: any[] = [];
 
   constructor(
     private extractMetadataService: ExtractMetadataService,
@@ -31,18 +40,7 @@ export class AppComponent implements OnInit {
     private prettierBytesService: PrettierBytesService,
     private fileHandlerService: FileHandlerService,
     private fileTypeService: FileTypeService,
-    private eltRef: ElementRef,
-    private detectBlackService: DetectBlackService,
-    private detectMonoService: AnalyzeAudioService,
   ) {
-    extractMetadataService.metadataResult.subscribe((a) => {
-      this.loggerService.info(`metadataResult.subscribe:`, 'color: darkgrey');
-      this.loggerService.debug(`\t error: ${a.error}`, 'color: red');
-      this.loggerService.debug(`\t analysis: ${a.analysis}`, 'color: grey');
-
-      this.metadataResult = a;
-    });
-
     loggerService.loggerResult.subscribe((res) => {
       this.logger += `\n${res}`;
       this.cdr.detectChanges();
@@ -68,30 +66,14 @@ export class AppComponent implements OnInit {
     );
 
     this.logger = `👉 Media Analysis, client UI v.${this.verUI} ─ is ready`;
-
-    window.addEventListener('resize', this.resize, true);
-    setTimeout(() => this.resize());
   }
 
   handleFilesListChange(files: any): void {
-    this.files = files;
+    this.files.push(...files);
 
     this.files.forEach((file: File) => {
       this.fileHandlerService.setMediaFile(file);
-
       this.extractMetadataService.extract(file);
-      this.extractMetadataService.metadataResult.subscribe(() => {
-        // const analysisObj = JSON.parse(metadata.analysis);
-        // TODO only if video, detect black and detect mono
-        this.detectBlackService.recursiveBlackDetect(file, 'head');
-        this.detectBlackService.recursiveBlackDetect(file, 'tail');
-
-        // attempt to clear previous state - TODO not working
-        // detectMonoService.results = [];
-        // detectMonoService.signalAnalysis = [];
-        // TODO pass bitrate from analysisObj to detectMono as second param
-        this.detectMonoService.detectMono(file);
-      });
     });
   }
 
@@ -100,14 +82,14 @@ export class AppComponent implements OnInit {
   }
 
   setTypeClass(type: string): string {
-    return type.replace(/\//g, '-');
+    return type.split('/')[0];
   }
 
-  getFileType(file: File): string {
+  getFileType(file: any): string {
     return this.fileTypeService.getFileType(file);
   }
 
-  resize = (): void => {
-    this.isTooLowHeight = window.innerHeight < 530;
-  };
+  handleResult(res: string, fileID: string): void {
+    this.files.find((file) => file.id === fileID).analysed = res;
+  }
 }
