@@ -1,15 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IdState, MsState, PqState, ValidationState } from '../store/models';
 import { select, Store } from '@ngrx/store';
-
-import { DdpState } from '../store/reducers/ddp.reducer';
-import { DdpFileService } from '../store/services/ddp-file.service';
-import { DdpmsService } from '../store/services/ddpms.service';
-import { DdppqService } from '../store/services/ddppq.service';
-import { ValidationsService } from '../store/services/validations.service';
-import { selectId, selectMs, selectPq, selectValidation } from '../store/selectors/ddp.selectors';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+
+import { DdpState } from '../store/reducers/ddp.reducer';
+import { DdpFileService, DdpmsService, DdppqService, ValidationsService } from '../store/services';
+import { selectId, selectMs, selectPq, selectValidation } from '../store/selectors/ddp.selectors';
+import { IdState, MsState, PqState, ValidationState } from '../store/models';
 
 @Component({
   selector: 'ddp-validations',

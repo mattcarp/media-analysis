@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
   files: File[] = [];
   audioValidations: any[] = [];
   videoValidations: any[] = [];
+  selectedTabIndex: number;
 
   constructor(
     private extractMetadataService: ExtractMetadataService,

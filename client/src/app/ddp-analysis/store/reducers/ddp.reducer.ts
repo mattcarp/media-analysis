@@ -1,16 +1,23 @@
 import { Action, createReducer, on } from '@ngrx/store';
 
-import { setAudioEntries, setDdpFiles, setIdState } from '../actions/ddp.actions';
-import { FilesState, HashesState, IdState, MsState, PqState, ValidationState } from '../models';
+import * as fromDdp from '../actions/ddp.actions';
+import {
+  FilesState,
+  HashesState,
+  IdState,
+  MsState,
+  PqState,
+  ValidationState,
+} from '../models';
 
 export const ddpFilesFeatureKey = 'ddp';
 
 export interface DdpState {
   files: FilesState;
   audioEntries: any[];
-  ms: MsState,
-  pq: PqState,
-  id: IdState,
+  ms: MsState;
+  pq: PqState;
+  id: IdState;
   hashes: HashesState;
   validation: ValidationState;
 }
@@ -18,7 +25,6 @@ export interface DdpState {
 const initialState: DdpState = {
   files: {
     selectedAt: null,
-    path: null,
     files: [],
   },
   audioEntries: [],
@@ -62,20 +68,20 @@ const initialState: DdpState = {
     created: null,
     failCount: 0,
     entries: [],
-  }
+  },
 };
 
-export const ddpFilesReducer = createReducer(
+const ddpFilesReducer = createReducer(
   initialState,
-  on(setDdpFiles, (state: DdpState, { selectedAt, path, files }) => ({
+  on(fromDdp.setDdpFiles, (state: DdpState, { selectedAt, files }) => ({
     ...state,
-    files: { selectedAt, path, files },
+    files: { selectedAt, files },
   })),
-  on(setAudioEntries, (state: DdpState, { audioEntries }) => ({
+  on(fromDdp.setAudioEntries, (state: DdpState, { audioEntries }) => ({
     ...state,
     audioEntries,
   })),
-  on(setIdState, (state: DdpState, { id }) => ({
+  on(fromDdp.setIdState, (state: DdpState, { id }) => ({
     ...state,
     id,
   })),

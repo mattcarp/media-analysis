@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card'
+import { MatCardModule } from '@angular/material/card';
 
 import { DdpComponent } from './ddp/ddp.component';
-import { ddpFilesFeatureKey, ddpFilesReducer } from './store/reducers/ddp.reducer';
+import { ddpFilesFeatureKey, reducer as ddpFilesReducer } from './store/reducers/ddp.reducer';
 import { CdtextComponent } from './cdtext/cdtext.component';
 import { TabComponent } from './shared/tabs/tab/tab.component';
 import { TabsComponent } from './shared/tabs/tabs.component';

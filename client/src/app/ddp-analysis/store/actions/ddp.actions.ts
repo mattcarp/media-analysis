@@ -4,7 +4,7 @@ import { DdpFile, HashesState, IdState, MsEntry, MsState, ValidationState } from
 
 export const setDdpFiles = createAction(
   '[DDP File] Set Files',
-  props<{ selectedAt?: Date; path?: string; files: DdpFile[] }>(),
+  props<{ selectedAt: Date; files: DdpFile[] }>(),
 );
 
 export const setAudioEntries = createAction(
