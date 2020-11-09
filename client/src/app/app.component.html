@@ -24,59 +24,63 @@
     </nav>
   </section>
 </header>
+<mat-tab-group mat-align-tabs="center" [(selectedIndex)]="selectedTabIndex">
+  <mat-tab label="audio / video / image">
+    <main>
+      <aside>
+        <h2>Uploader:</h2>
+        <handle-files (addedFiles)="handleFilesListChange($event)"></handle-files>
+      </aside>
 
-<main>
-  <aside>
-    <h2>Uploader:</h2>
-    <handle-files (addedFiles)="handleFilesListChange($event)"></handle-files>
-  </aside>
+      <article>
+        <h2>Validations:</h2>
+        <section>
+          <detect-black></detect-black>
 
-  <article>
-    <h2>Validations:</h2>
-    <section>
-      <detect-black></detect-black>
+          <div *ngFor="let file of files" class="container">
+            <div class="file">
+              <div class="file-state">
+                <i class="ma-icon question"></i>
+                <i *ngIf="file.analysed === 'pass'" class="ma-icon pass"></i>
+                <i *ngIf="file.analysed === 'error'" class="ma-icon error"></i>
+              </div>
+              <div class="file-type" [ngClass]="setTypeClass(file.type)">
+                <i class="ma-icon files"></i>
+                <i class="ma-icon" [ngClass]="setTypeClass(file.type)"></i>
+              </div>
+              <div class="ellipsis file-name">{{file.name}}</div>
+              <div class="file-size">{{prettierBytes(file.size)}}</div>
+            </div>
 
-      <div *ngFor="let file of files" class="container">
-        <div class="file">
-          <div class="file-state">
-            <i class="ma-icon question"></i>
-            <i *ngIf="file.analysed === 'pass'" class="ma-icon pass"></i>
-            <i *ngIf="file.analysed === 'error'" class="ma-icon error"></i>
+            <analyze-image
+              *ngIf="getFileType(file).includes('image')"
+              (validateResult) = "handleResult($event, file.id)"
+              [metadata] = file>
+            </analyze-image>
+
+            <analyze-video
+              *ngIf="getFileType(file).includes('video')"
+              (validateResult) = "handleResult($event, file.id)">
+            </analyze-video>
+
+            <analyze-audio *ngIf="getFileType(file).includes('audio')"></analyze-audio>
+
+            <div *ngIf="file.analysed === 'null'" class="alert-danger">
+              Analysis rules for files of type "<i><b>{{file.type}}</b></i>" not yet set.
+            </div>
           </div>
-          <div class="file-type" [ngClass]="setTypeClass(file.type)">
-            <i class="ma-icon files"></i>
-            <i class="ma-icon" [ngClass]="setTypeClass(file.type)"></i>
-          </div>
-          <div class="ellipsis file-name">{{file.name}}</div>
-          <div class="file-size">{{prettierBytes(file.size)}}</div>
-        </div>
+        </section>
+      </article>
+    </main>
+  </mat-tab>
+  <mat-tab label="ddp">
+    <app-ddp *ngIf="selectedTabIndex === 1"></app-ddp>
+  </mat-tab>
+</mat-tab-group>
 
-        <analyze-image
-          *ngIf="getFileType(file).includes('image')"
-          (validateResult) = "handleResult($event, file.id)"
-          [metadata] = file>
-        </analyze-image>
-
-        <analyze-video
-          *ngIf="getFileType(file).includes('video')"
-          (validateResult) = "handleResult($event, file.id)">
-        </analyze-video>
-
-        <analyze-audio *ngIf="getFileType(file).includes('audio')"></analyze-audio>
-
-        <div *ngIf="file.analysed === 'null'" class="alert-danger">
-          Analysis rules for files of type "<i><b>{{file.type}}</b></i>" not yet set.
-        </div>
-      </div>
-    </section>
-  </article>
-</main>
-
-<footer>
+<footer *ngIf="selectedTabIndex !== 1">
   <section>
     <h2>Console output:</h2>
-    <textarea #consoleLog [scrollTop]="consoleLog.scrollHeight" class="console-log">
-      {{logger}}
-    </textarea>
+    <textarea #consoleLog [scrollTop]="consoleLog.scrollHeight" class="console-log">{{logger}}</textarea>
   </section>
 </footer>

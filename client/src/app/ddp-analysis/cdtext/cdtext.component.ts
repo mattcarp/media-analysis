@@ -13,7 +13,7 @@ export class CdtextComponent implements OnInit {
 
   constructor(private cdtextService: CdTextService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.cdtextService.cdTextParsed$.subscribe((packs: any[]) => {
       this.parsedPacks = packs;
     });

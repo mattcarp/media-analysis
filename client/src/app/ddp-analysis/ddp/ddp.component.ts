@@ -9,8 +9,7 @@ import {
 import WaveSurfer from 'wavesurfer.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
-import { DdpService } from '../store/services/ddp.service';
-import { DdpFileService } from '../store/services/ddp-file.service';
+import { DdpService, DdpFileService } from '../store/services';
 
 declare const Resumable: any;
 
@@ -57,6 +56,10 @@ export class DdpComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    setTimeout(() => this.initPlayer());
+  }
+
+  initPlayer() {
     this.waveSurfer = WaveSurfer.create({
       container: '#waveform',
       waveColor: '#ECE4F4',
@@ -70,7 +73,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
           height: 30,
           waveColor: '#ddd',
           progressColor: '#999',
-          cursorColor: '#999'
+          cursorColor: '#999',
         }),
       ],
     });
@@ -110,45 +113,44 @@ export class DdpComponent implements OnInit, AfterViewInit {
       const timeline = Object.create(WaveSurfer.Timeline);
       timeline.init({
         wavesurfer: this.waveSurfer,
-        container: '#waveform-timeline'
+        container: '#waveform-timeline',
       });
     });
 
-    this.ddpFileService.audioEntries$.subscribe(
-      (audioEntries) => {
-        this.audioEntries = audioEntries;
-        for (let i = 0; i < this.allResumableFiles.length; i++) {
-          for (let j = 0; j < this.audioEntries.length; j++) {
-            if (this.allResumableFiles[i].fileName.toLowerCase() ===
-              this.audioEntries[j].dsi.trim().toLowerCase()) {
-              this.audioFileMap.push({
-                resumableFilesIndex: i,
-                playListIndex: j,
-                file: this.allResumableFiles[i],
-                isrc: this.audioEntries[j].isrc,
-                trk: this.audioEntries[j].idx,
-                preGap: this.audioEntries[j].preGap,
-                dur: this.audioEntries[j].dur,
-              });
-            }
-          } // inner loop
-        } // outer loop
+    this.ddpFileService.audioEntries$.subscribe((audioEntries) => {
+      this.audioEntries = audioEntries;
+      for (let i = 0; i < this.allResumableFiles.length; i++) {
+        for (let j = 0; j < this.audioEntries.length; j++) {
+          if (this.allResumableFiles[i].fileName.toLowerCase() ===
+            this.audioEntries[j].dsi.trim().toLowerCase()) {
+            this.audioFileMap.push({
+              resumableFilesIndex: i,
+              playListIndex: j,
+              file: this.allResumableFiles[i],
+              isrc: this.audioEntries[j].isrc,
+              trk: this.audioEntries[j].idx,
+              preGap: this.audioEntries[j].preGap,
+              dur: this.audioEntries[j].dur,
+            });
+          }
+        } // inner loop
+      } // outer loop
 
-        // sort by index
-        this.audioFileMap.sort((a, b) => {
-          if (a.playListIndex > b.playListIndex) {
-            return 1;
-          }
-          if (a.playListIndex < b.playListIndex) {
-            return -1;
-          }
-          // a must be equal to b
-          return 0;
-        });
-        this.playList = this.audioFileMap;
-        // queue up the first track
-        this.ddpFileService.readAudioFile(this.playList[0].file.file);
+      // sort by index
+      this.audioFileMap.sort((a, b) => {
+        if (a.playListIndex > b.playListIndex) {
+          return 1;
+        }
+        if (a.playListIndex < b.playListIndex) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
       });
+      this.playList = this.audioFileMap;
+      // queue up the first track
+      this.ddpFileService.readAudioFile(this.playList[0].file.file);
+    });
 
     // placeholders - we're not uploading anything yet
     this.resumable = new Resumable({
@@ -158,7 +160,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
       testChunks: true,
       throttleProgressCallbacks: 1,
       method: 'octet',
-      maxChunkRetries: 10
+      maxChunkRetries: 10,
     });
 
     if (!this.resumable.support) {
@@ -183,7 +185,6 @@ export class DdpComponent implements OnInit, AfterViewInit {
           this.fileCounter = 0;
         }
       });
-
     }
   }
 

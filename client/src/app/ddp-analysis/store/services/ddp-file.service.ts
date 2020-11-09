@@ -67,10 +67,7 @@ export class DdpFileService implements OnDestroy {
     this.allResumableFiles = resumable.files;
     this.parseStartTime = new Date();
     console.log('all files have been added');
-    this.store.dispatch(setDdpFiles({
-      selectedAt: new Date(),
-      files: resumableFiles,
-    }));
+    this.store.dispatch(setDdpFiles({ selectedAt: new Date(), files: resumableFiles }));
     this.allFilesAddedSource.next(resumableFiles);
     this.waveSurferInstance = waveSurferInstance;
     for (const fileObj of resumableFiles) {
@@ -90,12 +87,11 @@ export class DdpFileService implements OnDestroy {
       if (fileObj.fileName.toLowerCase() === fileName) {
         this.readAndParse(fileObj.file, 'pq');
         // TODO drop this subscription, subscribe to store
-        this.pqFileRead$.subscribe(
-          (parsedPq: PqState) => {
-            this.parsedPq = parsedPq;
-            const toc = this.ddpService.createToc(parsedPq.entries);
-            this.gracenoteService.queryByToc(toc);
-          });
+        this.pqFileRead$.subscribe((parsedPq: PqState) => {
+          this.parsedPq = parsedPq;
+          const toc = this.ddpService.createToc(parsedPq.entries);
+          this.gracenoteService.queryByToc(toc);
+        });
       }
     }
   }
@@ -111,7 +107,6 @@ export class DdpFileService implements OnDestroy {
     };
     reader.readAsArrayBuffer(audioFile);
   } // readAudioFile
-
 
   queueTrack(audioBuff: ArrayBuffer): void {
     if (!AudioContext) {
@@ -138,12 +133,12 @@ export class DdpFileService implements OnDestroy {
       this.showWaveform = true;
       this.waveSurferInstance.clearRegions();
       this.waveSurferInstance.addRegion({
+        start, // time in seconds
+        end, // time in seconds
         drag: false,
         resize: false,
-        start: start, // time in seconds
-        end: end, // time in seconds
         color: 'hsla(221, 48%, 58%, 0.5)',
-        data: 'at some point will use this'
+        data: 'at some point will use this',
       });
       this.waveSurferInstance.on('region-in', this.showInMsg.bind(this));
       this.waveSurferInstance.on('region-out', this.showOutMsg.bind(this));
@@ -155,7 +150,7 @@ export class DdpFileService implements OnDestroy {
       start: this.ddpService.framesToTime(region.start * 75),
       end: this.ddpService.framesToTime(region.end * 75),
       type: 'in',
-      msg: 'playing from index 0'
+      msg: 'playing from index 0',
     };
     this.annotationSource.next(msg);
   }
@@ -165,7 +160,7 @@ export class DdpFileService implements OnDestroy {
       start: this.ddpService.framesToTime(region.end * 75),
       end: 'end of file',
       type: 'in',
-      msg: 'playing from index 1'
+      msg: 'playing from index 1',
     };
     this.annotationSource.next(msg);
   }

@@ -2,6 +2,6 @@ import { DdpFile } from './ddp-file';
 
 export interface FilesState {
   selectedAt: Date;
-  path: string;
+  path?: string;
   files: DdpFile[];
 }
