@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { InjectionToken, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { MatTabsModule } from '@angular/material/tabs';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -15,9 +17,8 @@ import { LoggerService } from './services/logger.service';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 import { reducers } from './shared/store/reducers';
 import { DdpAnalysisModule } from './ddp-analysis/ddp-analysis.module';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
-import { MatTabsModule } from '@angular/material/tabs';
+
 
 export const ReducerToken = new InjectionToken('Media Analysis Registered Reducers');
 
@@ -44,7 +45,7 @@ export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers
     StoreModule.forRoot(ReducerToken, {}),
     DdpAnalysisModule,
     NoopAnimationsModule,
-    StoreDevtoolsModule.instrument({maxAge: 25, logOnly: environment.production}),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
     MatTabsModule,
   ],
   providers: [
