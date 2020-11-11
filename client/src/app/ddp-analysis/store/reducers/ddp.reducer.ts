@@ -90,7 +90,6 @@ const ddpFilesReducer = createReducer(
     hashes,
   })),
   on(fromDdp.setMsState, (state: DdpState, { ms }) => ({ ...state, ms })),
-  // on(fromDdp.set, (state: DdpState, { ms }) => ({ ...state, ms })),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {
