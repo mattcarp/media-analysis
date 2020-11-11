@@ -92,11 +92,11 @@ export class HashesService implements OnDestroy {
   // get an array of objects representing the md5 file's content and its name
   getMd5Arr(allResumableFiles: any[]) {
     this.allResumableFiles = allResumableFiles;
-    const hashItems: HashItem[] = [];
+    let hashItems: HashItem[] = [];
 
-    for (let i = 0; i < allResumableFiles.length; i++) {
-      const fileObj: any = allResumableFiles[i].file;
-      const entry: HashItem = { targetFileName: '', hash: ''};
+    for (const [index, value] of allResumableFiles.entries()) {
+      const fileObj: any = value;
+      const entry: HashItem = { targetFileName: '', hash: '' };
       const extension = fileObj.name.split('.').pop().toUpperCase();
       const baseFilename = fileObj.name.replace(/\.[^/.]+$/, '');
       const lastMod = fileObj.lastModifiedDate;
@@ -105,19 +105,18 @@ export class HashesService implements OnDestroy {
           console.error('File size to large to be an MD5. Continuing');
           continue;
         }
-        console.log('we have an md5 file, must now read it')
+        console.log('we have an md5 file, must now read it');
         const reader = new FileReader();
         reader.onload = (event: any) => {
           // remove line breaks
           entry.hash = event.target.result.replace(/^\s+|\s+$/g, '');
           entry.lastModified = lastMod;
           entry.targetFileName = baseFilename;
-          console.log('the hash entry', entry);
-          hashItems.push(entry);
+          hashItems = [...hashItems, entry];
         };
         reader.readAsText(fileObj);
       } // if extension is md5
-      if (i === allResumableFiles.length - 1) {
+      if (index === allResumableFiles.length - 1) {
         // TODO results is an empty array
         console.log('hash files have been gathered:', hashItems);
         const hashes = { hashes: hashItems };

@@ -25,10 +25,10 @@ export class DdpmsService {
       fileName: fileObj.name,
       fileSize: fileObj.size,
       lastModified: fileObj.lastModifiedDate,
-      entries: msArr
+      entries: msArr,
     };
     console.log('payload for store:', parsedMs);
-    this.store.dispatch(setMsState({ms: parsedMs}));
+    this.store.dispatch(setMsState({ ms: parsedMs }));
   }
 
   parseSingleBlock(block) {

@@ -4,16 +4,15 @@ import { Observable, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import { DdpState } from '../reducers/ddp.reducer';
-import { setAudioEntries, setDdpFiles } from '../actions/ddp.actions';
-import { selectMs, selectPq, selectPqEntries } from '../selectors/ddp.selectors';
-import { MsEntry, MsState, PqEntry, PqState } from '../models';
+import { setDdpFiles } from '../actions/ddp.actions';
+import { selectMs, selectPq } from '../selectors/ddp.selectors';
+import { MsEntry, MsState, PqState } from '../models';
 import { DdpService } from './ddp.service';
 import { DdpmsService } from './ddpms.service';
 import { DdpidService } from './ddpid.service';
 import { DdppqService } from './ddppq.service';
 import { GracenoteService } from './gracenote.service';
 import { CdTextService } from './cdtext.service';
-
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +61,7 @@ export class DdpFileService implements OnDestroy {
   }
 
   handleFiles(waveSurferInstance: any, resumable: any): void {
-    const resumableFiles = resumable.files;
+    const resumableFiles = resumable.files.map((file: any) => file.file);
     // TODO do we need this:
     this.allResumableFiles = resumable.files;
     this.parseStartTime = new Date();
@@ -71,11 +70,11 @@ export class DdpFileService implements OnDestroy {
     this.allFilesAddedSource.next(resumableFiles);
     this.waveSurferInstance = waveSurferInstance;
     for (const fileObj of resumableFiles) {
-      if (fileObj.fileName.toLowerCase() === 'ddpms') {
-        this.readAndParse(fileObj.file, 'ms');
+      if (fileObj.name.toLowerCase() === 'ddpms') {
+        this.readAndParse(fileObj, 'ms');
       }
-      if (fileObj.fileName.toLowerCase() === 'ddpid') {
-        this.readAndParse(fileObj.file, 'id');
+      if (fileObj.name.toLowerCase() === 'ddpid') {
+        this.readAndParse(fileObj, 'id');
       }
     }
   }

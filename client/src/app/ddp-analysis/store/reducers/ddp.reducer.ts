@@ -75,7 +75,7 @@ const ddpFilesReducer = createReducer(
   initialState,
   on(fromDdp.setDdpFiles, (state: DdpState, { selectedAt, files }) => ({
     ...state,
-    files: { selectedAt, files },
+    files: { ...state.files, selectedAt, files },
   })),
   on(fromDdp.setAudioEntries, (state: DdpState, { audioEntries }) => ({
     ...state,
@@ -85,6 +85,12 @@ const ddpFilesReducer = createReducer(
     ...state,
     id,
   })),
+  on(fromDdp.setHashesState, (state: DdpState, { hashes }) => ({
+    ...state,
+    hashes,
+  })),
+  on(fromDdp.setMsState, (state: DdpState, { ms }) => ({ ...state, ms })),
+  // on(fromDdp.set, (state: DdpState, { ms }) => ({ ...state, ms })),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {
