@@ -38,3 +38,8 @@ export const selectValidation = createSelector(
   selectDdp,
   (state: fromDdpFiles.DdpState) => state.validation,
 );
+
+export const selectHashes = createSelector(
+  selectDdp,
+  (state: fromDdpFiles.DdpState) => state.hashes.hashes,
+);

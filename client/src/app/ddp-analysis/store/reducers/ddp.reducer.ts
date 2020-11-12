@@ -4,6 +4,7 @@ import * as fromDdp from '../actions/ddp.actions';
 import {
   FilesState,
   HashesState,
+  HashItem,
   IdState,
   MsState,
   PqState,
@@ -92,6 +93,20 @@ const ddpFilesReducer = createReducer(
     ...state,
     validation,
   })),
+  on(fromDdp.setHashItemProgress, (state: DdpState, { hash, progress }) => {
+    const hashItems = [...state.hashes.hashes].map((item: HashItem) => {
+      return item.hash === hash ? { ...item, progress } : { ...item };
+    });
+    const hashes = { ...state.hashes, hashes: hashItems };
+    return { ...state, hashes };
+  }),
+  on(fromDdp.setComputedHashItem, (state: DdpState, { hash, computedHash, lastModified }) => {
+    const hashItems = [...state.hashes.hashes].map((item: HashItem) => {
+      return item.hash === hash ? { ...item, computedHash, lastModified } : { ...item };
+    });
+    const hashes = { ...state.hashes, hashes: hashItems };
+    return { ...state, hashes };
+  }),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {
