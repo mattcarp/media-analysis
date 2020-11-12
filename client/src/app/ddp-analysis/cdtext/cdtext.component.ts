@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { CdTextService } from '../store/services/cdtext.service';
+import { CdTextService } from '../store/services';
 
 @Component({
   selector: 'ddp-cdtext',

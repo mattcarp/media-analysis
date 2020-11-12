@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-import { DdpFile, HashesState, IdState, MsEntry, MsState, ValidationState } from '../models';
+import { DdpFile, HashesState, IdState, MsEntry, MsState, PqState, ValidationState } from '../models';
 
 export const setDdpFiles = createAction(
   '[DDP File] Set Files',
@@ -17,9 +17,9 @@ export const setMsEntries = createAction(
   props<{ ms: MsEntry[] }>(),
 );
 
-export const setPqEntries = createAction(
-  '[DDP File] Set Pq Entries',
-  props<{ pq: MsEntry[] }>(),
+export const setPqState = createAction(
+  '[DDP File] Set Pq State',
+  props<{ pq: PqState }>(),
 );
 
 export const setIdState = createAction(

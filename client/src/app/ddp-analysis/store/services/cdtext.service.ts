@@ -39,8 +39,8 @@ export class CdTextService {
     const numPacks = Math.floor(cdTextBin.byteLength / this.PACK_LENGTH);
     console.log('number of packs in cd text file:', numPacks);
     for (let i = 0; i < numPacks; i++) {
-      const parsedPack = this.parsePack(
-        cdTextBin.slice(i * this.PACK_LENGTH, (i + 1) * this.PACK_LENGTH));
+      const param = cdTextBin.slice(i * this.PACK_LENGTH, (i + 1) * this.PACK_LENGTH);
+      const parsedPack = this.parsePack(param);
       this.parsedPacks.push(parsedPack);
     }
 

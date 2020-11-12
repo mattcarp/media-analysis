@@ -81,15 +81,17 @@ const ddpFilesReducer = createReducer(
     ...state,
     audioEntries,
   })),
-  on(fromDdp.setIdState, (state: DdpState, { id }) => ({
-    ...state,
-    id,
-  })),
+  on(fromDdp.setIdState, (state: DdpState, { id }) => ({ ...state, id })),
+  on(fromDdp.setPqState, (state: DdpState, { pq }) => ({ ...state, pq })),
   on(fromDdp.setHashesState, (state: DdpState, { hashes }) => ({
     ...state,
     hashes,
   })),
   on(fromDdp.setMsState, (state: DdpState, { ms }) => ({ ...state, ms })),
+  on(fromDdp.setValidationState, (state: DdpState, { validation }) => ({
+    ...state,
+    validation,
+  })),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {

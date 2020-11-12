@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { GracenoteService } from '../store/services/gracenote.service';
+import { GracenoteService } from '../store/services';
 
 @Component({
   selector: 'ddp-gracenote',

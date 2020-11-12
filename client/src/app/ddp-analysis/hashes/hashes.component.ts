@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { HashesService } from '../store/services/hashes.service';
+import { HashesService } from '../store/services';
 
 @Component({
   selector: 'ddp-hashes',
@@ -22,7 +22,7 @@ export class HashesComponent implements OnInit {
     });
   }
 
-  verifyHashes(md5Arr) {
+  verifyHashes(md5Arr): void {
     this.hashesService.computeHashes(md5Arr);
   }
 }
