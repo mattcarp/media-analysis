@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { DdpState } from '../reducers/ddp.reducer';
-import { selectDdpFiles } from '../selectors/ddp.selectors';
-import { DdpFile, FilesState, HashesState, HashItem } from '../models';
-import { setHashesState } from '../actions/ddp.actions';
+import { selectDdpFiles, selectHashes } from '../selectors/ddp.selectors';
+import { DdpFile, FilesState, HashItem } from '../models';
+import { setComputedHashItem, setHashesState, setHashItemProgress } from '../actions/ddp.actions';
 
 declare const SparkMD5: any;
 
@@ -16,11 +16,7 @@ declare const SparkMD5: any;
 export class HashesService implements OnDestroy {
   hashes: any[] = [];
   allResumableFiles: any[];
-  hashFilesParsed$: Observable<any>;
-  allHashingComplete$: Observable<any>;
 
-  private hashFilesParsedSource = new Subject<any[]>();
-  private allHashingComplete = new Subject<any[]>();
   private destroy$ = new Subject<any>();
 
   constructor(private store: Store<DdpState>) {
@@ -31,8 +27,11 @@ export class HashesService implements OnDestroy {
       const allFiles: DdpFile[] = ddpFiles.files;
       this.getMd5Arr(allFiles);
     });
-    this.hashFilesParsed$ = this.hashFilesParsedSource.asObservable();
-    this.allHashingComplete$ = this.allHashingComplete.asObservable();
+
+    this.store.pipe(
+      select(selectHashes),
+      takeUntil(this.destroy$),
+    ).subscribe((hashes: HashItem[]) => this.hashes = hashes);
   }
 
   ngOnDestroy(): void {
@@ -40,14 +39,14 @@ export class HashesService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  computeHashes(md5Arr) {
+  computeHashes(md5Arr): void {
     for (let i = 0; i < md5Arr.length; i++) {
       for (let j = 0; j < this.allResumableFiles.length; j++) {
-        if (this.hashes[i].baseFilename.toUpperCase() ===
-          this.allResumableFiles[j].file.name.toUpperCase()) {
-
+        const hashFileName = this.hashes[i].targetFileName.toUpperCase();
+        const resumableFileName = this.allResumableFiles[j].name.toUpperCase();
+        if (hashFileName === resumableFileName) {
           const blobSlice = File.prototype.slice;
-          const file = this.allResumableFiles[j].file;
+          const file = this.allResumableFiles[j];
           const CHUNK_SIZE = 2097152; // Read in chunks of 2MB
           const chunks = Math.ceil(file.size / CHUNK_SIZE);
           let currentChunk = 0;
@@ -55,7 +54,11 @@ export class HashesService implements OnDestroy {
           const fileReader = new FileReader();
 
           fileReader.onload = (e: any) => {
-            md5Arr[i].progress = Math.floor(((currentChunk + 1) / chunks) * 100);
+            this.store.dispatch(setHashItemProgress({
+              hash: md5Arr[i].hash,
+              progress: Math.floor(((currentChunk + 1) / chunks) * 100),
+            }));
+            // md5Arr[i].progress = Math.floor(((currentChunk + 1) / chunks) * 100);
             // console.log('prog:', md5Arr[i].progress);
             spark.append(e.target.result); // append array buffer
             currentChunk++;
@@ -67,8 +70,11 @@ export class HashesService implements OnDestroy {
                 console.log('are we all done hashing? that would be great');
               }
 
-              md5Arr[i].fileLastMod = file.lastModifiedDate;
-              md5Arr[i].computedHash = spark.end();
+              this.store.dispatch(setComputedHashItem({
+                hash: md5Arr[i].hash,
+                lastModified: file.lastModifiedDate,
+                computedHash: spark.end(),
+              }));
               console.info('computed hash:', spark.end());  // compute hash
             }
           };
@@ -113,15 +119,11 @@ export class HashesService implements OnDestroy {
           entry.lastModified = lastMod;
           entry.targetFileName = baseFilename;
           hashItems = [...hashItems, entry];
+          const hashes = { hashes: hashItems };
+          this.store.dispatch(setHashesState({ hashes }));
         };
         reader.readAsText(fileObj);
       } // if extension is md5
-      if (index === allResumableFiles.length - 1) {
-        // TODO results is an empty array
-        console.log('hash files have been gathered:', hashItems);
-        const hashes = { hashes: hashItems };
-        this.store.dispatch(setHashesState({ hashes }));
-      }
     }
   }
 }

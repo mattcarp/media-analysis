@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 import { HashesService } from '../store/services';
+import { selectHashes } from '../store/selectors/ddp.selectors';
+import { DdpState } from '../store/reducers/ddp.reducer';
+import { HashItem } from '../store/models';
 
 @Component({
   selector: 'ddp-hashes',
@@ -9,17 +14,12 @@ import { HashesService } from '../store/services';
 })
 export class HashesComponent implements OnInit {
   computedHashes: any[];
-  hashFiles: any[];
-  hasHashes = false;
+  hashFiles$: Observable<HashItem[]>;
 
-  constructor(private hashesService: HashesService) {}
+  constructor(private hashesService: HashesService, private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    // TODO put these results in the store, get them back here
-    this.hashesService.hashFilesParsed$.subscribe((hashFilesArr: any[]) => {
-      this.hashFiles = hashFilesArr;
-      this.hasHashes = true;
-    });
+    this.hashFiles$ = this.store.pipe(select(selectHashes));
   }
 
   verifyHashes(md5Arr): void {

@@ -1,7 +1,7 @@
 huwo?
 <div class="ddp-hashes-content">
 
-<div *ngIf="hasHashes">
+<div *ngIf="hashFiles$ | async as hashFiles">
   <h3>Hashes
   </h3>
   <h4>{{hashFiles?.length}} hash files found. Would you like to verify them?</h4>
@@ -22,10 +22,10 @@ huwo?
     <tr *ngFor="let hashEntry of hashFiles"
         [ngClass]="{
         'ddp-hash-match': hashEntry?.hash === hashEntry?.computedHash,
-        'ddp-hash-mismatch': hashEntry?.computedHash && hashEntry?.hash != hashEntry?.computedHash
+        'ddp-hash-mismatch': hashEntry?.computedHash && hashEntry?.hash !== hashEntry?.computedHash
       }">
-      <td>{{hashEntry?.baseFilename}}</td>
-      <td>{{hashEntry?.lastModRelative}}</td>
+      <td>{{hashEntry?.targetFileName}}</td>
+      <td>{{hashEntry?.lastModified}}</td>
       <td>{{hashEntry?.hash}}</td>
       <td>{{hashEntry?.computedHash}}</td>
       <td>

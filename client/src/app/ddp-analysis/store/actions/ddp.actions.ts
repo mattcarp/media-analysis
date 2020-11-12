@@ -41,3 +41,13 @@ export const setValidationState = createAction(
   '[DDP File] Set Validation State',
   props<{ validation: ValidationState }>(),
 );
+
+export const setHashItemProgress = createAction(
+  '[DDP File] Set Hash Item Progress',
+  props<{ hash: string; progress: number }>(),
+);
+
+export const setComputedHashItem = createAction(
+  '[DDP File] Set Computed Hash Item',
+  props<{ hash: string; computedHash: string, lastModified: Date }>(),
+);
