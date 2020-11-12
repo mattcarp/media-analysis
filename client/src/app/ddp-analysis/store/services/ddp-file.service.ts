@@ -281,8 +281,7 @@ export class DdpFileService implements OnDestroy {
             takeUntil(this.destroy$),
           ).subscribe((pq: PqState) => {
             console.log('we should have a parsed pq at this point', pq);
-            const audioWithPq: any[] = this.ddppqService.
-            addPqToAudio(this.audioEntries, pq);
+            const audioWithPq: any[] = this.ddppqService.addPqToAudio(this.audioEntries, pq);
             console.log('this is my audio with pq stuff', audioWithPq);
             this.audioEntriesSource.next(audioWithPq);
             // set up the first track for playback

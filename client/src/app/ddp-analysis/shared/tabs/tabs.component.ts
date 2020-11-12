@@ -18,17 +18,15 @@ import { TabComponent } from './tab/tab.component';
 export class TabsComponent {
   tabs: TabComponent[] = [];
 
-  constructor() {}
-
-  addTab(tab: TabComponent) {
+  addTab(tab: TabComponent): void {
     if (this.tabs.length === 0) {
       tab.active = true;
     }
     this.tabs.push(tab);
   }
 
-  selectTab(tab: TabComponent) {
-    this.tabs.forEach((currentTab) => {
+  selectTab(tab: TabComponent): void {
+    this.tabs.forEach((currentTab: TabComponent) => {
       currentTab.active = false;
     });
     tab.active = true;

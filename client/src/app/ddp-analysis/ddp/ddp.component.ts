@@ -49,17 +49,17 @@ export class DdpComponent implements OnInit, AfterViewInit {
     private zone: NgZone,
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.ddpFileService.annotation$.subscribe((msg: any) => {
       this.playerAnnotation = msg;
     });
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     setTimeout(() => this.initPlayer());
   }
 
-  initPlayer() {
+  initPlayer(): void {
     this.waveSurfer = WaveSurfer.create({
       container: '#waveform',
       waveColor: '#ECE4F4',
@@ -90,7 +90,6 @@ export class DdpComponent implements OnInit, AfterViewInit {
         // TODOmc errors due to rounding
         this.timecode = this.ddpService.framesToTime(Math.floor(timeInSecs * 75));
       });
-
     });
 
     this.waveSurfer.on('seek', () => {
@@ -193,7 +192,6 @@ export class DdpComponent implements OnInit, AfterViewInit {
     this.waveSurfer.zoom(Number(value));
   }
 
-
   isSelected(index: number): boolean {
     if (!index || !this.currentIndex) {
       return false;
@@ -201,7 +199,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
     return index === this.currentIndex;
   }
 
-  queueTrack(index: number, event: Event) {
+  queueTrack(index: number, event: Event): void {
     // TODO highlight selected track
     this.currentIndex = index;
     this.trackSelected = true;
@@ -217,13 +215,13 @@ export class DdpComponent implements OnInit, AfterViewInit {
     // this.ddpFileService.addRegion(preGapSecs, preGapSecs);
   }
 
-  playFrom(start: number, end?: number) {
+  playFrom(start: number, end?: number): void {
     this.playbackStatus = '';
     this.showPlay = !this.showPlay;
     this.waveSurfer.play(start);
   }
 
-  playFromIdx1() {
+  playFromIdx1(): void {
     this.playbackStatus = '';
     // set preGap if we are on initial track
     if (!this.queuedPreGap) {
@@ -234,7 +232,7 @@ export class DdpComponent implements OnInit, AfterViewInit {
   }
 
   // toggle between play and pause
-  playPause() {
+  playPause(): void {
     this.showPlay = !this.showPlay;
     this.waveSurfer.playPause();
   }

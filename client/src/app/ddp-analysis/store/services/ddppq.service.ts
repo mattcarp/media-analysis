@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { DdpState } from '../reducers/ddp.reducer';
 import { DdpService } from './ddp.service';
 import { PqEntry, PqState } from '../models';
-
+import { setPqState } from '../actions/ddp.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +36,6 @@ export class DdppqService {
     let currentBlock = [];
     const pqArr = [];
 
-
     // divide pq content into 64 byte blocks
     const re = new RegExp('.{1,' + BLOCK_SIZE + '}', 'g');
     const entriesArr = pqContent.match(re);
@@ -49,13 +48,13 @@ export class DdppqService {
     let pqAmended: PqEntry[] = this.insertGaps(pqArr);
     pqAmended = this.insertDurations(pqAmended);
     console.log('the amended pq, should have durations:', pqAmended);
-    const parsedPq: PqState = {
+    const pq: PqState = {
       fileName: 'bubbafile',
       fileSize: 122345,
       lastModified: new Date(),
-      entries: pqAmended
+      entries: pqAmended,
     };
-    this.store.dispatch({type: 'SET_DDPPQ', payload: parsedPq});
+    this.store.dispatch(setPqState({ pq }));
   }
 
   getTrackCount(pqArr) {
