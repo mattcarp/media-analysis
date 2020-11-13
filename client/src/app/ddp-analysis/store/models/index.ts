@@ -12,3 +12,4 @@ export * from './validation-state';
 export * from './player-annotation-state';
 export * from './parsed-cd-text-item';
 export * from './parsed-pack-item';
+export * from './gracenote';

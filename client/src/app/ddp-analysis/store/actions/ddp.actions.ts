@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 
 import {
   DdpFile,
+  Gracenote,
   HashesState,
   IdState,
   MsEntry,
@@ -75,4 +76,9 @@ export const setParsedCdText = createAction(
 export const setParsedPackItems = createAction(
   '[DDP File] Set Parsed Pack Items',
   props<{ parsedPackItems: ParsedPackItem[] }>(),
+);
+
+export const setGracenote = createAction(
+  '[DDP File] Set Gracenote',
+  props<{ gracenote: Gracenote }>(),
 );

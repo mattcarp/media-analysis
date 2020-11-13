@@ -58,3 +58,8 @@ export const selectParsedPackItems = createSelector(
   selectDdp,
   (state: fromDdpFiles.DdpState) => state.parsedPackItems,
 );
+
+export const selectGracenote = createSelector(
+  selectDdp,
+  (state: fromDdpFiles.DdpState) => state.gracenote,
+);
