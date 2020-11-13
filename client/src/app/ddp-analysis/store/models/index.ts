@@ -9,3 +9,4 @@ export * from './hash-item';
 export * from './hashes-state';
 export * from './validation-entry';
 export * from './validation-state';
+export * from './player-annotation-state';

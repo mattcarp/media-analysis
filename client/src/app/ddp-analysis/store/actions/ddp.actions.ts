@@ -49,5 +49,10 @@ export const setHashItemProgress = createAction(
 
 export const setComputedHashItem = createAction(
   '[DDP File] Set Computed Hash Item',
-  props<{ hash: string; computedHash: string, lastModified: Date }>(),
+  props<{ hash: string; computedHash: string; lastModified: Date }>(),
+);
+
+export const setPlayerAnnotation = createAction(
+  '[DDP File] Set Player Annotation',
+  props<{ start: string; end: string; msgType: string; msg: string }>(),
 );

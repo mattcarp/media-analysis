@@ -7,6 +7,7 @@ import {
   HashItem,
   IdState,
   MsState,
+  PlayerAnnotationState,
   PqState,
   ValidationState,
 } from '../models';
@@ -21,6 +22,7 @@ export interface DdpState {
   id: IdState;
   hashes: HashesState;
   validation: ValidationState;
+  playerAnnotation: PlayerAnnotationState;
 }
 
 const initialState: DdpState = {
@@ -70,6 +72,12 @@ const initialState: DdpState = {
     failCount: 0,
     entries: [],
   },
+  playerAnnotation: {
+    start: null,
+    end: null,
+    msgType: null,
+    msg: null,
+  },
 };
 
 const ddpFilesReducer = createReducer(
@@ -106,6 +114,10 @@ const ddpFilesReducer = createReducer(
     });
     const hashes = { ...state.hashes, hashes: hashItems };
     return { ...state, hashes };
+  }),
+  on(fromDdp.setPlayerAnnotation, (state: DdpState, { start, end, msgType, msg }) => {
+    const playerAnnotation = { ...state.playerAnnotation, start, end, msgType, msg };
+    return { ...state, playerAnnotation };
   }),
 );
 

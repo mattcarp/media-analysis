@@ -43,3 +43,8 @@ export const selectHashes = createSelector(
   selectDdp,
   (state: fromDdpFiles.DdpState) => state.hashes.hashes,
 );
+
+export const selectPlayerAnnotation = createSelector(
+  selectDdp,
+  (state: fromDdpFiles.DdpState) => state.playerAnnotation,
+);

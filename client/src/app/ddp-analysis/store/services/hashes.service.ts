@@ -58,8 +58,6 @@ export class HashesService implements OnDestroy {
               hash: md5Arr[i].hash,
               progress: Math.floor(((currentChunk + 1) / chunks) * 100),
             }));
-            // md5Arr[i].progress = Math.floor(((currentChunk + 1) / chunks) * 100);
-            // console.log('prog:', md5Arr[i].progress);
             spark.append(e.target.result); // append array buffer
             currentChunk++;
 

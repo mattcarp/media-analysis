@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
 import { DdpState } from '../reducers/ddp.reducer';
-import { setDdpFiles } from '../actions/ddp.actions';
+import { setAudioEntries, setDdpFiles, setPlayerAnnotation, setPqState } from '../actions/ddp.actions';
 import { selectMs, selectPq } from '../selectors/ddp.selectors';
-import { MsEntry, MsState, PqState } from '../models';
+import { MsEntry, MsState, PlayerAnnotationState, PqState } from '../models';
 import { DdpService } from './ddp.service';
 import { DdpmsService } from './ddpms.service';
 import { DdpidService } from './ddpid.service';
@@ -25,20 +25,12 @@ export class DdpFileService implements OnDestroy {
   parsedId: any[];
   audioEntries: any[];
   // playlist is an array of resumable files
-  playList: any[]
+  playList: any[];
   audioSource: any;
   allResumableFiles: any[];
   showWaveform = false;
-  pqFileRead$: Observable<PqState>;
-  allFilesAdded$: Observable<any[]>;
-  audioEntries$: Observable<any>;
-  annotation$: Observable<any>;
 
   private destroy$: Subject<any> = new Subject<any>();
-  private pqFileReadSource = new Subject<PqState>();
-  private allFilesAddedSource = new Subject<any[]>();
-  private audioEntriesSource = new Subject<any>();
-  private annotationSource = new Subject<any>();
 
   constructor(
     private ddpService: DdpService,
@@ -48,12 +40,7 @@ export class DdpFileService implements OnDestroy {
     private gracenoteService: GracenoteService,
     private cdTextService: CdTextService,
     private store: Store<DdpState>,
-  ) {
-    this.pqFileRead$ = this.pqFileReadSource.asObservable();
-    this.allFilesAdded$ = this.allFilesAddedSource.asObservable();
-    this.audioEntries$ = this.audioEntriesSource.asObservable();
-    this.annotation$ = this.annotationSource.asObservable();
-  }
+  ) {}
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -67,7 +54,6 @@ export class DdpFileService implements OnDestroy {
     this.parseStartTime = new Date();
     console.log('all files have been added');
     this.store.dispatch(setDdpFiles({ selectedAt: new Date(), files: resumableFiles }));
-    this.allFilesAddedSource.next(resumableFiles);
     this.waveSurferInstance = waveSurferInstance;
     for (const fileObj of resumableFiles) {
       if (fileObj.name.toLowerCase() === 'ddpms') {
@@ -85,10 +71,13 @@ export class DdpFileService implements OnDestroy {
     for (const fileObj of resumableFiles) {
       if (fileObj.fileName.toLowerCase() === fileName) {
         this.readAndParse(fileObj.file, 'pq');
-        // TODO drop this subscription, subscribe to store
-        this.pqFileRead$.subscribe((parsedPq: PqState) => {
-          this.parsedPq = parsedPq;
-          const toc = this.ddpService.createToc(parsedPq.entries);
+        this.store.pipe(
+          select(selectPq),
+          filter((pq: PqState) => !!pq),
+          takeUntil(this.destroy$),
+        ).subscribe((pq: PqState) => {
+          this.parsedPq = pq;
+          const toc = this.ddpService.createToc(pq.entries);
           this.gracenoteService.queryByToc(toc);
         });
       }
@@ -113,7 +102,8 @@ export class DdpFileService implements OnDestroy {
       return;
     }
     // clear player annotations
-    this.annotationSource.next('');
+    const params: PlayerAnnotationState = { start: null, end: null, msgType: null, msg: null };
+    this.store.dispatch(setPlayerAnnotation(params));
     const audioCtx = new AudioContext();
     const encodedWav = DdpFileService.encodeWav(audioBuff);
     this.audioSource = audioCtx.createBufferSource();
@@ -123,11 +113,11 @@ export class DdpFileService implements OnDestroy {
     this.createWaveForm(blob);
   } // queueTrack
 
-  createWaveForm(waveBuffer: Blob) {
+  createWaveForm(waveBuffer: Blob): void {
     this.waveSurferInstance.loadBlob(waveBuffer);
   }
 
-  addRegion(start: number, end: number) {
+  addRegion(start: number, end: number): void {
     this.waveSurferInstance.on('ready', () => {
       this.showWaveform = true;
       this.waveSurferInstance.clearRegions();
@@ -144,24 +134,24 @@ export class DdpFileService implements OnDestroy {
     });
   }
 
-  showInMsg(region: any) {
-    const msg = {
+  showInMsg(region: any): void {
+    const params: PlayerAnnotationState = {
       start: this.ddpService.framesToTime(region.start * 75),
       end: this.ddpService.framesToTime(region.end * 75),
-      type: 'in',
+      msgType: 'in',
       msg: 'playing from index 0',
     };
-    this.annotationSource.next(msg);
+    this.store.dispatch(setPlayerAnnotation(params));
   }
 
-  showOutMsg(region: any) {
-    const msg = {
+  showOutMsg(region: any): void {
+    const params: PlayerAnnotationState = {
       start: this.ddpService.framesToTime(region.end * 75),
       end: 'end of file',
-      type: 'in',
+      msgType: 'in',
       msg: 'playing from index 1',
     };
-    this.annotationSource.next(msg);
+    this.store.dispatch(setPlayerAnnotation(params));
   }
 
   static encodeWav(rawAudio: ArrayBuffer): ArrayBuffer {
@@ -267,9 +257,8 @@ export class DdpFileService implements OnDestroy {
     }
   } // getCdTextFileInfo
 
-
   // reads small ASCII text files (e.g. DDPMS, DDPID, PQ) and calls parses
-  readAndParse(fileObj: File, fileType: string) {
+  readAndParse(fileObj: File, fileType: string): void {
     const textReader: FileReader = new FileReader();
     textReader.onloadend = (e) => {
       switch (fileType) {
@@ -283,12 +272,11 @@ export class DdpFileService implements OnDestroy {
             console.log('we should have a parsed pq at this point', pq);
             const audioWithPq: any[] = this.ddppqService.addPqToAudio(this.audioEntries, pq);
             console.log('this is my audio with pq stuff', audioWithPq);
-            this.audioEntriesSource.next(audioWithPq);
+            this.store.dispatch(setAudioEntries({ audioEntries: audioWithPq }));
             // set up the first track for playback
             const trk1Pregap = parseFloat(audioWithPq[0].preGap) / 75.0;
             this.addRegion(0, trk1Pregap);
-            // TODO set parsedPq using the store
-            this.pqFileReadSource.next(pq);
+            this.store.dispatch(setPqState({ pq }));
           });
           break;
         case 'id':
