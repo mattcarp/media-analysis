@@ -3,13 +3,20 @@ import {
   Component,
   ElementRef,
   NgZone,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import WaveSurfer from 'wavesurfer.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
 import { DdpService, DdpFileService } from '../store/services';
+import { DdpState } from '../store/reducers/ddp.reducer';
+import { selectAudioEntries, selectPlayerAnnotation } from '../store/selectors/ddp.selectors';
+import { PlayerAnnotationState } from '../store/models';
 
 declare const Resumable: any;
 
@@ -18,7 +25,7 @@ declare const Resumable: any;
   templateUrl: './ddp.component.html',
   styleUrls: ['./ddp.component.scss'],
 })
-export class DdpComponent implements OnInit, AfterViewInit {
+export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('dropArea') dropArea: ElementRef;
   @ViewChild('browseArea') browseArea: ElementRef;
   @ViewChild('slider') slider: ElementRef;
@@ -39,24 +46,33 @@ export class DdpComponent implements OnInit, AfterViewInit {
   showDragDrop = true;
   showTabs = false;
   queuedPreGap: number;
-  playerAnnotation: any;
+  playerAnnotation: PlayerAnnotationState;
   trackSelected = false;
   currentIndex: number;
+
+  private destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private ddpService: DdpService,
     private ddpFileService: DdpFileService,
     private zone: NgZone,
+    private store: Store<DdpState>,
   ) {}
 
   ngOnInit(): void {
-    this.ddpFileService.annotation$.subscribe((msg: any) => {
-      this.playerAnnotation = msg;
-    });
+    this.store.pipe(
+      select(selectPlayerAnnotation),
+      takeUntil(this.destroy$),
+    ).subscribe((state: PlayerAnnotationState) => this.playerAnnotation = state);
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.initPlayer());
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   initPlayer(): void {
@@ -116,12 +132,17 @@ export class DdpComponent implements OnInit, AfterViewInit {
       });
     });
 
-    this.ddpFileService.audioEntries$.subscribe((audioEntries) => {
+    this.store.pipe(
+      select(selectAudioEntries),
+      filter((audioEntries: any[]) => !!audioEntries.length),
+      takeUntil(this.destroy$),
+    ).subscribe((audioEntries: any[]) => {
       this.audioEntries = audioEntries;
       for (let i = 0; i < this.allResumableFiles.length; i++) {
         for (let j = 0; j < this.audioEntries.length; j++) {
-          if (this.allResumableFiles[i].fileName.toLowerCase() ===
-            this.audioEntries[j].dsi.trim().toLowerCase()) {
+          const resumableFileName = this.allResumableFiles[i].fileName.toLowerCase();
+          const audioFileName = this.audioEntries[j].dsi.trim().toLowerCase();
+          if (resumableFileName === audioFileName) {
             this.audioFileMap.push({
               resumableFilesIndex: i,
               playListIndex: j,
@@ -132,8 +153,8 @@ export class DdpComponent implements OnInit, AfterViewInit {
               dur: this.audioEntries[j].dur,
             });
           }
-        } // inner loop
-      } // outer loop
+        }
+      }
 
       // sort by index
       this.audioFileMap.sort((a, b) => {
