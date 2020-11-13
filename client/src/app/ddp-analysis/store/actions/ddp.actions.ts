@@ -1,6 +1,16 @@
 import { createAction, props } from '@ngrx/store';
 
-import { DdpFile, HashesState, IdState, MsEntry, MsState, PqState, ValidationState } from '../models';
+import {
+  DdpFile,
+  HashesState,
+  IdState,
+  MsEntry,
+  MsState,
+  ParsedCdTextItem,
+  ParsedPackItem,
+  PqState,
+  ValidationState,
+} from '../models';
 
 export const setDdpFiles = createAction(
   '[DDP File] Set Files',
@@ -55,4 +65,14 @@ export const setComputedHashItem = createAction(
 export const setPlayerAnnotation = createAction(
   '[DDP File] Set Player Annotation',
   props<{ start: string; end: string; msgType: string; msg: string }>(),
+);
+
+export const setParsedCdText = createAction(
+  '[DDP File] Set Parsed Cd Text',
+  props<{ parsedCdText: ParsedCdTextItem[] }>(),
+);
+
+export const setParsedPackItems = createAction(
+  '[DDP File] Set Parsed Pack Items',
+  props<{ parsedPackItems: ParsedPackItem[] }>(),
 );

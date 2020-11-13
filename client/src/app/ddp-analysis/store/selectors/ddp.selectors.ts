@@ -48,3 +48,13 @@ export const selectPlayerAnnotation = createSelector(
   selectDdp,
   (state: fromDdpFiles.DdpState) => state.playerAnnotation,
 );
+
+export const selectParsedCdText = createSelector(
+  selectDdp,
+  (state: fromDdpFiles.DdpState) => state.parsedCdText,
+);
+
+export const selectParsedPackItems = createSelector(
+  selectDdp,
+  (state: fromDdpFiles.DdpState) => state.parsedPackItems,
+);

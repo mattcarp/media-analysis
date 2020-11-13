@@ -7,6 +7,8 @@ import {
   HashItem,
   IdState,
   MsState,
+  ParsedCdTextItem,
+  ParsedPackItem,
   PlayerAnnotationState,
   PqState,
   ValidationState,
@@ -23,6 +25,8 @@ export interface DdpState {
   hashes: HashesState;
   validation: ValidationState;
   playerAnnotation: PlayerAnnotationState;
+  parsedCdText: ParsedCdTextItem[];
+  parsedPackItems: ParsedPackItem[];
 }
 
 const initialState: DdpState = {
@@ -78,6 +82,8 @@ const initialState: DdpState = {
     msgType: null,
     msg: null,
   },
+  parsedCdText: [],
+  parsedPackItems: [],
 };
 
 const ddpFilesReducer = createReducer(
@@ -119,6 +125,14 @@ const ddpFilesReducer = createReducer(
     const playerAnnotation = { ...state.playerAnnotation, start, end, msgType, msg };
     return { ...state, playerAnnotation };
   }),
+  on(fromDdp.setParsedCdText, (state: DdpState, { parsedCdText }) => ({
+    ...state,
+    parsedCdText,
+  })),
+  on(fromDdp.setParsedPackItems, (state: DdpState, { parsedPackItems }) => ({
+    ...state,
+    parsedPackItems,
+  })),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {

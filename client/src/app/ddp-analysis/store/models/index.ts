@@ -10,3 +10,5 @@ export * from './hashes-state';
 export * from './validation-entry';
 export * from './validation-state';
 export * from './player-annotation-state';
+export * from './parsed-cd-text-item';
+export * from './parsed-pack-item';
