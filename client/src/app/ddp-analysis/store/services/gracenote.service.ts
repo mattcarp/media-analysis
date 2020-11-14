@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { filter, map, tap } from 'rxjs/operators';
+
+import { DdpState } from '../reducers/ddp.reducer';
+import { setGracenote } from '../actions/ddp.actions';
 
 declare const X2JS: any;
 
@@ -9,15 +12,9 @@ declare const X2JS: any;
   providedIn: 'root',
 })
 export class GracenoteService {
-  gracenoteResponse$: Observable<any>;
-
   private gracenoteUrl = 'https://c2045878769.web.cddbp.net/webapi/xml/1.0/';
-  private gracenoteResponseSource = new Subject<any>();
 
-  constructor(private http: HttpClient) {
-    this.gracenoteResponse$ = this.gracenoteResponseSource.asObservable();
-  }
-
+  constructor(private http: HttpClient, private store: Store<DdpState>) {}
 
   queryByToc(toc?: string) {
     const x2js = new X2JS();
@@ -46,12 +43,14 @@ export class GracenoteService {
     const headers = new HttpHeaders();
     headers.append('Accept', 'application/xml');
     headers.append('Content-Type', 'application/xml');
-    console.log('gracenote service got this toc', toc );
+    console.log('gracenote service got this toc', toc);
 
-    return this.http.post(this.gracenoteUrl, request, { headers }).pipe(
-      map((res: any) => {
-        this.gracenoteResponseSource.next(x2js.xml_str2json(res.text()));
-      }));
-      // TODOmc don't subscribe here - do it in the component that consume the data
+    this.http.post(this.gracenoteUrl, request, { headers }).pipe(
+      map((res: any) => x2js.xml_str2json(res.text())),
+      filter((res: any) => !!res?.RESPONSES?.RESPONSE?.ALBUM),
+      tap((res: any) => {
+        this.store.dispatch(setGracenote({ gracenote: res.RESPONSES.RESPONSE }));
+      }),
+    );
   }
 }

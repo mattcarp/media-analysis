@@ -1,24 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { GracenoteService } from '../store/services';
+import { DdpState } from '../store/reducers/ddp.reducer';
+import { selectGracenote } from '../store/selectors/ddp.selectors';
+import { Gracenote } from '../store/models';
 
 @Component({
   selector: 'ddp-gracenote',
   templateUrl: 'gracenote.component.html',
   styleUrls: ['gracenote.component.scss'],
 })
-export class GracenoteComponent implements OnInit {
-  gracenoteData: any;
+export class GracenoteComponent implements OnInit, OnDestroy {
+  gracenoteData: Gracenote;
 
-  constructor(private gracenoteService: GracenoteService) {}
+  private destroy$: Subject<any> = new Subject<any>();
+
+  constructor(private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    this.gracenoteService.gracenoteResponse$.subscribe((data: any) => {
-      if (data.RESPONSES.RESPONSE.ALBUM) {
-        this.gracenoteData = data.RESPONSES.RESPONSE;
-      } else {
-        this.gracenoteData = null;
-      }
-    });
+    this.store.pipe(
+      select(selectGracenote),
+      takeUntil(this.destroy$),
+    ).subscribe((gracenoteData: Gracenote) => this.gracenoteData = gracenoteData);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

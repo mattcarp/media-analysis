@@ -3,10 +3,13 @@ import { Action, createReducer, on } from '@ngrx/store';
 import * as fromDdp from '../actions/ddp.actions';
 import {
   FilesState,
+  Gracenote,
   HashesState,
   HashItem,
   IdState,
   MsState,
+  ParsedCdTextItem,
+  ParsedPackItem,
   PlayerAnnotationState,
   PqState,
   ValidationState,
@@ -23,6 +26,9 @@ export interface DdpState {
   hashes: HashesState;
   validation: ValidationState;
   playerAnnotation: PlayerAnnotationState;
+  parsedCdText: ParsedCdTextItem[];
+  parsedPackItems: ParsedPackItem[];
+  gracenote: Gracenote;
 }
 
 const initialState: DdpState = {
@@ -78,6 +84,9 @@ const initialState: DdpState = {
     msgType: null,
     msg: null,
   },
+  parsedCdText: [],
+  parsedPackItems: [],
+  gracenote: null,
 };
 
 const ddpFilesReducer = createReducer(
@@ -119,6 +128,15 @@ const ddpFilesReducer = createReducer(
     const playerAnnotation = { ...state.playerAnnotation, start, end, msgType, msg };
     return { ...state, playerAnnotation };
   }),
+  on(fromDdp.setParsedCdText, (state: DdpState, { parsedCdText }) => ({
+    ...state,
+    parsedCdText,
+  })),
+  on(fromDdp.setParsedPackItems, (state: DdpState, { parsedPackItems }) => ({
+    ...state,
+    parsedPackItems,
+  })),
+  on(fromDdp.setGracenote, (state: DdpState, { gracenote }) => ({ ...state, gracenote })),
 );
 
 export function reducer(state: DdpState | undefined, action: Action) {

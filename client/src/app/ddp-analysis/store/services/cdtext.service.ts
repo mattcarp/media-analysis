@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Store } from '@ngrx/store';
+
+import { DdpState } from '../reducers/ddp.reducer';
+import { setParsedCdText, setParsedPackItems } from '../actions/ddp.actions';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CdTextService {
-  cdTextParsed$: Observable<any>;
-  packsAssembled$: Observable<any>;
   parsedPacks: any[] = []; // raw packs, with 12-character payloads
   parsedCdText: any[] = []; // after parsing raw packs, assemble payload to their true length
   assembledEntries: any[] = [];
@@ -27,13 +28,7 @@ export class CdTextService {
     '8f': 'blockSize' // 'information' (binary)
   };
 
-  private cdTextParsedSource = new Subject<any>();
-  private packsAssembledSource = new Subject<any>();
-
-  constructor() {
-    this.cdTextParsed$ = this.cdTextParsedSource.asObservable();
-    this.packsAssembled$ = this.packsAssembledSource.asObservable();
-  }
+  constructor(private store: Store<DdpState>) {}
 
   parseCdText(cdTextBin: ArrayBuffer) {
     const numPacks = Math.floor(cdTextBin.byteLength / this.PACK_LENGTH);
@@ -44,11 +39,10 @@ export class CdTextService {
       this.parsedPacks.push(parsedPack);
     }
 
-    this.cdTextParsedSource.next(this.parsedPacks);
+    this.store.dispatch(setParsedCdText({ parsedCdText: this.parsedPacks }));
     const fullPayload: string = this.combinePayloads(this.parsedPacks);
-    // this.parsedCdText = this.parseFullPayload(fullPayload, this.parsedPacks);
+    this.parsedCdText = this.parseFullPayload(fullPayload, this.parsedPacks);
     this.assemblePacks(this.parsedPacks);
-    // this.packsAssembledSource.next(this.parsedCdText);
   }
 
   parseFullPayload(payload: string, parsedPacks: any[]): any[] {
@@ -120,7 +114,7 @@ export class CdTextService {
           will need to go back more`);
       }
     }
-    this.packsAssembledSource.next(this.assembledEntries);
+    this.store.dispatch(setParsedPackItems({ parsedPackItems: this.assembledEntries }));
     console.log('called next on assembled with this', this.assembledEntries);
   }
 
@@ -168,7 +162,7 @@ export class CdTextService {
   parsePack(pack: ArrayBuffer) {
     const parsedPack: any = {};
     const packView = new DataView(pack, 0);
-    const typeCode  = packView.getUint8(0).toString(16);
+    const typeCode = packView.getUint8(0).toString(16);
     parsedPack.packType = this.PACK_TYPES[typeCode];
     // console.log('pack type?', parsedPack.packType);
     parsedPack.packTrackNo = packView.getUint8(1); // .toString(16);
