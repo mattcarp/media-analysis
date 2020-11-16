@@ -4,10 +4,10 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 
-router.get('*.*', express.static(path.join(__dirname, '/../../sme-uploader/')));
+router.get('*.*', express.static(path.join(__dirname, '/../../sme-uploader/demo/')));
 
 router.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/../../sme-uploader/index.html'));
+  res.sendFile(path.join(__dirname, '/../../sme-uploader/demo/index.html'));
 });
 
 module.exports = router;
