@@ -48,9 +48,9 @@ export class GracenoteService {
     this.http.post(this.gracenoteUrl, request, { headers }).pipe(
       map((res: any) => x2js.xml_str2json(res.text())),
       filter((res: any) => !!res?.RESPONSES?.RESPONSE?.ALBUM),
-      tap((res: any) => {
-        this.store.dispatch(setGracenote({ gracenote: res.RESPONSES.RESPONSE }));
-      }),
-    );
+    ).subscribe((res: any) => {
+      console.log('!!!!res', res);
+      this.store.dispatch(setGracenote({ gracenote: res.RESPONSES.RESPONSE }));
+    });
   }
 }

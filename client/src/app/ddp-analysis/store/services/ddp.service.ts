@@ -54,7 +54,6 @@ export class DdpService {
     console.log(tocArray);
     const toc: string = tocArray.join(' ');
     return toc;
-
   }
 
   timeToFrames(timeString: string): number {
