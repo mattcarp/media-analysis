@@ -243,9 +243,7 @@ export class DdpFileService implements OnDestroy {
       return null;
     }
 
-    for (let i = 0; i < parsedMs.length; i++) {
-      const currentEntry = parsedMs[i];
-
+    for (const currentEntry of parsedMs.entries) {
       if (currentEntry.sub.trim().toUpperCase() === 'CDTEXT') {
         cdTextFileInfo.fileName = currentEntry.dsi;
         // parseInt will eliminate leading zeros
