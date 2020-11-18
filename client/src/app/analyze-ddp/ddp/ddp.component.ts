@@ -60,11 +60,8 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.store
-      .pipe(select(selectPlayerAnnotation), takeUntil(this.destroy$))
-      .subscribe(
-        (state: PlayerAnnotationState) => this.playerAnnotation = state
-      );
+    this.store.pipe(select(selectPlayerAnnotation), takeUntil(this.destroy$))
+      .subscribe((state: PlayerAnnotationState) => this.playerAnnotation = state);
   }
 
   ngAfterViewInit(): void {
@@ -137,48 +134,46 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
       this.timecode = this.ddpService.framesToTime(0);
     });
 
-    this.store
-      .pipe(
-        select(selectAudioEntries),
-        filter((audioEntries: any[]) => !!audioEntries.length),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((audioEntries: any[]) => {
-        this.audioEntries = audioEntries;
-        for (let i = 0; i < this.files.length; i += 1) {
-          for (let j = 0; j < this.audioEntries.length; j += 1) {
-            const fileName = this.files[i].name.toLowerCase();
-            const audioFileName = this.audioEntries[j].dsi.trim().toLowerCase();
+    this.store.pipe(
+      select(selectAudioEntries),
+      filter((audioEntries: any[]) => !!audioEntries.length),
+      takeUntil(this.destroy$),
+    ).subscribe((audioEntries: any[]) => {
+      this.audioEntries = audioEntries;
+      for (let i = 0; i < this.files.length; i += 1) {
+        for (let j = 0; j < this.audioEntries.length; j += 1) {
+          const fileName = this.files[i].name.toLowerCase();
+          const audioFileName = this.audioEntries[j].dsi.trim().toLowerCase();
 
-            if (fileName === audioFileName) {
-              this.audioFileMap.push({
-                resumableFilesIndex: i,
-                playListIndex: j,
-                file: this.files[i],
-                isrc: this.audioEntries[j].isrc,
-                trk: this.audioEntries[j].idx,
-                preGap: this.audioEntries[j].preGap,
-                dur: this.audioEntries[j].dur,
-              });
-            }
+          if (fileName === audioFileName) {
+            this.audioFileMap.push({
+              resumableFilesIndex: i,
+              playListIndex: j,
+              file: this.files[i],
+              isrc: this.audioEntries[j].isrc,
+              trk: this.audioEntries[j].idx,
+              preGap: this.audioEntries[j].preGap,
+              dur: this.audioEntries[j].dur,
+            });
           }
         }
+      }
 
-        // sort by index
-        this.audioFileMap.sort((a, b) => {
-          if (a.playListIndex > b.playListIndex) {
-            return 1;
-          }
-          if (a.playListIndex < b.playListIndex) {
-            return -1;
-          }
-          // a must be equal to b
-          return 0;
-        });
-        this.playList = this.audioFileMap;
-        // queue up the first track
-        this.ddpFileService.readAudioFile(this.playList[0].file);
+      // sort by index
+      this.audioFileMap.sort((a, b) => {
+        if (a.playListIndex > b.playListIndex) {
+          return 1;
+        }
+        if (a.playListIndex < b.playListIndex) {
+          return -1;
+        }
+        // a must be equal to b
+        return 0;
       });
+      this.playList = this.audioFileMap;
+      // queue up the first track
+      this.ddpFileService.readAudioFile(this.playList[0].file);
+    });
 
     // placeholders - we're not uploading anything yet
     this.resumable = new Resumable();
@@ -208,7 +203,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     this.queuedPreGap = this.playList[index].preGap;
     this.logger.log('playlist', this.playList);
     this.logger.log('queued preGap?', this.queuedPreGap);
-    this.ddpFileService.readAudioFile(this.playList[index].file.file);
+    this.ddpFileService.readAudioFile(this.playList[index].file);
     const preGapSecs = this.playList[index].preGap / 75.0;
     this.ddpFileService.addRegion(0, preGapSecs);
   }

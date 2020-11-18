@@ -25,18 +25,15 @@ export class HashesService implements OnDestroy {
   private destroy$ = new Subject<any>();
 
   constructor(private store: Store<DdpState>, private logger: NGXLogger) {
-    this.store
-      .pipe(
-        select(selectDdpFiles),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((ddpFiles: FilesState) => {
-        const allFiles: DdpFile[] = ddpFiles.files;
-        this.getMd5Arr(allFiles);
-      });
+    this.store.pipe(
+      select(selectDdpFiles),
+      takeUntil(this.destroy$),
+    ).subscribe((ddpFiles: FilesState) => {
+      const allFiles: DdpFile[] = ddpFiles.files;
+      this.getMd5Arr(allFiles);
+    });
 
-    this.store
-      .pipe(select(selectHashes), takeUntil(this.destroy$))
+    this.store.pipe(select(selectHashes), takeUntil(this.destroy$))
       .subscribe((hashes: HashItem[]) => this.hashes = hashes);
   }
 

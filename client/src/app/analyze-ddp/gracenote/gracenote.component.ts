@@ -20,11 +20,8 @@ export class GracenoteComponent implements OnInit, OnDestroy {
   constructor(private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    this.store
-      .pipe(select(selectGracenote), takeUntil(this.destroy$))
-      .subscribe(
-        (gracenoteData: Gracenote) => this.gracenoteData = gracenoteData,
-      );
+    this.store.pipe(select(selectGracenote), takeUntil(this.destroy$))
+      .subscribe((gracenoteData: Gracenote) => this.gracenoteData = gracenoteData);
   }
 
   ngOnDestroy(): void {

@@ -21,16 +21,14 @@ export class DdppqComponent implements OnInit {
   constructor(private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    this.store
-      .pipe(
-        select(selectPq),
-        filter((pq: PqState) => !!pq),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((pq: PqState) => {
-        this.hasPq = true;
-        this.parsedPq = pq;
-      });
+    this.store.pipe(
+      select(selectPq),
+      filter((pq: PqState) => !!pq),
+      takeUntil(this.destroy$),
+    ).subscribe((pq: PqState) => {
+      this.hasPq = true;
+      this.parsedPq = pq;
+    });
   }
 
   ngOnDestroy(): void {

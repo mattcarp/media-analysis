@@ -22,17 +22,15 @@ export class DdpmsComponent implements OnInit, OnDestroy {
   constructor(private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    this.store
-      .pipe(
-        select(selectMs),
-        filter((ms: MsState) => !!ms),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((ms: MsState) => {
-        this.hasMs = true;
-        this.masterFormat.name = 'temp';
-        this.parsedMs = ms;
-      });
+    this.store.pipe(
+      select(selectMs),
+      filter((ms: MsState) => !!ms),
+      takeUntil(this.destroy$),
+    ).subscribe((ms: MsState) => {
+      this.hasMs = true;
+      this.masterFormat.name = 'temp';
+      this.parsedMs = ms;
+    });
   }
 
   ngOnDestroy(): void {

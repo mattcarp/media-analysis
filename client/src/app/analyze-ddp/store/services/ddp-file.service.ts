@@ -19,6 +19,7 @@ import { DdpidService } from './ddpid.service';
 import { DdppqService } from './ddppq.service';
 import { GracenoteService } from './gracenote.service';
 import { CdTextService } from './cdtext.service';
+import { LoggerMonitor } from '@app/analyze-ddp/store/services/logger-monitor';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +49,9 @@ export class DdpFileService implements OnDestroy {
     private cdTextService: CdTextService,
     private store: Store<DdpState>,
     private logger: NGXLogger,
-  ) {}
+  ) {
+    DdpFileService.setLoggerS(logger);
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -79,17 +82,15 @@ export class DdpFileService implements OnDestroy {
     files.forEach((file) => {
       if (file.name.toLowerCase() === fileName) {
         this.readAndParse(file, 'pq');
-        this.store
-          .pipe(
-            select(selectPq),
-            filter((pq: PqState) => !!pq),
-            takeUntil(this.destroy$),
-          )
-          .subscribe((pq: PqState) => {
-            this.parsedPq = pq;
-            const toc = this.ddpService.createToc(pq.entries);
-            this.gracenoteService.queryByToc(toc);
-          });
+        this.store.pipe(
+          select(selectPq),
+          filter((pq: PqState) => !!pq),
+          takeUntil(this.destroy$),
+        ).subscribe((pq: PqState) => {
+          this.parsedPq = pq;
+          const toc = this.ddpService.createToc(pq.entries);
+          this.gracenoteService.queryByToc(toc);
+        });
       }
     });
   }
@@ -171,6 +172,10 @@ export class DdpFileService implements OnDestroy {
     this.store.dispatch(setPlayerAnnotation(params));
   }
 
+  static setLoggerS(logger: NGXLogger) {
+    DdpFileService.loggerS = logger;
+  }
+
   static encodeWav(rawAudio: ArrayBuffer): ArrayBuffer {
     // wav header is 44 bytes
     const HEADER_LENGTH = 44;
@@ -207,22 +212,22 @@ export class DdpFileService implements OnDestroy {
     DdpFileService.writeString(view, 36, 'data');
     // data chunk length
     // TODOmc certain ddps throw: RangeError: byte length of Uint32Array should be a multiple of 4
-    // DdpFileService.loggerS.log(
-    //   'the byte length for this Uint32 array , which might not be divisible by 4, is',
-    //   rawAudio.byteLength,
-    // );
+    DdpFileService.loggerS.log(
+      'the byte length for this Uint32 array , which might not be divisible by 4, is',
+      rawAudio.byteLength,
+    );
     // view.setUint32(40, rawAudio.byteLength, true);
     /// TODOmc temp hard-coding 32 - should use rawAudio.byteLEngth
     // view.setUint32(40, 32, true);
     view.setFloat32(40, rawAudio.byteLength, true);
 
-    // DdpFileService.loggerS.log('first 120 chars of view buffer:');
-    // DdpFileService.loggerS.log(
-    //   String.fromCharCode.apply(
-    //     null,
-    //     new Uint8Array(view.buffer.slice(0, 120)),
-    //   ),
-    // );
+    DdpFileService.loggerS.log('first 120 chars of view buffer:');
+    DdpFileService.loggerS.log(
+      String.fromCharCode.apply(
+        null,
+        new Uint8Array(view.buffer.slice(0, 120)),
+      ),
+    );
 
     return DdpFileService.appendBuffer(view.buffer, rawAudio);
   }
@@ -314,25 +319,23 @@ export class DdpFileService implements OnDestroy {
           break;
         case 'ms':
           this.ddpmsService.parse(textReader.result.toString(), fileObj);
-          this.store
-            .pipe(
-              select(selectMs),
-              filter((ms: MsState) => !!ms),
-              takeUntil(this.destroy$),
-            )
-            .subscribe((ms: MsState) => {
-              // this.hasMs = true;
-              // TODO get the parsedMs info from the store, put audio entries in the store
-              this.audioEntries = this.ddpmsService.getAudioEntries(ms);
-              const pqFileInfo: any = this.getPqFileInfo(ms);
-              this.logger.log('parsed ms:', ms);
-              this.handlePqFile(pqFileInfo, this.files);
-              const cdTextFileInfo = this.getCdTextFileInfo(ms);
-              if (cdTextFileInfo) {
-                this.cdTextService.getFile(cdTextFileInfo, this.files);
-              }
-              this.logger.log('audio entries', this.audioEntries);
-            });
+          this.store.pipe(
+            select(selectMs),
+            filter((ms: MsState) => !!ms),
+            takeUntil(this.destroy$),
+          ).subscribe((ms: MsState) => {
+            // this.hasMs = true;
+            // TODO get the parsedMs info from the store, put audio entries in the store
+            this.audioEntries = this.ddpmsService.getAudioEntries(ms);
+            const pqFileInfo: any = this.getPqFileInfo(ms);
+            this.logger.log('parsed ms:', ms);
+            this.handlePqFile(pqFileInfo, this.files);
+            const cdTextFileInfo = this.getCdTextFileInfo(ms);
+            if (cdTextFileInfo) {
+              this.cdTextService.getFile(cdTextFileInfo, this.files);
+            }
+            this.logger.log('audio entries', this.audioEntries);
+          });
           break;
         default:
           break;

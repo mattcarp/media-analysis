@@ -21,16 +21,14 @@ export class DdpIdComponent implements OnInit, OnDestroy {
   constructor(private store: Store<DdpState>) {}
 
   ngOnInit(): void {
-    this.store
-      .pipe(
-        select(selectId),
-        filter((id: IdState) => !!id),
-        takeUntil(this.destroy$),
-      )
-      .subscribe((id: IdState) => {
-        this.hasId = true;
-        this.parsedId = id;
-      });
+    this.store.pipe(
+      select(selectId),
+      filter((id: IdState) => !!id),
+      takeUntil(this.destroy$),
+    ).subscribe((id: IdState) => {
+      this.hasId = true;
+      this.parsedId = id;
+    });
   }
 
   ngOnDestroy(): void {
