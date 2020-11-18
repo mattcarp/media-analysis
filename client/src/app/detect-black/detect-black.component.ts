@@ -4,7 +4,7 @@ import { DetectBlackService } from './detect-black.service';
 import { LoggerService } from '../services/logger.service';
 
 @Component({
-  selector: 'detect-black',
+  selector: 'app-detect-black',
   templateUrl: './detect-black.component.html',
   styleUrls: ['./detect-black.component.scss'],
 })

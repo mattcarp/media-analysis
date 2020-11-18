@@ -51,7 +51,8 @@ body {
 app-root {
   display: grid;
   grid-template-columns: [line1] minmax(320px, auto) [line2];
-  grid-template-rows: [row1] $size-headerHeight [row2] calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight}) [row3] $size-consoleHeight [row4];
+  //grid-template-rows: [row1] $size-headerHeight [row2] calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight}) [row3] $size-consoleHeight [row4];
+  grid-template-rows: [row1] $size-headerHeight [row2] 1fr [row3] $size-consoleHeight [row4];
 
   header {
     grid-column: line1 / line2;
@@ -87,7 +88,8 @@ app-root {
 
       section {
         overflow-y: auto;
-        height: calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight} - 40px);
+        //height: calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight} - 40px);
+        height: calc(100vh - #{$size-headerHeight} - 50px);
       }
     }
   }
@@ -153,6 +155,7 @@ dl {
   padding: 0 5px;
   cursor: pointer;
   background-color: #eef4f5;
+  margin: 5px 0 0;
 
   span {
     color: blue;
@@ -165,4 +168,54 @@ pre {
   width: 100%;
   white-space: pre-wrap;
   margin: 0 0 10px;
+}
+
+.informer {
+  position: absolute;
+  z-index: -1000;
+  right: 0;
+  bottom: 60px;
+  left: 0;
+  transition: all 0.3s ease-in;
+  transform: translateY(350%);
+  text-align: center;
+  opacity: 0;
+
+  &.show {
+    z-index: 1005;
+    transition: all 0.25s ease-in;
+    transform: none;
+    opacity: 1;
+  }
+
+  p {
+    display: inline-block;
+    max-width: 90%;
+    margin: 0;
+    padding: 6px 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #fff;
+    border-radius: 18px;
+    background-color: #757575;
+  }
+}
+
+
+button {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+  transition: background 0.3s linear;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  border: 0;
+  border-radius: 3px;
+  outline: none;
+  padding: 8px 20px;
+  color: #fff;
+  background-color: #2275d7;
 }

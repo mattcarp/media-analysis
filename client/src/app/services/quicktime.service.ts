@@ -17,7 +17,7 @@ export class QuicktimeService {
   constructor(private loggerService: LoggerService) {}
 
   // given a small binary chunk, returns stats on the moov atom, if found
-  getMoovStats(buf: ArrayBuffer): Object {
+  getMoovStats(buf: ArrayBuffer): any {
     const result: any = {};
     const chunkView = new jDataView(buf);
     const chunkString = chunkView.getString(chunkView.length, 0);
@@ -39,7 +39,11 @@ export class QuicktimeService {
     return result;
   }
 
-  getMoov(moovStart: number, moovLength: number, buf: ArrayBuffer): ArrayBuffer {
+  getMoov(
+    moovStart: number,
+    moovLength: number,
+    buf: ArrayBuffer,
+  ): ArrayBuffer {
     return buf.slice(moovStart, moovStart + moovLength);
   }
 
@@ -53,8 +57,14 @@ export class QuicktimeService {
     const dcomPos = movString.indexOf('dcom');
     const dmvdPos = movString.indexOf('cmvd');
 
-    this.loggerService.info(`Positions, everyone: ${cmovPos}, ${dcomPos}, ${dmvdPos}`, 'color: green');
-    this.loggerService.info(`This shold be a string containing only the moov data:`, 'color: green');
+    this.loggerService.info(
+      `Positions, everyone: ${cmovPos}, ${dcomPos}, ${dmvdPos}`,
+      'color: green',
+    );
+    this.loggerService.info(
+      `This shold be a string containing only the moov data:`,
+      'color: green',
+    );
     console.log(movString);
 
     return { bubbaGump: 'shrimp co' };

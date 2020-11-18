@@ -1,0 +1,18 @@
+span.ddp-nav-link {
+  color: rebeccapurple;
+  font-weight: 200;
+  margin-top: 20px;
+}
+
+.nav-tabs {
+  margin-left: 50px;
+  margin-bottom: 35px;
+}
+
+.ddp-nav-link:hover {
+  background-color: pink;
+}
+
+.ddp-nav-link.active {
+  background-color: red;
+}

@@ -10,16 +10,16 @@ ProResParser.readFileHead = (file, hollaback) => {
   const bufferSize = 150000;
   fs.open(file, 'r', (status, fileToRead) => {
     if (status) {
-      console.log(status.message);
+      this.logger.log(status.message);
       return;
     }
     const buffer = new Buffer(bufferSize);
     // fs.read(fd, buffer, 0, 100, 0, function(err, num)
     fs.read(fileToRead, buffer, 0, bufferSize, 0, (err) => {
-      console.log('error?', err);
-      // console.log(buffer.toString("utf-8", 0));
+      this.logger.log('error?', err);
+      // this.logger.log(buffer.toString("utf-8", 0));
       hollaback(buffer);
-      if (err) console.log(err);
+      if (err) this.logger.log(err);
       // return buffer;
     });
   });
@@ -30,15 +30,15 @@ ProResParser.readFileHead = (file, hollaback) => {
 ProResParser.getHeader = (buf) => {
   // reserved space, file type, etc at beginning of prores
   const magicSize = 31;
-  console.log('bing bang boom you called the hollaback');
+  this.logger.log('bing bang boom you called the hollaback');
   const moovIdx = buf.indexOf('moov');
-  console.log('moov', moovIdx);
+  this.logger.log('moov', moovIdx);
   // move size if from bytes 32 to 35
   const moovSize = buf.readInt32BE(32);
-  console.log('moov size', moovSize);
-  console.log('ftypqt', buf.indexOf('ftypqt'));
+  this.logger.log('moov size', moovSize);
+  this.logger.log('ftypqt', buf.indexOf('ftypqt'));
   const headerEndIdx = magicSize + moovSize;
-  console.log('end of moov atom is at', headerEndIdx);
+  this.logger.log('end of moov atom is at', headerEndIdx);
   return buf.slice(0, headerEndIdx);
 };
 
@@ -49,9 +49,9 @@ ProResParser.getNextFrameIdx = (file) => {
   const frameSizeLength = 8;
   ProResParser.readFileHead(file, (buffer) => {
     //
-    console.log('from get next frame, buff length', buffer.length);
+    this.logger.log('from get next frame, buff length', buffer.length);
     const nextFrameIcpf = buffer.indexOf('icpf');
-    console.log('next frame icpf', nextFrameIcpf);
+    this.logger.log('next frame icpf', nextFrameIcpf);
     return nextFrameIcpf - frameSizeLength;
   });
 };

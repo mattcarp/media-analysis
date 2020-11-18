@@ -21,13 +21,13 @@ describe('ProRes Parser', () => {
   it('should get length of prores header', (buf) => {
     let result1 = 0;
     p.readFileHead(f, (buffer) => {
-      console.log('from the test, buffer length', buffer.length);
+      this.logger.log('from the test, buffer length', buffer.length);
       result1 = p.getHeader(buffer);
-      console.log('length of result from test on getHeader', result1.length);
+      this.logger.log('length of result from test on getHeader', result1.length);
       assert.equal(result1.length, 40297);
       // done();
       // const result2 = p.getheader(buf);
-      // console.log('length of the header:', result2.length);
+      // this.logger.log('length of the header:', result2.length);
     });
   });
 });
@@ -36,7 +36,7 @@ describe('ProRes Parser', () => {
   const f = `${path}prores_last_2_megs.mov`;
   it('should get next frame index', (done) => {
     p.getNextFrameIdx(f, (nextFrame) => {
-      console.log('length of result from test on getHeader', nextFrame);
+      this.logger.log('length of result from test on getHeader', nextFrame);
       assert.equal(nextFrame, 40297);
       done();
     });

@@ -1,22 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { version } from '../../package.json';
 
+import { File } from './models/file.model';
 import { ExtractMetadataService } from './extract-metadata/extract-metadata.service';
 import { LoggerService } from './services/logger.service';
 import { PrettierBytesService } from './services/prettier-bytes.service';
-import { FileHandlerService } from './handle-files/handle-files.service';
+import { UploaderService } from './uploader/uploader.service';
 import { FileTypeService } from './services/file-type.service';
-
-export interface File {
-  analysed: string;
-  id: string;
-  lastModified: number;
-  lastModifiedDate: string;
-  name: string;
-  size: number;
-  status: string;
-  type: string;
-}
 
 @Component({
   selector: 'app-root',
@@ -24,7 +14,6 @@ export interface File {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  @ViewChild('consoleLog') consoleLog: ElementRef;
   title = 'client';
   metadataStarted: boolean;
   verUI = version;
@@ -32,14 +21,17 @@ export class AppComponent implements OnInit {
   files: File[] = [];
   audioValidations: any[] = [];
   videoValidations: any[] = [];
-  selectedTabIndex: number;
+  isDDP = false;
+  isDDPPQ = false;
+  isDDPMS = false;
+  isDDPID = false;
 
   constructor(
     private extractMetadataService: ExtractMetadataService,
     private loggerService: LoggerService,
     private cdr: ChangeDetectorRef,
     private prettierBytesService: PrettierBytesService,
-    private fileHandlerService: FileHandlerService,
+    private fileHandlerService: UploaderService,
     private fileTypeService: FileTypeService,
   ) {
     loggerService.loggerResult.subscribe((res) => {
@@ -59,7 +51,10 @@ export class AppComponent implements OnInit {
 
     console.log(
       `%c ► Media Analysis %c ${
-        document.location.hostname === 'localhost' || document.location.hostname === '127.0.0.1' ? 'localhost' : ''
+        document.location.hostname === 'localhost' ||
+        document.location.hostname === '127.0.0.1'
+          ? 'localhost'
+          : ''
       } %c client UI v.${this.verUI}`,
       style1,
       style2,
@@ -69,10 +64,21 @@ export class AppComponent implements OnInit {
     this.logger = `👉 Media Analysis, client UI v.${this.verUI} ─ is ready`;
   }
 
-  handleFilesListChange(files: any): void {
+  handleFilesListChange(files: File[]): void {
     this.files.push(...files);
 
     this.files.forEach((file: File) => {
+      if (file.name === 'DDPPQ') {
+        this.isDDPPQ = true;
+      }
+      if (file.name === 'DDPMS') {
+        this.isDDPMS = true;
+      }
+      if (file.name === 'DDPID') {
+        this.isDDPID = true;
+      }
+      this.isDDP = this.isDDPPQ && this.isDDPMS && this.isDDPID;
+
       this.fileHandlerService.setMediaFile(file);
       this.extractMetadataService.extract(file);
     });

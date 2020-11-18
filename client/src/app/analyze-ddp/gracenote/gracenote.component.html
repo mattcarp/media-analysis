@@ -1,0 +1,42 @@
+<div class="ddp-gracenote_content">
+  <div *ngIf="!gracenoteData"><h4>No gracenote data found</h4></div>
+  <div *ngIf="gracenoteData">
+
+    <h3> {{gracenoteData?.ALBUM.ARTIST}}</h3>
+    <h3> {{gracenoteData?.ALBUM.TITLE}}</h3>
+    <p>Packaging Language <strong>{{gracenoteData?.ALBUM.PKG_LANG}}</strong></p>
+    <p>Date <strong>{{gracenoteData?.ALBUM.DATE}}</strong></p>
+    <p>Genre <strong>{{gracenoteData?.ALBUM.GENRE.__text}}</strong></p>
+    <p>Track Count <strong>{{gracenoteData?.ALBUM.TRACK_COUNT}}</strong></p>
+
+    <div class="col-xs-6">
+      <table class="table table-sm table-striped">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Title</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let track of gracenoteData?.ALBUM.TRACK">
+          <th scope="row">{{track?.TRACK_NUM}}</th>
+          <td>{{track?.TITLE}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+    <!--TODOmc getting 'differ' error if album has only one image-->
+    <div class="col-xs-6">
+      <!--<span *ngIf="gracenoteData?.ALBUM.URL > 1" *ngFor="let image of gracenoteData?.ALBUM.URL">-->
+      <!--<img src="{{image.__text}}" alt="{{image._type}}">-->
+      <!--</span>-->
+      <img src="{{gracenoteData?.ALBUM.URL}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
+      <span *ngIf="gracenoteData?.ALBUM.length === 1">
+    <img src="{{gracenoteData?.ALBUM.URL.__text}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
+  </span>
+    </div><!-- second column -->
+    <p>&nbsp;</p>
+  </div>
+</div>

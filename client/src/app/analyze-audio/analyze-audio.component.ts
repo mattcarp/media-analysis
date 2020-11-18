@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { AnalyzeAudioService } from './analyze-audio.service';
 
 @Component({
-  selector: 'analyze-audio',
+  selector: 'app-analyze-audio',
   templateUrl: './analyze-audio.component.html',
 })
 export class AnalyzeAudioComponent {
@@ -25,7 +25,7 @@ export class AnalyzeAudioComponent {
       this.detectingMono = value;
     });
 
-    analyzeAudioService.resultsEmitter.subscribe(detections => {
+    analyzeAudioService.resultsEmitter.subscribe((detections) => {
       this.detectingMono = false;
       console.log('mono detection complete: the detection array:');
       console.log(detections);

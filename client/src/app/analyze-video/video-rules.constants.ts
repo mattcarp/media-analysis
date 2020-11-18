@@ -2,9 +2,11 @@ export const VideoRulesConstants = {
   videoStream: [
     {
       codecs: ['prores', 'mpeg2video', 'h264'],
-      codecsMessage: 'Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD.',
+      codecsMessage:
+        'Video codec must be ProRes, MPEG-2, H.264, or Avid DNX HD.',
       frameRates: [23.976, 24, 25, 29.97, 30],
-      frameRatesMessage: 'Frame rate must be either 23.976, 24, 25, 29.97, or 30.',
+      frameRatesMessage:
+        'Frame rate must be either 23.976, 24, 25, 29.97, or 30.',
       width: 1920,
       widthMessage: `Width must be 1920 pixels.`,
       height: 1080,

@@ -1,0 +1,114 @@
+<div class="ddp-body">
+  <div class="ddp-player-panel">
+    <div class="ddp-player">
+      <div class="row">
+        <div class="col-xs-2">
+          <h3 class="ddp-timecode">
+            {{timecode}}
+          </h3>
+        </div>
+        <div class="col-xs-6">
+          <!-- playback controls -->
+          <button (click)="playPause()">
+            <i class="ma-icon play" *ngIf="showPlay"></i>
+            <i class="ma-icon stop" *ngIf="!showPlay"></i>
+          </button>
+          <button (click)="playFrom(0)">
+            <i class="ma-icon play"></i>
+            <span>Play from file start</span>
+          </button>
+          <button (click)="playFromIdx1()">
+            <i class="ma-icon play"></i>
+            <span>Play from index 1</span>
+          </button>
+        </div>
+        <div class="row ddp-annotation-wrapper">
+          <div *ngIf="playerAnnotation && !playbackStatus">
+            <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
+            <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
+            <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
+            <p>{{playbackStatus}}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ddp-waveform-container">
+        <!--<progress *ngIf="wavProgress < 100" class="progress progress-striped progress-info"-->
+        <!--value="{{wavProgress}}" max="100">-->
+        <!--</progress>-->
+
+        <div [hidden]="wavProgress <= 99">
+          <div id="waveform" class="ddp-waveform"></div>
+          <div id="waveform-timeline"></div>
+        </div>
+      </div>
+
+      <div class="ddp-player">
+        <!--zoom control -->
+        <p class="row">
+        <div class="col-xs-1">
+          <i class="fa fa-search-minus"></i>
+        </div>
+        <div class="col-xs-10">
+          <input id="slider" type="range" min="1" max="46" value="1" style="width: 100%" />
+        </div>
+        <div class="col-xs-1">
+          <i class="fa fa-search-plus"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="ddp-playlist">
+      <table class="md-data-table">
+        <thead>
+        <tr>
+          <th></th>
+          <th>Track Name</th>
+          <th>ISRC</th>
+          <th>Pre Gap</th>
+          <th>Duration</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let track of playList; let i = index"
+            [class.selected]="isSelected(i)"
+            (click)="queueTrack(i, $event)" class="ddp-track">
+          <th scope="row">{{i + 1}}</th>
+          <td>{{track?.file?.file?.name}}</td>
+          <td>{{track?.isrc}}</td>
+          <td>{{track?.preGap}}</td>
+          <td>{{track?.dur}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="ddp-tabs-container">
+    <br>
+    <h2>Playback</h2>
+    <p>refactor player into it's own component and put it here (don't lazy load)</p>
+    <br>
+    <h2>DDP ID</h2>
+    <ddp-ddpid></ddp-ddpid>
+    <br>
+    <h2>Map Stream</h2>
+    <ddp-ddpms></ddp-ddpms>
+    <br>
+    <h2>PQ Subcode</h2>
+    <ddp-ddppq></ddp-ddppq>
+    <br>
+    <h2>Validations</h2>
+    <ddp-validations></ddp-validations>
+    <br>
+    <h2>Hashes</h2>
+    <ddp-hashes></ddp-hashes>
+    <br>
+    <h2>CD Text</h2>
+    <ddp-cdtext></ddp-cdtext>
+    <br>
+    <h2>Gracenote</h2>
+    <p>Show gracenote junk here</p>
+  </div>
+
+</div>

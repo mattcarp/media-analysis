@@ -1,0 +1,43 @@
+huwo?
+<div class="ddp-hashes-content">
+
+  <div *ngIf="hashFiles$ | async as hashFiles">
+    <h3>Hashes
+    </h3>
+    <h4>{{hashFiles?.length}} hash files found. Would you like to verify them?</h4>
+    <button (click)="verifyHashes(hashFiles)">verify hashes</button>
+    <!--<div class="alert alert-info" ng-show="hashWarning">{{hashWarning}}</div>-->
+    <table class="table table-sm" id="bb-ddp-hashes">
+      <thead>
+      <tr>
+        <th>Hash File</th>
+        <th>Last Modified</th>
+        <th>Provided Hash</th>
+        <th>Computed Hash</th>
+        <th>Result</th>
+      </tr>
+      </thead>
+      <tbody>
+
+      <tr *ngFor="let hashEntry of hashFiles"
+          [ngClass]="{
+        'ddp-hash-match': hashEntry?.hash === hashEntry?.computedHash,
+        'ddp-hash-mismatch': hashEntry?.computedHash && hashEntry?.hash !== hashEntry?.computedHash
+      }">
+        <td>{{hashEntry?.targetFileName}}</td>
+        <td>{{hashEntry?.lastModified}}</td>
+        <td>{{hashEntry?.hash}}</td>
+        <td>{{hashEntry?.computedHash}}</td>
+        <td>
+          <progress *ngIf="hashEntry?.progress < 100" class="progress progress-striped progress-info"
+                    value="{{hashEntry?.progress}}" max="100"></progress>
+          <i *ngIf="hashEntry?.hash === hashEntry?.computedHash"
+             class="fa fa-check ddp-hash-status"></i>
+          <i *ngIf="hashEntry?.computedHash && hashEntry?.hash !== hashEntry?.computedHash"
+             class="fa fa-close ddp-hash-status"></i>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

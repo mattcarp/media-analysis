@@ -1,37 +1,45 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { InjectionToken, CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import {
+  InjectionToken,
+  CUSTOM_ELEMENTS_SCHEMA,
+  NgModule,
+} from '@angular/core';
 import { StoreModule } from '@ngrx/store';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MatTabsModule } from '@angular/material/tabs';
 
+import { environment } from '../environments/environment';
+import { reducers } from './shared/store/reducers';
 import { AppRoutingModule } from './app-routing.module';
+import { LoggerService } from './services/logger.service';
+import { HelperService } from './services/helper.service';
 import { AppComponent } from './app.component';
-import { HandleFilesComponent } from './handle-files/handle-files.component';
+import { UploaderComponent } from './uploader/uploader.component';
 import { PlayerComponent } from './player/player.component';
 import { AnalyzeVideoComponent } from './analyze-video/analyze-video.component';
 import { AnalyzeAudioComponent } from './analyze-audio/analyze-audio.component';
 import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.component';
 import { DetectBlackComponent } from './detect-black/detect-black.component';
-import { LoggerService } from './services/logger.service';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
-import { reducers } from './shared/store/reducers';
-import { DdpAnalysisModule } from './ddp-analysis/ddp-analysis.module';
-import { environment } from '../environments/environment';
+import { AnalyzeDdpModule } from './analyze-ddp/analyze-ddp.module';
 
+export const ReducerToken = new InjectionToken(
+  'Media Analysis Registered Reducers',
+);
 
-export const ReducerToken = new InjectionToken('Media Analysis Registered Reducers');
-
-export const getReducers = () => {
+export const getReducers = (): any => {
   return reducers;
 };
 
-export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers }];
+export const ReducerProvider = [
+  { provide: ReducerToken, useFactory: getReducers },
+];
 
 @NgModule({
   declarations: [
     AppComponent,
-    HandleFilesComponent,
+    UploaderComponent,
     DetectBlackComponent,
     ExtractMetadataComponent,
     AnalyzeAudioComponent,
@@ -43,15 +51,15 @@ export const ReducerProvider = [{ provide: ReducerToken, useFactory: getReducers
     BrowserModule,
     AppRoutingModule,
     StoreModule.forRoot(ReducerToken, {}),
-    DdpAnalysisModule,
+    AnalyzeDdpModule,
     NoopAnimationsModule,
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
     MatTabsModule,
   ],
-  providers: [
-    LoggerService,
-    ReducerProvider,
-  ],
+  providers: [LoggerService, HelperService, ReducerProvider],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

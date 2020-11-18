@@ -38,9 +38,9 @@ $color-primary: #ff181f;
 // sizes
 $size-radius: 2px;
 $size-headerHeight: 60px;
-$size-consoleHeight: 35vh;
-$size-uploaderWidth: 700px;
-$size-validationWidth: 600px;
+$size-consoleHeight: 0; // 35vh;
+$size-uploaderWidth: 580px;
+$size-validationWidth: 720px;
 $gridColumnGapWidth: 20px;
 $size-sectionWidth: calc(#{$size-uploaderWidth} + #{$size-validationWidth} + #{$gridColumnGapWidth});
 

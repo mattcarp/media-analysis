@@ -12,7 +12,9 @@ export class FileTypeService {
 
     return '/';
 */
-    let fileExtension = file.name ? this.getFileNameAndExtension(file.name).extension : null;
+    let fileExtension = file.name
+      ? this.getFileNameAndExtension(file.name).extension
+      : null;
     fileExtension = fileExtension ? fileExtension.toLowerCase() : null;
 
     if (file.type) {
@@ -29,7 +31,9 @@ export class FileTypeService {
     return 'application/octet-stream';
   }
 
-  getFileNameAndExtension(fullFileName: string): { extension: string; name: string } {
+  getFileNameAndExtension(
+    fullFileName: string,
+  ): { extension: string; name: string } {
     const lastDot = fullFileName.lastIndexOf('.');
     // these count as no extension: "no-dot", "trailing-dot."
     if (lastDot === -1 || lastDot === fullFileName.length - 1) {
@@ -91,5 +95,6 @@ export class FileTypeService {
     conf: 'text/plain',
     log: 'text/plain',
     pdf: 'application/pdf',
+    trk: 'CD-image/ddp',
   };
 }
