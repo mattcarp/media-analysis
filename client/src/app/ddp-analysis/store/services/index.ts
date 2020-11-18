@@ -7,3 +7,4 @@ export * from './ddppq.service';
 export * from './gracenote.service';
 export * from './hashes.service';
 export * from './validations.service';
+export * from './logger-monitor';

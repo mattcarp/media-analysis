@@ -11,7 +11,7 @@ import { IdState } from '../models';
 export class DdpidService {
   constructor(private store: Store<DdpState>) {}
 
-  parse(ddpidContent: string, resumFile: any) {
+  parse(ddpidContent: string, resumFile: any): void {
     const parsedId: IdState = {
       fileId: resumFile.uniqueIdentifier,
       fileName: resumFile.name,
@@ -29,7 +29,7 @@ export class DdpidService {
       side: ddpidContent[90],
       nlayer: ddpidContent[91],
       layer: ddpidContent[92],
-      txt: ddpidContent.substring(95, 128).trim()
+      txt: ddpidContent.substring(95, 128).trim(),
     };
     this.store.dispatch(setIdState({ id: parsedId }));
   }

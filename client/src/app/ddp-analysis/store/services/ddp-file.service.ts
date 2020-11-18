@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
@@ -18,6 +19,7 @@ import { CdTextService } from './cdtext.service';
   providedIn: 'root',
 })
 export class DdpFileService implements OnDestroy {
+  static loggerS: NGXLogger;
   parseStartTime: Date = new Date();
   waveSurferInstance: any;
   parsedMs: MsState;
@@ -40,6 +42,7 @@ export class DdpFileService implements OnDestroy {
     private gracenoteService: GracenoteService,
     private cdTextService: CdTextService,
     private store: Store<DdpState>,
+    private logger: NGXLogger,
   ) {}
 
   ngOnDestroy(): void {
@@ -52,7 +55,7 @@ export class DdpFileService implements OnDestroy {
     // TODO do we need this:
     this.allResumableFiles = resumable.files;
     this.parseStartTime = new Date();
-    console.log('all files have been added');
+    this.logger.log('all files have been added');
     this.store.dispatch(setDdpFiles({ selectedAt: new Date(), files: resumableFiles }));
     this.waveSurferInstance = waveSurferInstance;
     for (const fileObj of resumableFiles) {
@@ -190,15 +193,15 @@ export class DdpFileService implements OnDestroy {
     DdpFileService.writeString(view, 36, 'data');
     // data chunk length
     // TODOmc certain ddps throw: RangeError: byte length of Uint32Array should be a multiple of 4
-    console.log('the byte length for this Uint32 array , which might not be divisible by 4, is',
+    DdpFileService.loggerS.log('the byte length for this Uint32 array , which might not be divisible by 4, is',
       rawAudio.byteLength);
     // view.setUint32(40, rawAudio.byteLength, true);
     /// TODOmc temp hard-coding 32 - should use rawAudio.byteLEngth
     // view.setUint32(40, 32, true);
     view.setFloat32(40, rawAudio.byteLength, true);
 
-    console.log('first 120 chars of view buffer:');
-    console.log(String.fromCharCode.apply(null, new Uint8Array(view.buffer.slice(0, 120))));
+    DdpFileService.loggerS.log('first 120 chars of view buffer:');
+    DdpFileService.loggerS.log(String.fromCharCode.apply(null, new Uint8Array(view.buffer.slice(0, 120))));
     return DdpFileService.appendBuffer(view.buffer, rawAudio);
   }
 
@@ -267,9 +270,9 @@ export class DdpFileService implements OnDestroy {
             select(selectPq),
             takeUntil(this.destroy$),
           ).subscribe((pq: PqState) => {
-            console.log('we should have a parsed pq at this point', pq);
+            this.logger.log('we should have a parsed pq at this point', pq);
             const audioWithPq: any[] = this.ddppqService.addPqToAudio(this.audioEntries, pq);
-            console.log('this is my audio with pq stuff', audioWithPq);
+            this.logger.log('this is my audio with pq stuff', audioWithPq);
             this.store.dispatch(setAudioEntries({ audioEntries: audioWithPq }));
             // set up the first track for playback
             const trk1Pregap = parseFloat(audioWithPq[0].preGap) / 75.0;
@@ -291,14 +294,13 @@ export class DdpFileService implements OnDestroy {
             // TODO get the parsedMs info from the store, put audio entries in the store
             this.audioEntries = this.ddpmsService.getAudioEntries(ms);
             const pqFileInfo: any = this.getPqFileInfo(ms);
-            console.log('parsed ms:', ms);
+            this.logger.log('parsed ms:', ms);
             this.handlePqFile(pqFileInfo, this.allResumableFiles);
             const cdTextFileInfo = this.getCdTextFileInfo(ms);
             if (cdTextFileInfo) {
               this.cdTextService.getFile(cdTextFileInfo, this.allResumableFiles);
             }
-            console.log('audio entries');
-            console.dir(this.audioEntries);
+            this.logger.log('audio entries', this.audioEntries);
           });
           break;
       }

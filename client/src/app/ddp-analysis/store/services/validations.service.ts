@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 
 import { DdpState } from '../reducers/ddp.reducer';
 import { DdpmsService } from './ddpms.service';
@@ -19,6 +20,7 @@ export class ValidationsService {
     private ddpmsService: DdpmsService,
     private ddpService: DdpService,
     private store: Store<DdpState>,
+    private logger: NGXLogger,
   ) {}
 
   validate(collectedFileInfo, parsedMs, parsedId) {
@@ -42,7 +44,7 @@ export class ValidationsService {
     // let trackCount = ''; // todomc get track count
     // validation.trackCountWarning = this.getTrackCountWarning();
 
-    console.log('file status', fileStatus);
+    this.logger.log('file status', fileStatus);
     if (fileStatus.isValid === false || validation.pqMsIssues.length) {
       validation.isValid = false;
     }
@@ -56,7 +58,7 @@ export class ValidationsService {
     // TODOmc add pqMsPasses to length of total passes
     validation.totalPasses = fileStatus.foundFiles.length + fileStatus.sizeMatches.length;
     // +  validation.pqMsPasses.length;
-    console.log('gonna set these validations on the store', validation);
+    this.logger.log('gonna set these validations on the store', validation);
 
     this.store.dispatch(setValidationState({ validation }));
   }
@@ -95,7 +97,7 @@ export class ValidationsService {
           foundFiles.push({ name: reqFileName, size: reqFileSize });
 
           if (reqFileSize === foundFileSize) {
-            // console.log(reqFileName + ': file sizes match');
+            // this.logger.log(reqFileName + ': file sizes match');
             sizeMatches.push({ name: reqFileName, reqSize: reqFileSize });
           } else if (reqFileName !== 'DDPID' && reqFileSize !== foundFileSize) {
             isValid = false;
@@ -108,7 +110,7 @@ export class ValidationsService {
               diff: sizeDiff,
             });
           }
-          // console.log(reqFileName + ' was found in the directory');
+          // this.logger.log(reqFileName + ' was found in the directory');
         }
       }
       if (!fileExists) {
@@ -117,7 +119,7 @@ export class ValidationsService {
         missingFiles.push({ name: reqFileName, reqSize: reqFileSize });
       }
     }
-    console.log('req files?', requiredFiles);
+    this.logger.log('req files?', requiredFiles);
     // DDPID file is not in the map stream, but is required
 
     if (requiredFiles) {
@@ -149,7 +151,7 @@ export class ValidationsService {
         ofs: '',
         pad: '',
       });
-      console.log('did we get past the concat?');
+      this.logger.log('did we get past the concat?');
     }
 
     // if audio, DDPID should be 128 bytes
@@ -158,7 +160,7 @@ export class ValidationsService {
     if (parsedId?.type_ === 'CD') {
 
       if (parsedId.fileSize !== this.AUDIO_ID_FILE_SIZE) {
-        console.log('size mismatches:', sizeMismatches);
+        this.logger.log('size mismatches:', sizeMismatches);
         sizeMismatches.push({
           name: this.DDPID_FILE_NAME,
           reqSize: this.AUDIO_ID_FILE_SIZE,
@@ -178,7 +180,7 @@ export class ValidationsService {
     response.sizeMatches = sizeMatches;
     response.sizeMismatches = sizeMismatches;
     response.foundFiles = foundFiles;
-    console.log('get file status is returning:', response);
+    this.logger.log('get file status is returning:', response);
     return response;
   }
 
@@ -236,7 +238,7 @@ export class ValidationsService {
     const returnObj: any = {};
 
     if (frames <= THRESHOLD_1) {
-      console.log('frames are less than threshold 1');
+      this.logger.log('frames are less than threshold 1');
       returnObj.msg = null;
       returnObj.shouldBlock = false;
     }

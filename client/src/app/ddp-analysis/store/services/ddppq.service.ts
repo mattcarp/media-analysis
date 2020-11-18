@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 
 import { DdpState } from '../reducers/ddp.reducer';
 import { DdpService } from './ddp.service';
@@ -10,7 +11,11 @@ import { setPqState } from '../actions/ddp.actions';
   providedIn: 'root',
 })
 export class DdppqService {
-  constructor(private ddpService: DdpService, private store: Store<DdpState>) {}
+  constructor(
+    private ddpService: DdpService,
+    private store: Store<DdpState>,
+    private logger: NGXLogger,
+  ) {}
 
   static parseSingleBlock(block) {
     const blockObj: any = {};
@@ -47,7 +52,7 @@ export class DdppqService {
     // TODO these cause mutations to pqAmended - write as pure functions
     let pqAmended: PqEntry[] = this.insertGaps(pqArr);
     pqAmended = this.insertDurations(pqAmended);
-    console.log('the amended pq, should have durations:', pqAmended);
+    this.logger.log('the amended pq, should have durations:', pqAmended);
     const pq: PqState = {
       fileName: 'bubbafile',
       fileSize: 122345,
@@ -130,14 +135,14 @@ export class DdppqService {
           }
 
         }
-        // console.log('trackStart', trackStart, 'for', parseInt(pqArr[i].trk, 10));
+        // this.logger.log('trackStart', trackStart, 'for', parseInt(pqArr[i].trk, 10));
         const startFrame = this.timeToFrames(trackStart);
         const endFrame = this.timeToFrames(nextPauseStart);
-        // console.log('trackEnd', nextPauseStart);
+        // this.logger.log('trackEnd', nextPauseStart);
         const dur = endFrame - startFrame;
-        // console.log(parseMs().framesToTime(dur));
+        // this.logger.log(parseMs().framesToTime(dur));
         pqArrWithDurations[i].dur = this.ddpService.framesToTime(dur);
-        // console.log('dur', this.ddpService.framesToTime(dur));
+        // this.logger.log('dur', this.ddpService.framesToTime(dur));
 
       }
     }

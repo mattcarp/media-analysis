@@ -8,6 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import WaveSurfer from 'wavesurfer.js';
@@ -57,6 +58,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     private ddpFileService: DdpFileService,
     private zone: NgZone,
     private store: Store<DdpState>,
+    private logger: NGXLogger,
   ) {}
 
   ngOnInit(): void {
@@ -100,7 +102,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.waveSurfer.on('audioprocess', () => {
-      // console.log('current time in audio process?', this.waveSurfer.getCurrentTime());
+      // this.logger.log('current time in audio process?', this.waveSurfer.getCurrentTime());
       const timeInSecs: number = this.waveSurfer.getCurrentTime();
       this.zone.run(() => {
         // TODOmc errors due to rounding
@@ -123,7 +125,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.waveSurfer.on('ready', () => {
       this.showWaveform = true;
-      // console.log('current time?', this.waveSurfer.getCurrentTime());
+      // this.logger.log('current time?', this.waveSurfer.getCurrentTime());
       this.timecode = this.ddpService.framesToTime(0);
       const timeline = Object.create(WaveSurfer.Timeline);
       timeline.init({
@@ -209,7 +211,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onSliderChange(value): void {
-    // console.log('were does the waveform disappear?', slider.value);
+    // this.logger.log('were does the waveform disappear?', slider.value);
     this.waveSurfer.zoom(Number(value));
   }
 
@@ -224,12 +226,12 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     // TODO highlight selected track
     this.currentIndex = index;
     this.trackSelected = true;
-    console.log('the click event:', event);
+    this.logger.log('the click event:', event);
     this.playbackStatus = '';
     this.waveSurfer.empty();
     this.queuedPreGap = this.playList[index].preGap;
-    console.log('playlist', this.playList);
-    console.log('queued preGap?', this.queuedPreGap);
+    this.logger.log('playlist', this.playList);
+    this.logger.log('queued preGap?', this.queuedPreGap);
     this.ddpFileService.readAudioFile(this.playList[index].file.file);
     const preGapSecs = this.playList[index].preGap / 75.0;
     this.ddpFileService.addRegion(0, preGapSecs);

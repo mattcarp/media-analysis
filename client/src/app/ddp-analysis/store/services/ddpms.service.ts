@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 
 import { DdpState } from '../reducers/ddp.reducer';
 import { MsEntry, MsState } from '../models';
@@ -11,7 +12,7 @@ import { setMsState } from '../actions/ddp.actions';
 export class DdpmsService {
   BLOCK_SIZE = 128;
 
-  constructor(private store: Store<DdpState>) {}
+  constructor(private store: Store<DdpState>, private logger: NGXLogger) {}
 
   parse(ddpmsString: string, fileObj: File & any) {
     const msArr: MsEntry[] = [];
@@ -27,7 +28,7 @@ export class DdpmsService {
       lastModified: fileObj.lastModifiedDate,
       entries: msArr,
     };
-    console.log('payload for store:', parsedMs);
+    this.logger.log('payload for store:', parsedMs);
     this.store.dispatch(setMsState({ ms: parsedMs }));
   }
 
@@ -104,12 +105,12 @@ export class DdpmsService {
         // dsl can be either a string or an int
         // streamLength = parseInt(ddpmsObjs[i].dsl, 10);
         const dsl = parseInt(ddpmsObjs[i].dss, 10);
-        console.log(parseInt(ddpmsObjs[i].trk, 10));
+        this.logger.log(parseInt(ddpmsObjs[i].trk, 10));
         // if there's no dss, then DDP is consolidated
         if (!isNaN(dsl)) {
-          console.log('this one is split');
+          this.logger.log('this one is split');
         } else {
-          console.log('this one is consolidated');
+          this.logger.log('this one is consolidated');
         }
       }
     }
@@ -169,7 +170,7 @@ export class DdpmsService {
     const audioEntries = [];
     let audioEntry: any = {};
     const ddpmsObjs = parsedDdpMs.entries;
-    console.log('wha?, ms objs', ddpmsObjs);
+    this.logger.log('wha?, ms objs', ddpmsObjs);
     for (let i = 0; i < ddpmsObjs.length; i++) {
       if (ddpmsObjs[i].cdm.trim() === 'DA') {
         audioEntry = {};

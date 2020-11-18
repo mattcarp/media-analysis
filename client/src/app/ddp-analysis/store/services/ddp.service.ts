@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DdpService {
   FRAMES_PER_SECOND = 75;
+
+  constructor(private logger: NGXLogger) {}
 
   getMasterFormat(nside: string, nlayer: string, type: string) {
     const masterFormat: any = {};
@@ -46,12 +49,12 @@ export class DdpService {
       }
     }
     // if leadout is repeated, remove last entry
-    console.log(tocArray[tocArray.length - 1], tocArray[tocArray.length - 2]);
+    this.logger.log(tocArray[tocArray.length - 1], tocArray[tocArray.length - 2]);
     if (tocArray[tocArray.length - 1] === tocArray[tocArray.length - 2]) {
       tocArray.pop();
     }
-    console.log('toc array');
-    console.log(tocArray);
+    this.logger.log('toc array');
+    this.logger.log(tocArray);
     const toc: string = tocArray.join(' ');
     return toc;
   }
