@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -19,7 +20,7 @@ export class HashesService implements OnDestroy {
 
   private destroy$ = new Subject<any>();
 
-  constructor(private store: Store<DdpState>) {
+  constructor(private store: Store<DdpState>, private logger: NGXLogger) {
     this.store.pipe(
       select(selectDdpFiles),
       takeUntil(this.destroy$),
@@ -65,7 +66,7 @@ export class HashesService implements OnDestroy {
               this.loadNext(fileReader, file, currentChunk, CHUNK_SIZE, blobSlice);
             } else {
               if (i === md5Arr.length - 1) {
-                console.log('are we all done hashing? that would be great');
+                this.logger.log('are we all done hashing? that would be great');
               }
 
               this.store.dispatch(setComputedHashItem({
@@ -73,12 +74,12 @@ export class HashesService implements OnDestroy {
                 lastModified: file.lastModifiedDate,
                 computedHash: spark.end(),
               }));
-              console.info('computed hash:', spark.end());  // compute hash
+              this.logger.log('computed hash:', spark.end());  // compute hash
             }
           };
 
           fileReader.onerror = () => {
-            console.warn('something went wrong while hashing a file');
+            this.logger.error('something went wrong while hashing a file');
           };
 
           this.loadNext(fileReader, file, currentChunk, CHUNK_SIZE, blobSlice);
@@ -106,10 +107,10 @@ export class HashesService implements OnDestroy {
       const lastMod = fileObj.lastModifiedDate;
       if (extension === 'MD5') {
         if (fileObj.size > 100000) {
-          console.error('File size to large to be an MD5. Continuing');
+          this.logger.error('File size to large to be an MD5. Continuing');
           continue;
         }
-        console.log('we have an md5 file, must now read it');
+        this.logger.log('we have an md5 file, must now read it');
         const reader = new FileReader();
         reader.onload = (event: any) => {
           // remove line breaks

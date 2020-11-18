@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
+import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { DdpComponent } from './ddp/ddp.component';
 import { ddpFilesFeatureKey, reducer as ddpFilesReducer } from './store/reducers/ddp.reducer';
@@ -17,6 +18,7 @@ import { DdppqComponent } from './ddppq/ddppq.component';
 import { GracenoteComponent } from './gracenote/gracenote.component';
 import { HashesComponent } from './hashes/hashes.component';
 import { ValidationsComponent } from './validations/validations.component';
+import { LoggerMonitor } from './store/services';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,11 @@ import { ValidationsComponent } from './validations/validations.component';
     StoreModule.forFeature(ddpFilesFeatureKey, ddpFilesReducer),
     MatTabsModule,
     MatCardModule,
+    LoggerModule.forRoot({
+      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
+      level: NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.ERROR,
+    }),
   ],
   exports: [
     DdpComponent,
@@ -53,4 +60,11 @@ import { ValidationsComponent } from './validations/validations.component';
     ValidationsComponent,
   ],
 })
-export class DdpAnalysisModule {}
+export class DdpAnalysisModule {
+  constructor(private logger: NGXLogger) {
+    this.logger.registerMonitor(new LoggerMonitor());
+    this.logger.error('ERROR');
+    this.logger.debug('DEBUG');
+    this.logger.log('LOG');
+  }
+}

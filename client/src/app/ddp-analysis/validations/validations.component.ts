@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -28,6 +29,7 @@ export class ValidationsComponent implements OnInit, OnDestroy {
     private ddppqService: DdppqService,
     private validationsService: ValidationsService,
     private store: Store<DdpState>,
+    private logger: NGXLogger,
   ) {}
 
   ngOnInit(): void {
@@ -56,8 +58,8 @@ export class ValidationsComponent implements OnInit, OnDestroy {
         this.validations = validations;
       });
       // TODO validations are null
-      console.log('got these validations', this.validations);
-      console.log('in return for ', this.parsedMs, this.parsedId);
+      this.logger.log('got these validations', this.validations);
+      this.logger.log('in return for ', this.parsedMs, this.parsedId);
       const end = new Date().getTime();
       this.totalValidationTime = end - this.ddpFileService.parseStartTime.getTime();
     });
