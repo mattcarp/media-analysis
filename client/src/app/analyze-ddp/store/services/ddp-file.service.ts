@@ -296,8 +296,7 @@ export class DdpFileService implements OnDestroy {
         case 'pq':
           // TODO set in store by calling parse, then get from store
           this.ddppqService.parse(textReader.result);
-          this.store
-            .pipe(select(selectPq), takeUntil(this.destroy$))
+          this.store.pipe(select(selectPq), takeUntil(this.destroy$))
             .subscribe((pq: PqState) => {
               this.logger.log('we should have a parsed pq at this point', pq);
               const audioWithPq: any[] = this.ddppqService.addPqToAudio(
