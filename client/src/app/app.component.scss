@@ -130,6 +130,7 @@ h4 {
   font-weight: 400;
   line-height: 1.1;
   color: $color-medium;
+  display: flex;
 }
 
 a {
@@ -150,6 +151,20 @@ a {
   width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.badge {
+  font-size: 14px;
+  background-color: #eee;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #777;
+  margin: 0 0 0 10px;
+
+  &.active {
+    color: #fff;
+    background-color: #492e7c;
+  }
 }
 
 // Main Logo
@@ -182,12 +197,10 @@ a {
       }
     }
 
-    span {
-      margin: -20px 0 0 10px;
-      padding: 4px;
+    .badge {
       font-size: 11px;
       text-transform: uppercase;
-      border-radius: 2px;
+      background-color: #492e7c;
     }
   }
 
@@ -224,6 +237,11 @@ a {
     position: relative;
     display: inline-block;
     margin: 0 0.3em;
+
+    button {
+      background-color: transparent;
+      padding: 0;
+    }
 
     @media #{$screen-medium} {
       margin: 0 0.6em;

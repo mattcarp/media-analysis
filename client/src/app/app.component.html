@@ -6,7 +6,7 @@
           <i class="main-logo-icon"></i>
           Media Analysis
           <small>Client Side</small>
-          <span>demo</span>
+          <span class="badge">demo</span>
         </a>
       </div>
 
@@ -20,12 +20,14 @@
         <li>
           <a href="https://github.com/mattcarp/media-analysis/" target="_blank" rel="noopener" class="nav-link ext">GitHub</a>
         </li>
+        <li>
+          <button (click)="onAboutClick()" class="nav-link">About</button>
+        </li>
       </ul>
     </nav>
   </section>
 </header>
-<!--<mat-tab-group mat-align-tabs="center" [(selectedIndex)]="selectedTabIndex">-->
-<!--  <mat-tab label="audio / video / image">-->
+
 <main>
   <aside>
     <h2>Uploader:</h2>
@@ -33,7 +35,12 @@
   </aside>
 
   <article>
-    <h2>Validations:</h2>
+    <h2>
+      Analysis:
+      <small class="badge" [class.active]="files.length && !isDDP">Audio/Video/Image</small>
+      <small class="badge" [class.active]="files.length && isDDP">DDP</small>
+    </h2>
+
     <section>
       <app-detect-black></app-detect-black>
 
@@ -78,17 +85,18 @@
     </section>
   </article>
 </main>
-<!--
-  </mat-tab>
-  <mat-tab label="ddp">
-    <app-ddp *ngIf="selectedTabIndex === 1"></app-ddp>
-  </mat-tab>
-</mat-tab-group>
 
-<footer *ngIf="selectedTabIndex !== 1">
-  <section>
-    <h2>Console output:</h2>
-    <textarea #consoleLog [scrollTop]="consoleLog.scrollHeight" class="console-log">{{logger}}</textarea>
-  </section>
-</footer>
--->
+<app-modal modalId="aboutModal" modalTitle="About" closeBtn="true">
+  <p>Media Analysis | Client v.{{verUI}}</p>
+  <p>Analyzes file formats:</p>
+  <dl>
+    <dt>image</dt>
+    <dd>in developing</dd>
+    <dt>video</dt>
+    <dd>in developing</dd>
+    <dt>audio</dt>
+    <dd>in developing</dd>
+    <dt>DDP</dt>
+    <dd>✔</dd>
+  </dl>
+</app-modal>

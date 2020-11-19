@@ -7,6 +7,7 @@ import { LoggerService } from './services/logger.service';
 import { PrettierBytesService } from './services/prettier-bytes.service';
 import { UploaderService } from './uploader/uploader.service';
 import { FileTypeService } from './services/file-type.service';
+import { ModalService } from './services/modal-service/modal.service';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,7 @@ export class AppComponent implements OnInit {
     private prettierBytesService: PrettierBytesService,
     private fileHandlerService: UploaderService,
     private fileTypeService: FileTypeService,
+    private modalService: ModalService,
   ) {
     loggerService.loggerResult.subscribe((res) => {
       this.logger += `\n${res}`;
@@ -98,5 +100,9 @@ export class AppComponent implements OnInit {
 
   handleResult(res: string, fileID: string): void {
     this.files.find((file) => file.id === fileID).analysed = res;
+  }
+
+  onAboutClick(): void {
+    this.modalService.openModal('aboutModal');
   }
 }

@@ -23,6 +23,8 @@ import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.co
 import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 import { AnalyzeDdpModule } from './analyze-ddp/analyze-ddp.module';
+import { ModalComponent } from '@app/services/modal-service/modal.component';
+import { ModalService } from '@app/services/modal-service/modal.service';
 
 export const ReducerToken = new InjectionToken(
   'Media Analysis Registered Reducers',
@@ -46,6 +48,7 @@ export const ReducerProvider = [
     AnalyzeVideoComponent,
     PlayerComponent,
     AnalyzeImageComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,7 +62,7 @@ export const ReducerProvider = [
     }),
     MatTabsModule,
   ],
-  providers: [LoggerService, HelperService, ReducerProvider],
+  providers: [LoggerService, HelperService, ModalService, ReducerProvider],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

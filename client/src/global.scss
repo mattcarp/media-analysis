@@ -201,7 +201,6 @@ pre {
   }
 }
 
-
 button {
   display: flex;
   overflow: hidden;
@@ -218,4 +217,10 @@ button {
   padding: 8px 20px;
   color: #fff;
   background-color: #2275d7;
+}
+
+.modal {
+  p {
+    padding: 6px 0;
+  }
 }
