@@ -19,19 +19,13 @@ export class DetectBlackComponent {
   tailBlackResult: any;
 
   constructor(detectBlackService: DetectBlackService, private loggerService: LoggerService) {
-    detectBlackService.headBlackStarted.subscribe((value) => {
-      this.headBlackStarted = value;
-    });
-    detectBlackService.tailBlackStarted.subscribe((value) => {
-      this.tailBlackStarted = value;
-    });
+    detectBlackService.headBlackStarted.subscribe((value) => this.headBlackStarted = value);
+    detectBlackService.tailBlackStarted.subscribe((value) => this.tailBlackStarted = value);
     detectBlackService.headProgress.subscribe((value) => {
       this.headBlackProgress = value * 100;
       this.headBlackProgressValue = value;
     });
-    detectBlackService.tailProgress.subscribe((value) => {
-      this.tailBlackProgress = value;
-    });
+    detectBlackService.tailProgress.subscribe((value) => this.tailBlackProgress = value);
     detectBlackService.headBlackResult.subscribe((value) => {
       this.loggerService.info(`I'm subscribing, and should not be undefined: ${typeof value}`, 'color: orange');
 
@@ -44,8 +38,6 @@ export class DetectBlackComponent {
         // if (typof )
       }
     });
-    detectBlackService.tailBlackResult.subscribe((value) => {
-      this.tailBlackResult = value;
-    });
+    detectBlackService.tailBlackResult.subscribe((value) => this.tailBlackResult = value);
   }
 }

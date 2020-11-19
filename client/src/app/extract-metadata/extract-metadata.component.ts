@@ -34,9 +34,7 @@ export class ExtractMetadataComponent {
       this.metadataLoading = value;
     });
     this.metadataResult = extractMetadataService.metadataResult;
-    this.metadataResult.subscribe((value) => {
-      this.renderResult(value);
-    });
+    this.metadataResult.subscribe((value) => this.renderResult(value));
   }
 
   renderResult(data) {

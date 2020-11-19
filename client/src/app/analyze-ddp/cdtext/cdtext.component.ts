@@ -31,15 +31,11 @@ export class CdtextComponent implements OnInit, OnDestroy {
     this.store.pipe(
       select(selectParsedCdText),
       takeUntil(this.destroy$)
-    ).subscribe(
-      (parsedCdText: ParsedCdTextItem[]) => this.parsedCdText = parsedCdText
-    );
+    ).subscribe((parsedCdText: ParsedCdTextItem[]) => this.parsedCdText = parsedCdText);
 
     this.store.pipe(
       select(selectParsedPackItems), takeUntil(this.destroy$)
-    ).subscribe(
-      (parsedPackItems: ParsedPackItem[]) => this.parsedPackItems = parsedPackItems
-    );
+    ).subscribe((parsedPackItems: ParsedPackItem[]) => this.parsedPackItems = parsedPackItems);
   }
 
   ngOnDestroy(): void {

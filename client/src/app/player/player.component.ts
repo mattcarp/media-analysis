@@ -59,11 +59,7 @@ export class PlayerComponent {
     this.loggerService.info(`Player instance.`, 'color: green');
     console.log(this.playerInstance);
     this.metadataResult = extractMetadataService.metadataResult;
-    this.metadataResult.subscribe(() => {
-      // this.renderResult(value);
-      // this.initPlayer(this.dummyPlaylist);
-      this.showPlayerHeader = true;
-    });
+    this.metadataResult.subscribe(() => this.showPlayerHeader = true);
   }
 
   playVideo(track: Object) {}

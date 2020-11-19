@@ -29,9 +29,7 @@ export class AnalyzeVideoComponent {
     private extractMetadataService: ExtractMetadataService,
     private loggerService: LoggerService,
   ) {
-    this.extractMetadataService.metadataStarted.subscribe((value) => {
-      this.metadataStarted = value;
-    });
+    this.extractMetadataService.metadataStarted.subscribe((value) => this.metadataStarted = value);
 
     this.extractMetadataService.metadataResult
       .pipe(takeUntil(this.destroy$))
