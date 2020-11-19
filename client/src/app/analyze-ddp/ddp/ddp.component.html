@@ -1,5 +1,5 @@
-<div class="ddp-body">
-  <div class="ddp-player-panel">
+<app-accordion [firstOpened]="true">
+  <app-accordion-group title="Playback">
     <div class="ddp-player">
       <div class="row">
         <div class="col-xs-2">
@@ -82,33 +82,44 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </app-accordion-group>
 
-  <div class="ddp-tabs-container">
-    <br>
-    <h2>Playback</h2>
-    <p>refactor player into it's own component and put it here (don't lazy load)</p>
-    <br>
-    <h2>DDP ID</h2>
+  <app-accordion-group title="DDP ID">
     <ddp-ddpid></ddp-ddpid>
-    <br>
-    <h2>Map Stream</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="Map Stream">
     <ddp-ddpms></ddp-ddpms>
-    <br>
-    <h2>PQ Subcode</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="PQ Subcode">
     <ddp-ddppq></ddp-ddppq>
-    <br>
-    <h2>Validations</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="Validations">
     <ddp-validations></ddp-validations>
-    <br>
-    <h2>Hashes</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="Hashes">
     <ddp-hashes></ddp-hashes>
-    <br>
-    <h2>CD Text</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="CD Text">
     <ddp-cdtext></ddp-cdtext>
-    <br>
-    <h2>Gracenote</h2>
+  </app-accordion-group>
+
+  <app-accordion-group title="Gracenote">
     <p>Show gracenote junk here</p>
-  </div>
+  </app-accordion-group>
+</app-accordion>
+<!--
+<div (click)="toggleBlock($event, 0)" class="toggle-container">
+  <h3>Playback</h3>
+  <span *ngIf="!isShowBlock">[+]</span>
+  <span *ngIf="isShowBlock">[–]</span>
+</div>
+
+<div *ngIf="isShowBlock" (click)="toggleBlock()" class="ma-metadata">
 
 </div>
+-->

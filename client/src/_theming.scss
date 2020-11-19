@@ -49,12 +49,12 @@ $screen-medium: 'only screen and (min-width: 1024px)';
 $screen-large: 'only screen and (min-width: 1150px)';
 
 ::-webkit-scrollbar {
-  background-color: #eee;
+  background-color: #f6f6f6;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: $color-light;
-  box-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 1px #eee;
 }
 
 body {

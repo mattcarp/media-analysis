@@ -4,7 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
-import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 import { DdpComponent } from './ddp/ddp.component';
 import {
@@ -21,7 +21,8 @@ import { DdppqComponent } from './ddppq/ddppq.component';
 import { GracenoteComponent } from './gracenote/gracenote.component';
 import { HashesComponent } from './hashes/hashes.component';
 import { ValidationsComponent } from './validations/validations.component';
-import { LoggerMonitor } from './store/services';
+import { AccordionComponent } from '@app/shared/accordion/accordion.component';
+import { AccordionGroupComponent } from '@app/shared/accordion/accordion-group.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,8 @@ import { LoggerMonitor } from './store/services';
     GracenoteComponent,
     HashesComponent,
     ValidationsComponent,
+    AccordionComponent,
+    AccordionGroupComponent,
   ],
   imports: [
     CommonModule,
@@ -63,11 +66,4 @@ import { LoggerMonitor } from './store/services';
     ValidationsComponent,
   ],
 })
-export class AnalyzeDdpModule {
-  constructor(private logger: NGXLogger) {
-    this.logger.registerMonitor(new LoggerMonitor());
-    this.logger.error('ERROR');
-    this.logger.debug('DEBUG');
-    this.logger.log('LOG');
-  }
-}
+export class AnalyzeDdpModule {}

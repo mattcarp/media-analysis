@@ -48,6 +48,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   playerAnnotation: PlayerAnnotationState;
   trackSelected = false;
   currentIndex: number;
+  isShowBlock = false;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -229,5 +230,9 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   playPause(): void {
     this.showPlay = !this.showPlay;
     this.waveSurfer.playPause();
+  }
+
+  toggleBlock() {
+    this.isShowBlock = !this.isShowBlock;
   }
 }

@@ -8,12 +8,15 @@ import { StoreModule } from '@ngrx/store';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { MatTabsModule } from '@angular/material/tabs';
+import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { environment } from '../environments/environment';
 import { reducers } from './shared/store/reducers';
 import { AppRoutingModule } from './app-routing.module';
 import { LoggerService } from './services/logger.service';
 import { HelperService } from './services/helper.service';
+import { LoggerMonitor } from '@app/analyze-ddp/store/services';
+import { ModalService } from '@app/services/modal-service/modal.service';
 import { AppComponent } from './app.component';
 import { UploaderComponent } from './uploader/uploader.component';
 import { PlayerComponent } from './player/player.component';
@@ -24,7 +27,6 @@ import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
 import { AnalyzeDdpModule } from './analyze-ddp/analyze-ddp.module';
 import { ModalComponent } from '@app/services/modal-service/modal.component';
-import { ModalService } from '@app/services/modal-service/modal.service';
 
 export const ReducerToken = new InjectionToken(
   'Media Analysis Registered Reducers',
@@ -61,9 +63,26 @@ export const ReducerProvider = [
       logOnly: environment.production,
     }),
     MatTabsModule,
+    LoggerModule.forRoot({
+      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
+      level: NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.ERROR,
+    }),
   ],
-  providers: [LoggerService, HelperService, ModalService, ReducerProvider],
+  providers: [
+    LoggerService,
+    HelperService,
+    ModalService,
+    ReducerProvider,
+  ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private logger: NGXLogger) {
+    this.logger.registerMonitor(new LoggerMonitor());
+    this.logger.error('ERROR');
+    this.logger.debug('DEBUG');
+    this.logger.log('LOG');
+  }
+}
