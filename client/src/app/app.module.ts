@@ -7,7 +7,6 @@ import {
 import { StoreModule } from '@ngrx/store';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { MatTabsModule } from '@angular/material/tabs';
 import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { environment } from '../environments/environment';
@@ -62,7 +61,6 @@ export const ReducerProvider = [
       maxAge: 25,
       logOnly: environment.production,
     }),
-    MatTabsModule,
     LoggerModule.forRoot({
       colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
       level: NgxLoggerLevel.DEBUG,

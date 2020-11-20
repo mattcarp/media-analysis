@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
 import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 import { DdpComponent } from './ddp/ddp.component';
@@ -38,8 +36,6 @@ import { AccordionGroupComponent } from '@app/shared/accordion/accordion-group.c
     CommonModule,
     HttpClientModule,
     StoreModule.forFeature(ddpFilesFeatureKey, ddpFilesReducer),
-    MatTabsModule,
-    MatCardModule,
     LoggerModule.forRoot({
       colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
       level: NgxLoggerLevel.DEBUG,
