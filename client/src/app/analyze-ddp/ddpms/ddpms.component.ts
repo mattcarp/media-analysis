@@ -30,7 +30,6 @@ export class DdpmsComponent implements OnInit, OnDestroy {
       this.hasMs = true;
       this.masterFormat.name = 'temp';
       this.parsedMs = ms;
-      console.log('❌', this.parsedMs);
     });
   }
 
