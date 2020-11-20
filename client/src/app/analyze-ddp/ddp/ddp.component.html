@@ -1,125 +1,88 @@
 <app-accordion [firstOpened]="true">
   <app-accordion-group title="Playback">
     <div class="ddp-player">
-      <div class="row">
-        <div class="col-xs-2">
-          <h3 class="ddp-timecode">
-            {{timecode}}
-          </h3>
-        </div>
-        <div class="col-xs-6">
-          <!-- playback controls -->
-          <button (click)="playPause()">
-            <i class="ma-icon play" *ngIf="showPlay"></i>
-            <i class="ma-icon stop" *ngIf="!showPlay"></i>
-          </button>
-          <button (click)="playFrom(0)">
-            <i class="ma-icon play"></i>
-            <span>Play from file start</span>
-          </button>
-          <button (click)="playFromIdx1()">
-            <i class="ma-icon play"></i>
-            <span>Play from index 1</span>
-          </button>
-        </div>
-        <div class="row ddp-annotation-wrapper">
-          <div *ngIf="playerAnnotation && !playbackStatus">
-            <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
-            <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
-            <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
-            <p>{{playbackStatus}}</p>
-          </div>
-        </div>
+      <div class="ddp-player-actions">
+        <button (click)="playPause()">
+          <i class="ma-icon play" *ngIf="showPlay"></i>
+          <i class="ma-icon stop" *ngIf="!showPlay"></i>
+        </button>
+        <button (click)="playFrom(0)" [disabled]="!showPlay">
+          <i class="ma-icon play"></i>
+          <span>Play from file start</span>
+        </button>
+        <button (click)="playFromIdx1()" [disabled]="!showPlay">
+          <i class="ma-icon play"></i>
+          <span>Play from index 1</span>
+        </button>
+        <h3>{{timecode}}</h3>
       </div>
-
-      <div class="ddp-waveform-container">
-        <!--<progress *ngIf="wavProgress < 100" class="progress progress-striped progress-info"-->
-        <!--value="{{wavProgress}}" max="100">-->
-        <!--</progress>-->
-
-        <div [hidden]="wavProgress <= 99">
-          <div id="waveform" class="ddp-waveform"></div>
-          <div id="waveform-timeline"></div>
-        </div>
+      <div *ngIf="playerAnnotation && !playbackStatus" class="ddp-player-annotation">
+        <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
+        <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
+        <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
+        <p>{{playbackStatus}}</p>
       </div>
+    </div>
 
-      <div class="ddp-player">
-        <!--zoom control -->
-        <p class="row">
-        <div class="col-xs-1">
-          <i class="fa fa-search-minus"></i>
-        </div>
-        <div class="col-xs-10">
-          <input id="slider" type="range" min="1" max="46" value="1" style="width: 100%" />
-        </div>
-        <div class="col-xs-1">
-          <i class="fa fa-search-plus"></i>
-        </div>
-      </div>
+    <div [hidden]="wavProgress <= 99" class="ddp-waveform">
+      <div id="waveform" class="ddp-waveform"></div>
+      <div id="waveform-timeline"></div>
+    </div>
+
+    <div class="ddp-controls">
+      <i class="ma-icon search-minus"></i>
+      <input id="slider" type="range" min="1" max="46" value="1" class="ddp-controls-slider" />
+      <i class="ma-icon search-plus"></i>
     </div>
 
     <div class="ddp-playlist">
-      <table class="md-data-table">
-        <thead>
-        <tr>
-          <th></th>
-          <th>Track Name</th>
-          <th>ISRC</th>
-          <th>Pre Gap</th>
-          <th>Duration</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let track of playList; let i = index"
-            [class.selected]="isSelected(i)"
-            (click)="queueTrack(i, $event)" class="ddp-track">
-          <th scope="row">{{i + 1}}</th>
-          <td>{{track?.file?.file?.name}}</td>
-          <td>{{track?.isrc}}</td>
-          <td>{{track?.preGap}}</td>
-          <td>{{track?.dur}}</td>
-        </tr>
-        </tbody>
-      </table>
+      <div class="ma-table-header">
+        <div>#</div>
+        <div>Track Name</div>
+        <div>ISRC</div>
+        <div>Pre Gap</div>
+        <div>Duration</div>
+      </div>
+
+      <ng-container *ngFor="let track of playList; let i = index">
+        <div (click)="queueTrack(i, $event)"
+             class="ma-table-data"
+             [class.selected]="isSelected(i)">
+          <div>{{i + 1}}</div>
+          <div>{{track?.file?.name}}</div>
+          <div>{{track?.isrc}}</div>
+          <div>{{track?.preGap}}</div>
+          <div>{{track?.dur}}</div>
+        </div>
+      </ng-container>
     </div>
   </app-accordion-group>
 
+  <app-accordion-group title="Validations">
+    <app-ddp-validations></app-ddp-validations>
+  </app-accordion-group>
+
   <app-accordion-group title="DDP ID">
-    <ddp-ddpid></ddp-ddpid>
+    <app-ddp-ddpid></app-ddp-ddpid>
   </app-accordion-group>
 
   <app-accordion-group title="Map Stream">
-    <ddp-ddpms></ddp-ddpms>
+    <app-ddp-ddpms></app-ddp-ddpms>
   </app-accordion-group>
 
   <app-accordion-group title="PQ Subcode">
-    <ddp-ddppq></ddp-ddppq>
-  </app-accordion-group>
-
-  <app-accordion-group title="Validations">
-    <ddp-validations></ddp-validations>
+    <app-ddp-ddppq></app-ddp-ddppq>
   </app-accordion-group>
 
   <app-accordion-group title="Hashes">
-    <ddp-hashes></ddp-hashes>
+    <app-ddp-hashes></app-ddp-hashes>
   </app-accordion-group>
 
   <app-accordion-group title="CD Text">
-    <ddp-cdtext></ddp-cdtext>
+    <app-ddp-cdtext></app-ddp-cdtext>
   </app-accordion-group>
 
   <app-accordion-group title="Gracenote">
-    <p>Show gracenote junk here</p>
+    <app-ddp-gracenote></app-ddp-gracenote>
   </app-accordion-group>
 </app-accordion>
-<!--
-<div (click)="toggleBlock($event, 0)" class="toggle-container">
-  <h3>Playback</h3>
-  <span *ngIf="!isShowBlock">[+]</span>
-  <span *ngIf="isShowBlock">[–]</span>
-</div>
-
-<div *ngIf="isShowBlock" (click)="toggleBlock()" class="ma-metadata">
-
-</div>
--->

@@ -1,54 +1,50 @@
-<h3 *ngIf="!parsedCdText">no cd text found</h3>
+<ng-container *ngIf="!parsedCdText; else cdText">
+  <div class="alert-danger">
+    <p>No CD text found</p>
+  </div>
+</ng-container>
 
-<div *ngIf="parsedCdText" class="ddp-cdtext-content">
+<ng-template #cdText>
+  <h4>Assembled CD Text Packs</h4>
 
-<h3>Assembled CD Text Packs</h3>
+  <div class="ma-table-header">
+    <div>#</div>
+    <div>Level</div>
+    <div>Type</div>
+    <div>Text</div>
+  </div>
 
-<table class="table table-striped table-sm">
-  <thead>
-  <tr>
-    <th>#</th>
-    <th>Level</th>
-    <th>Type</th>
-    <th>Text</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let entry of parsedCdText">
-    <td>{{entry?.trackNo}}</td>
-    <td>
-      <span *ngIf="entry?.trackNo === 0">album</span>
-      <span *ngIf="entry?.trackNo !== 0">track</span>
-    </td>
-    <td>{{entry?.type}}</td>
-    <td>{{entry?.text}}</td>
-  </tr>
-  </tbody>
-</table>
+  <ng-container *ngFor="let entry of parsedCdText">
+    <div class="ma-table-data">
+      <div>{{entry?.trackNo}}</div>
+      <div>
+        <span *ngIf="entry?.trackNo === 0">album</span>
+        <span *ngIf="entry?.trackNo !== 0">track</span>
+      </div>
+      <div>{{entry?.type}}</div>
+      <div>{{entry?.text}}</div>
+    </div>
+  </ng-container>
 
-<hr>
+  <h4>Raw CD Text Packs</h4>
 
-<h3>Raw CD Text Packs</h3>
-<table class="table table-striped table-sm">
-  <thead>
-  <tr>
-    <th>Counter</th>
-    <th>Type</th>
-    <th>Track</th>
-    <th>Character Position</th>
-    <th>Payload</th>
-    <th>CRC</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr *ngFor="let pack of parsedPackItems">
-    <td>{{pack?.counter}}</td>
-    <td>{{pack?.packType}}</td>
-    <td>{{pack?.packTrackNo}}</td>
-    <td>{{pack?.charPos}}</td>
-    <td>{{pack?.payload}}</td>
-    <td>{{pack?.crc}}</td>
-  </tr>
-  </tbody>
-</table>
-</div>
+  <div class="ma-table-header">
+    <div>Counter</div>
+    <div>Type</div>
+    <div>Track</div>
+    <div>Character Position</div>
+    <div>Payload</div>
+    <div>CRC</div>
+  </div>
+
+  <ng-container *ngFor="let pack of parsedPackItems">
+    <div class="ma-table-data">
+      <div>{{pack?.counter}}</div>
+      <div>{{pack?.packType}}</div>
+      <div>{{pack?.packTrackNo}}</div>
+      <div>{{pack?.charPos}}</div>
+      <div>{{pack?.payload}}</div>
+      <div>{{pack?.crc}}</div>
+    </div>
+  </ng-container>
+</ng-template>

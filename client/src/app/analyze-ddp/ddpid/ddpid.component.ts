@@ -8,9 +8,8 @@ import { DdpState } from '../store/reducers/ddp.reducer';
 import { selectId } from '../store/selectors/ddp.selectors';
 
 @Component({
-  selector: 'ddp-ddpid',
+  selector: 'app-ddp-ddpid',
   templateUrl: './ddpid.component.html',
-  styleUrls: ['./ddpid.component.scss'],
 })
 export class DdpIdComponent implements OnInit, OnDestroy {
   hasId = false;

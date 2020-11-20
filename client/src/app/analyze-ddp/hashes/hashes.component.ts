@@ -8,7 +8,7 @@ import { DdpState } from '../store/reducers/ddp.reducer';
 import { HashItem } from '../store/models';
 
 @Component({
-  selector: 'ddp-hashes',
+  selector: 'app-ddp-hashes',
   templateUrl: './hashes.component.html',
   styleUrls: ['./hashes.component.scss'],
 })

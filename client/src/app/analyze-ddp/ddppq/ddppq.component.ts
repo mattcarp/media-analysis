@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
@@ -8,11 +8,11 @@ import { DdpState } from '../store/reducers/ddp.reducer';
 import { selectPq } from '../store/selectors/ddp.selectors';
 
 @Component({
-  selector: 'ddp-ddppq',
+  selector: 'app-ddp-ddppq',
   templateUrl: './ddppq.component.html',
   styleUrls: ['./ddppq.component.scss'],
 })
-export class DdppqComponent implements OnInit {
+export class DdppqComponent implements OnInit, OnDestroy {
   hasPq = false;
   parsedPq: PqState;
 

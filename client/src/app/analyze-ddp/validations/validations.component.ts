@@ -20,9 +20,8 @@ import {
 import { IdState, MsState, ValidationState } from '../store/models';
 
 @Component({
-  selector: 'ddp-validations',
+  selector: 'app-ddp-validations',
   templateUrl: './validations.component.html',
-  styleUrls: ['./validations.component.scss'],
 })
 export class ValidationsComponent implements OnInit, OnDestroy {
   parsedMs: MsState;

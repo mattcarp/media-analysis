@@ -8,7 +8,7 @@ import { DdpState } from '../store/reducers/ddp.reducer';
 import { selectMs } from '../store/selectors/ddp.selectors';
 
 @Component({
-  selector: 'ddp-ddpms',
+  selector: 'app-ddp-ddpms',
   templateUrl: './ddpms.component.html',
   styleUrls: ['./ddpms.component.scss'],
 })
@@ -30,6 +30,7 @@ export class DdpmsComponent implements OnInit, OnDestroy {
       this.hasMs = true;
       this.masterFormat.name = 'temp';
       this.parsedMs = ms;
+      console.log('❌', this.parsedMs);
     });
   }
 

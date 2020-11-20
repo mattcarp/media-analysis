@@ -1,51 +1,32 @@
-<div *ngIf="hasPq">
-  <a name="pq-descriptor"></a>
-  <div class="ddp-ddppq-content">
-    <h3>PQ Descriptor</h3>
-    <table class="table">
-      <tbody>
-      <tr>
-        <!--<td><strong>File Name: </strong>{{ pqFileInfo.fileName }}</td>-->
-        <!--<td *ngIf="pqFileLastMod"><strong>Last Modified: </strong>{{ pqFileLastMod | date:'medium' }}</td>-->
-        <!--<td><strong>Expected Size: </strong> {{ pqFileInfo.fileSize }} ({{ pqFileInfo.fileSize }})</td>-->
-        <td></td>
-      </tr>
-      </tbody>
-    </table>
-    <table class="md-data-table">
-      <thead>
-      <tr>
-        <th>SPV</th>
-        <th>Track</th>
-        <th>Index</th>
-        <th>Start Time</th>
-        <th>Pre Gap</th>
-        <th>Duration</th>
-        <th>ISRC</th>
-        <th>CB1</th>
-        <th>CB2</th>
-        <th>UPC</th>
-        <th>TXT</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr *ngFor="let pqEntry of parsedPq?.entries">
-        <td>{{pqEntry?.spv}}</td>
-        <td>{{pqEntry?.trk}}</td>
-        <td>{{pqEntry?.idx}}</td>
-        <td><span *ngIf="pqEntry?.hrs !==''">{{pqEntry?.hrs}}</span>{{pqEntry?.min}}:
-          {{pqEntry?.sec}}:{{pqEntry?.frm}}
-        </td>
-        <td>{{pqEntry?.preGap}}</td>
-        <td>{{pqEntry?.dur}}</td>
-        <td>{{pqEntry?.isrc}}</td>
-        <td>{{pqEntry?.cb1}}</td>
-        <td>{{pqEntry?.cb2}}</td>
-        <td>{{pqEntry?.upc}}</td>
-        <td>{{pqEntry?.txt}}</td>
-      </tr>
-      </tbody>
-    </table>
-  </div>
-  <hr>
+<div class="ma-table-header">
+  <div #a1>SPV</div>
+  <div #a2>Track</div>
+  <div #a3>Index</div>
+  <div #a4>Start Time</div>
+  <div #a5>Pre Gap</div>
+  <div #a6>Duration</div>
+  <div #a7>ISRC</div>
+  <div #a8>CB1</div>
+  <div #a9>CB2</div>
+  <div #a10>UPC</div>
+  <div #a11>TXT</div>
 </div>
+
+<ng-container *ngFor="let pqEntry of parsedPq?.entries">
+  <div class="ma-table-data">
+    <div #b1>{{pqEntry?.spv}}</div>
+    <div #b2>{{pqEntry?.trk}}</div>
+    <div #b3>{{pqEntry?.idx}}</div>
+    <div #b4>
+      <span *ngIf="pqEntry?.hrs !==''">{{pqEntry?.hrs}}</span>
+      {{pqEntry?.min}}:{{pqEntry?.sec}}:{{pqEntry?.frm}}
+    </div>
+    <div #b5>{{pqEntry?.preGap}}</div>
+    <div #b6>{{pqEntry?.dur}}</div>
+    <div #b7>{{pqEntry?.isrc}}</div>
+    <div #b8>{{pqEntry?.cb1}}</div>
+    <div #b9>{{pqEntry?.cb2}}</div>
+    <div #b10>{{pqEntry?.upc}}</div>
+    <div #b11>{{pqEntry?.txt}}</div>
+  </div>
+</ng-container>

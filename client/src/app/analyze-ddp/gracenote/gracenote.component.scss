@@ -1,7 +1,4 @@
-.ddp-gracenote_content {
-  padding-left: 40px;
-}
-
-h3 {
-  font-weight: 200;
+.ma-table-header,
+.ma-table-data {
+  grid-template-columns: 40px minmax(140px, 1fr);
 }

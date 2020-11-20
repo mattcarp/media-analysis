@@ -12,7 +12,7 @@ import {
 import { ParsedCdTextItem, ParsedPackItem } from '../store/models';
 
 @Component({
-  selector: 'ddp-cdtext',
+  selector: 'app-ddp-cdtext',
   templateUrl: './cdtext.component.html',
   styleUrls: ['./cdtext.component.scss'],
 })

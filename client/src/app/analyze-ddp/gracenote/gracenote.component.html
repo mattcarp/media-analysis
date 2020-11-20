@@ -1,42 +1,39 @@
-<div class="ddp-gracenote_content">
-  <div *ngIf="!gracenoteData"><h4>No gracenote data found</h4></div>
-  <div *ngIf="gracenoteData">
+<ng-container *ngIf="!gracenoteData; else dataBlock">
+  <div class="alert-danger">
+    <p>No gracenote data found</p>
+  </div>
+</ng-container>
 
-    <h3> {{gracenoteData?.ALBUM.ARTIST}}</h3>
-    <h3> {{gracenoteData?.ALBUM.TITLE}}</h3>
-    <p>Packaging Language <strong>{{gracenoteData?.ALBUM.PKG_LANG}}</strong></p>
-    <p>Date <strong>{{gracenoteData?.ALBUM.DATE}}</strong></p>
-    <p>Genre <strong>{{gracenoteData?.ALBUM.GENRE.__text}}</strong></p>
-    <p>Track Count <strong>{{gracenoteData?.ALBUM.TRACK_COUNT}}</strong></p>
+<ng-template #dataBlock>
+  <dl>
+    <dt>Album Artist:</dt>
+    <dd>{{gracenoteData?.ALBUM.ARTIST}}</dd>
+    <dt>Album Title:</dt>
+    <dd>{{gracenoteData?.ALBUM.TITLE}}</dd>
+    <dt>Packaging Language:</dt>
+    <dd>{{gracenoteData?.ALBUM.PKG_LANG}}</dd>
+    <dt>Date:</dt>
+    <dd>{{gracenoteData?.ALBUM.DATE}}</dd>
+    <dt>Genre:</dt>
+    <dd>{{gracenoteData?.ALBUM.GENRE.__text}}</dd>
+    <dt>Track Count:</dt>
+    <dd>{{gracenoteData?.ALBUM.TRACK_COUNT}}</dd>
+  </dl>
 
-    <div class="col-xs-6">
-      <table class="table table-sm table-striped">
-        <thead>
-        <tr>
-          <th></th>
-          <th>Title</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let track of gracenoteData?.ALBUM.TRACK">
-          <th scope="row">{{track?.TRACK_NUM}}</th>
-          <td>{{track?.TITLE}}</td>
-        </tr>
-        </tbody>
-      </table>
+  <div class="ma-table-header">
+    <div>#</div>
+    <div>Title</div>
+  </div>
+
+  <ng-container *ngFor="let track of gracenoteData?.ALBUM.TRACK">
+    <div class="ma-table-data">
+      <div>{{track?.TRACK_NUM}}</div>
+      <div>{{track?.TITLE}}</div>
     </div>
+  </ng-container>
 
-
-    <!--TODOmc getting 'differ' error if album has only one image-->
-    <div class="col-xs-6">
-      <!--<span *ngIf="gracenoteData?.ALBUM.URL > 1" *ngFor="let image of gracenoteData?.ALBUM.URL">-->
-      <!--<img src="{{image.__text}}" alt="{{image._type}}">-->
-      <!--</span>-->
-      <img src="{{gracenoteData?.ALBUM.URL}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
-      <span *ngIf="gracenoteData?.ALBUM.length === 1">
+  <img src="{{gracenoteData?.ALBUM.URL}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
+  <span *ngIf="gracenoteData?.ALBUM.length === 1">
     <img src="{{gracenoteData?.ALBUM.URL.__text}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
   </span>
-    </div><!-- second column -->
-    <p>&nbsp;</p>
-  </div>
-</div>
+</ng-template>

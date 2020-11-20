@@ -1,26 +1,15 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  NgZone,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { AfterViewInit, Component, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import WaveSurfer from 'wavesurfer.js';
-import TimelinePlugin
-  from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
+import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
 import { DdpService, DdpFileService } from '../store/services';
 import { DdpState } from '../store/reducers/ddp.reducer';
-import {
-  selectAudioEntries,
-  selectPlayerAnnotation,
-} from '../store/selectors/ddp.selectors';
+import { selectAudioEntries, selectPlayerAnnotation } from '../store/selectors/ddp.selectors';
 import { PlayerAnnotationState } from '../store/models';
 
 declare const Resumable: any;
@@ -57,7 +46,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     private ddpFileService: DdpFileService,
     private zone: NgZone,
     private store: Store<DdpState>,
-    private logger: NGXLogger,
+    private logger: NGXLogger
   ) {}
 
   ngOnInit(): void {
@@ -82,17 +71,11 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
       height: 100,
       cursorColor: '#A96FE8',
       cursorWidth: 2,
-      plugins: [
-        MinimapPlugin.create({
-          height: 30,
-          waveColor: '#ddd',
-          progressColor: '#999',
-          cursorColor: '#999',
-        }),
-        TimelinePlugin.create({
-          container: '#waveform-timeline',
-        }),
-      ],
+      plugins: [MinimapPlugin.create({
+        height: 30, waveColor: '#ddd', progressColor: '#999', cursorColor: '#999',
+      }), TimelinePlugin.create({
+        container: '#waveform-timeline',
+      })],
     });
 
     this.waveSurfer.on('loading', (progress: number) => {
@@ -101,25 +84,18 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.waveSurfer.on('audioprocess', () => {
-      this.logger.log(
-        'current time in audio process?',
-        this.waveSurfer.getCurrentTime(),
-      );
+      this.logger.log('current time in audio process?', this.waveSurfer.getCurrentTime());
       const timeInSecs: number = this.waveSurfer.getCurrentTime();
       this.zone.run(() => {
         // TODOmc errors due to rounding
-        this.timecode = this.ddpService.framesToTime(
-          Math.floor(timeInSecs * 75),
-        );
+        this.timecode = this.ddpService.framesToTime(Math.floor(timeInSecs * 75));
       });
     });
 
     this.waveSurfer.on('seek', () => {
       const timeInSecs: number = this.waveSurfer.getCurrentTime();
       this.zone.run(() => {
-        this.timecode = this.ddpService.framesToTime(
-          Math.round(timeInSecs * 75),
-        );
+        this.timecode = this.ddpService.framesToTime(Math.round(timeInSecs * 75));
       });
     });
 
@@ -195,7 +171,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   queueTrack(index: number, event: Event): void {
-    // TODO highlight selected track
+    this.showPlay = true;
     this.currentIndex = index;
     this.trackSelected = true;
     this.logger.log('the click event:', event);
@@ -232,7 +208,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
     this.waveSurfer.playPause();
   }
 
-  toggleBlock() {
+  toggleBlock(): void {
     this.isShowBlock = !this.isShowBlock;
   }
 }

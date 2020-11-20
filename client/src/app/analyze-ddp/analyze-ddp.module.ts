@@ -12,9 +12,6 @@ import {
   reducer as ddpFilesReducer,
 } from './store/reducers/ddp.reducer';
 import { CdtextComponent } from './cdtext/cdtext.component';
-import { TabComponent } from './shared/tabs/tab/tab.component';
-import { TabsComponent } from './shared/tabs/tabs.component';
-import { TooltipComponent } from './shared/tooltip/tooltip.component';
 import { DdpIdComponent } from './ddpid/ddpid.component';
 import { DdpmsComponent } from './ddpms/ddpms.component';
 import { DdppqComponent } from './ddppq/ddppq.component';
@@ -28,9 +25,6 @@ import { AccordionGroupComponent } from '@app/shared/accordion/accordion-group.c
   declarations: [
     DdpComponent,
     CdtextComponent,
-    TabComponent,
-    TabsComponent,
-    TooltipComponent,
     DdpIdComponent,
     DdpmsComponent,
     DdppqComponent,
@@ -55,9 +49,6 @@ import { AccordionGroupComponent } from '@app/shared/accordion/accordion-group.c
   exports: [
     DdpComponent,
     CdtextComponent,
-    TabComponent,
-    TabsComponent,
-    TooltipComponent,
     DdpIdComponent,
     DdpmsComponent,
     DdppqComponent,

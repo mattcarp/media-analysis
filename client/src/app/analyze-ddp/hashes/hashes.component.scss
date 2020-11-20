@@ -1,31 +1,32 @@
-.ddp-hashes-content {
-  padding-left: 40px;
-  padding-right: 40px;
+button {
+  display: inline-flex;
 }
 
-.ddp-hash-match {
-  background-color: #9edbaa;
+.ma-table-header,
+.ma-table-data {
+  grid-template-columns: 72px minmax(40px, 1fr) repeat(2, 180px) 70px;
 }
 
-.ddp-hash-mismatch {
-  background-color: #e58184;
+.ma-table-data {
+  & > div:last-child {
+    text-align: center;
+  }
 }
 
-.btn-primary {
-  background-color: #BBBEC5;
-  margin-bottom: 20px;
-  border-radius: 15px;
-  margin-top: -40px;
-  font-size: 15px;
-  font-weight: 200;
-  color: white;
-  border: 1px  #9283A2 solid;
-  margin-left: 800px;
+.ddp-hash-match > div {
+  background-color: #d1f3d8;
+}
+
+.ddp-hash-mismatch > div {
+  background-color: #fac6c9;
 }
 
 .ddp-hash-status {
-  text-align: center;
   margin: auto;
   padding-left: 20px;
+  text-align: center;
 }
 
+.progress {
+  width: 100%;
+}

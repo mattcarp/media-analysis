@@ -8,7 +8,7 @@ import { selectGracenote } from '../store/selectors/ddp.selectors';
 import { Gracenote } from '../store/models';
 
 @Component({
-  selector: 'ddp-gracenote',
+  selector: 'app-ddp-gracenote',
   templateUrl: 'gracenote.component.html',
   styleUrls: ['gracenote.component.scss'],
 })

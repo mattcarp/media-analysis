@@ -1,3 +1,4 @@
-.ddp-ddppq-content {
- padding: 30px;
+.ma-table-header,
+.ma-table-data {
+  grid-template-columns: 46px repeat(2, 44px) 70px 62px 70px minmax(40px, 1fr) repeat(2, 40px) 118px 40px;
 }
