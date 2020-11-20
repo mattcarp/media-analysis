@@ -15,6 +15,7 @@ import { HashItem } from '../store/models';
 export class HashesComponent implements OnInit {
   computedHashes: any[];
   hashFiles$: Observable<HashItem[]>;
+  isVerified = false;
 
   constructor(
     private hashesService: HashesService,
@@ -27,5 +28,6 @@ export class HashesComponent implements OnInit {
 
   verifyHashes(md5Arr: any): void {
     this.hashesService.computeHashes(md5Arr);
+    this.isVerified = true;
   }
 }

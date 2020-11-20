@@ -17,7 +17,7 @@
     <div class="ma-table-data"
          [ngClass]="{
           'ddp-hash-match': hashEntry?.hash === hashEntry?.computedHash,
-          'ddp-hash-mismatch': hashEntry?.computedHash && hashEntry?.hash !== hashEntry?.computedHash
+          'ddp-hash-mismatch': isVerified && hashEntry?.hash !== hashEntry?.computedHash && !(hashEntry?.progress > 0)
          }">
       <div #b1>{{hashEntry?.targetFileName}}</div>
       <div #b2>{{hashEntry?.lastModified}}</div>
@@ -30,9 +30,11 @@
           max="100"
           class="progress">
         </progress>
+        <i *ngIf="!isVerified && !hashEntry?.computedHash && !(hashEntry?.progress > 0)"
+           class="ma-icon question"></i>
         <i *ngIf="hashEntry?.hash === hashEntry?.computedHash"
            class="ma-icon success"></i>
-        <i *ngIf="hashEntry?.computedHash && hashEntry?.hash !== hashEntry?.computedHash"
+        <i *ngIf="isVerified && hashEntry?.hash !== hashEntry?.computedHash && !(hashEntry?.progress > 0)"
            class="ma-icon error"></i>
       </div>
     </div>
