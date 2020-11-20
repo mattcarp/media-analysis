@@ -19,7 +19,6 @@ import { DdpidService } from './ddpid.service';
 import { DdppqService } from './ddppq.service';
 import { GracenoteService } from './gracenote.service';
 import { CdTextService } from './cdtext.service';
-import { LoggerMonitor } from '@app/analyze-ddp/store/services/logger-monitor';
 
 @Injectable({
   providedIn: 'root',
@@ -172,7 +171,7 @@ export class DdpFileService implements OnDestroy {
     this.store.dispatch(setPlayerAnnotation(params));
   }
 
-  static setLoggerS(logger: NGXLogger) {
+  static setLoggerS(logger: NGXLogger): void {
     DdpFileService.loggerS = logger;
   }
 

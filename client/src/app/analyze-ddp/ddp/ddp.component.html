@@ -1,4 +1,4 @@
-<app-accordion [firstOpened]="true">
+<app-accordion [isFirstOpened]="true">
   <app-accordion-group title="Playback">
     <div class="ddp-player">
       <div class="ddp-player-actions">
@@ -58,7 +58,7 @@
     </div>
   </app-accordion-group>
 
-  <app-accordion-group title="Validations">
+  <app-accordion-group title="Validations" [resultValidation]="getResultValidation()">
     <app-ddp-validations></app-ddp-validations>
   </app-accordion-group>
 

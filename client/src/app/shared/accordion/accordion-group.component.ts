@@ -5,7 +5,11 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   template: `
     <div class="accordion-panel">
       <div (click)="toggle.emit()" class="accordion-panel-title">
-        {{title}}
+        <div>
+          <i *ngIf="resultValidation?.length" class="ma-icon" [ngClass]="resultValidation"></i>
+          {{title}}
+        </div>
+
         <span *ngIf="!opened">[+]</span>
         <span *ngIf="opened">[–]</span>
       </div>
@@ -19,5 +23,6 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class AccordionGroupComponent {
   @Input() opened = false;
   @Input() title: string;
+  @Input() resultValidation: string;
   @Output() toggle: EventEmitter<any> = new EventEmitter<any>();
 }

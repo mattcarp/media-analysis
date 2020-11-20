@@ -20,4 +20,5 @@ export interface ValidationState {
   sizeMatches?: FileItem[];
   sizeMismatches?: FileItem[];
   foundFiles?: FileItem[];
+  isValid?: boolean;
 }

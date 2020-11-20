@@ -66,13 +66,18 @@ export class ValidationsComponent implements OnInit, OnDestroy {
         this.logger.log('got these validations', this.validations);
         this.logger.log('in return for ', this.parsedMs, this.parsedId);
         const end = new Date().getTime();
-        this.totalValidationTime =
-          end - this.ddpFileService.parseStartTime.getTime();
+        this.totalValidationTime = end - this.ddpFileService.parseStartTime.getTime();
       });
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  getClassValidation(): string {
+    return this.hasValidations
+      ? this.validations.isValid ? 'success' : 'error'
+      : 'question';
   }
 }

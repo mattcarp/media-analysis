@@ -9,8 +9,11 @@ import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap.js';
 
 import { DdpService, DdpFileService } from '../store/services';
 import { DdpState } from '../store/reducers/ddp.reducer';
-import { selectAudioEntries, selectPlayerAnnotation } from '../store/selectors/ddp.selectors';
-import { PlayerAnnotationState } from '../store/models';
+import {
+  selectAudioEntries,
+  selectPlayerAnnotation, selectValidation,
+} from '../store/selectors/ddp.selectors';
+import { PlayerAnnotationState, ValidationState } from '../store/models';
 
 declare const Resumable: any;
 
@@ -38,6 +41,7 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   trackSelected = false;
   currentIndex: number;
   isShowBlock = false;
+  validations: ValidationState;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -52,6 +56,11 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.store.pipe(select(selectPlayerAnnotation), takeUntil(this.destroy$))
       .subscribe((state: PlayerAnnotationState) => this.playerAnnotation = state);
+
+    this.store.pipe(select(selectValidation), takeUntil(this.destroy$))
+      .subscribe((validations: ValidationState) => {
+        this.validations = validations;
+      });
   }
 
   ngAfterViewInit(): void {
@@ -210,5 +219,11 @@ export class DdpComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleBlock(): void {
     this.isShowBlock = !this.isShowBlock;
+  }
+
+  getResultValidation(): string {
+    return this.validations.isValid === null
+      ? 'question'
+      : this.validations.isValid ? 'success' : 'error';
   }
 }
