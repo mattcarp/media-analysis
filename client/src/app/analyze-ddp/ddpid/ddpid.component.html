@@ -1,0 +1,32 @@
+<dl>
+  <dt>File Name:</dt>
+  <dd>{{parsedId?.fileName}}</dd>
+  <dt>Last Modified:</dt>
+  <dd>{{parsedId?.lastModified | date:'medium'}}</dd>
+  <dt>Size:</dt>
+  <dd>{{parsedId?.fileSize}}</dd>
+  <dt>Version:</dt>
+  <dd>{{parsedId?.ddpid}}</dd>
+  <dt>Type:</dt>
+  <dd>{{parsedId?.type_ == 'DV' ? 'DVD' : parsedId?.type_}}</dd>
+  <dt>Master ID:</dt>
+  <dd>{{parsedId?.mid}}</dd>
+</dl>
+<dl *ngIf="parsedId?.type_ === 'DV'">
+  <dt>Total Sides:</dt>
+  <dd>{{parsedId?.nside}}</dd>
+  <dt>Current Side:</dt>
+  <dd>{{parsedId?.side}} <small> (0 represents the first side, 1 represents the second)</small></dd>
+  <dt>Total Layers:</dt>
+  <dd>{{parsedId?.nlayer}}</dd>
+  <dt>Current Layer:</dt>
+  <dd>{{parsedId?.layer}} <small> (0 represents the first layer, 1 represents the second)</small></dd>
+</dl>
+<dl *ngIf="parsedId?.upc?.length">
+  <dt>UPC/EAN:</dt>
+  <dd>{{parsedId?.upc}}</dd>
+</dl>
+<dl *ngIf="parsedId?.txt?.length">
+  <dt>User Text:</dt>
+  <dd>{{parsedId?.txt}}</dd>
+</dl>

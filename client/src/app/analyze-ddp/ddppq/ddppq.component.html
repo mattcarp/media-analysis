@@ -1,0 +1,32 @@
+<div class="ma-table-header">
+  <div #a1>SPV</div>
+  <div #a2>Track</div>
+  <div #a3>Index</div>
+  <div #a4>Start Time</div>
+  <div #a5>Pre Gap</div>
+  <div #a6>Duration</div>
+  <div #a7>ISRC</div>
+  <div #a8>CB1</div>
+  <div #a9>CB2</div>
+  <div #a10>UPC</div>
+  <div #a11>TXT</div>
+</div>
+
+<ng-container *ngFor="let pqEntry of parsedPq?.entries">
+  <div class="ma-table-data">
+    <div #b1>{{pqEntry?.spv}}</div>
+    <div #b2>{{pqEntry?.trk}}</div>
+    <div #b3>{{pqEntry?.idx}}</div>
+    <div #b4>
+      <span *ngIf="pqEntry?.hrs !==''">{{pqEntry?.hrs}}</span>
+      {{pqEntry?.min}}:{{pqEntry?.sec}}:{{pqEntry?.frm}}
+    </div>
+    <div #b5>{{pqEntry?.preGap}}</div>
+    <div #b6>{{pqEntry?.dur}}</div>
+    <div #b7>{{pqEntry?.isrc}}</div>
+    <div #b8>{{pqEntry?.cb1}}</div>
+    <div #b9>{{pqEntry?.cb2}}</div>
+    <div #b10>{{pqEntry?.upc}}</div>
+    <div #b11>{{pqEntry?.txt}}</div>
+  </div>
+</ng-container>

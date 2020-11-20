@@ -1,0 +1,66 @@
+<div class="ddpms-card">
+  <div>
+    <i class="image"></i>
+  </div>
+  <div>
+    <dl>
+      <dt>File name:</dt>
+      <dd>{{parsedMs?.fileName}}</dd>
+      <dt>Size:</dt>
+      <dd>{{parsedMs?.fileSize}}</dd>
+      <dt>Last modified:</dt>
+      <dd>{{parsedMs?.lastModified}}</dd>
+      <dt></dt>
+      <dd></dd>
+      <dt></dt>
+      <dd></dd>
+    </dl>
+  </div>
+</div>
+
+<div *ngIf="hasMs">
+  <p>Based on the map stream data and the spec, the following files must be in the DDP directory.</p>
+  <br>
+
+  <div class="ma-table-header">
+    <div #a1>Name</div>
+    <div #a2>Type</div>
+    <div #a3>Sub</div>
+    <div #a4>TRK</div>
+    <div #a5>IDX</div>
+    <div #a6>PRE1</div>
+    <div #a7>PRE2</div>
+    <div #a8>PST</div>
+    <div #a9>DST</div>
+    <div #a10>MPV</div>
+    <div #a11>ISRC</div>
+    <div #a12>Expected Size</div>
+  </div>
+
+  <ng-container *ngFor="let item of parsedMs?.entries">
+    <div class="ma-table-data">
+      <div #b1>{{item?.dsi}}</div>
+      <div #b2>
+        <span *ngIf="item?.dsi === 'DDPID'">DDP Identification</span>
+        <span *ngIf="item?.dsi !== 'DDPID'">{{item?.dst}}</span>
+      </div>
+      <div #b3>{{item?.sub}}</div>
+      <div #b4>{{item?.trk}}</div>
+      <div #b5>{{item?.idx}}</div>
+      <div #b6>{{item?.pre1}}</div>
+      <div #b7>{{item?.pre2}}</div>
+      <div #b8>{{item?.pst}}</div>
+      <div #b9>{{item?.dst}}</div>
+      <div #b10>{{item?.mpv}}</div>
+      <div #b11>{{item?.isrc}}</div>
+      <div #b12>
+        <span *ngIf="item?.fileSize && masterFormat?.name.substring(0, 3) !== 'DVD'">
+          {{item?.fileSize | number}}<br>({{item?.fileSize}})
+        </span>
+        <span *ngIf="masterFormat?.name.substring(0, 3) === 'DVD'">
+          Not applicable for DVD
+        </span>
+      </div>
+    </div>
+  </ng-container>
+</div>

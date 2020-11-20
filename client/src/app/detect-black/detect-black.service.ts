@@ -162,7 +162,7 @@ export class DetectBlackService {
     });
   } // recursiveBlackDetect
 
-  requestBlack(slice: any, position: string, filename: string) {
+  requestBlack(slice: any, position: string, filename: string): any {
     return $.ajax({
       type: 'POST',
       url: this.endpoint + 'black',

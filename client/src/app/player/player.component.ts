@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { ExtractMetadataService } from '../extract-metadata/extract-metadata.service';
-import { FileHandlerService } from '../handle-files/handle-files.service';
+import { UploaderService } from '../uploader/uploader.service';
 import { LoggerService } from '../services/logger.service';
 // import {PlayerService} from "./player.service";
 
 declare var jwplayer: any;
-
 
 // TODOmc inject the player service
 
@@ -13,7 +12,6 @@ declare var jwplayer: any;
   selector: 'player',
   templateUrl: './player.html',
 })
-
 export class PlayerComponent {
   showPlayer: boolean = false;
   showPlayerHeader: boolean = false;
@@ -55,17 +53,13 @@ export class PlayerComponent {
 
   constructor(
     extractMetadataService: ExtractMetadataService,
-    fileHandlerService: FileHandlerService,
+    fileHandlerService: UploaderService,
     private loggerService: LoggerService,
   ) {
     this.loggerService.info(`Player instance.`, 'color: green');
     console.log(this.playerInstance);
     this.metadataResult = extractMetadataService.metadataResult;
-    this.metadataResult.subscribe(() => {
-      // this.renderResult(value);
-      // this.initPlayer(this.dummyPlaylist);
-      this.showPlayerHeader = true;
-    });
+    this.metadataResult.subscribe(() => this.showPlayerHeader = true);
   }
 
   playVideo(track: Object) {}

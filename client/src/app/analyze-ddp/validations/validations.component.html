@@ -1,0 +1,71 @@
+<ng-container *ngIf="hasValidations">
+  <p>Passed {{validations?.totalPasses}} tests.</p>
+
+  <ng-container *ngIf="validations?.totalFails === 0; else failedBlock">
+    <div class="alert-success">
+      <p>All file parsing and validations completed in {{totalValidationTime}} milliseconds.</p>
+    </div>
+  </ng-container>
+
+  <ng-template #failedBlock>
+    <div class="alert-danger">
+      <p>
+        <strong>This DDP failed {{validations?.totalFails}} test.</strong>
+        <span *ngIf="validations?.missingFiles?.length > 1">
+            Most likely because not all required files were submitted.
+          </span>
+      </p>
+
+      <ng-container *ngIf="validations?.missingFiles?.length">
+        <h4>Missing Files:</h4>
+        <div *ngFor="let file of validations?.missingFiles">
+          <i class="ma-icon error"></i>
+          {{file?.name}}, which is required in the map stream and should be
+          {{file?.reqSize | number}} bytes, was not found in the directory.
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="validations?.pqMsIssues?.length">
+        <h4>There were {{validations?.pqMsIssues?.length}} PQ - MS Mismatches (see above).</h4>
+      </ng-container>
+
+      <ng-container *ngIf="validations?.sizeMismatches?.length">
+        <h4>File Size Mismatches:</h4>
+        <div *ngFor="let file of validations?.sizeMismatches">
+          <i class="ma-icon error"></i>
+          {{file?.name}} was found, but the map stream indicates should be
+          {{file?.reqSize | number}} bytes, and it was {{file?.actualSize | number}}
+          bytes, which is a difference of {{(file?.reqSize - file?.actualSize) | number}}.
+          <i *ngIf="file?.diff < 3 && file?.diff > 0">
+            However, in cases like this where the actual file is larger than the required by a
+            small number of bytes, the discrepancy is normally considered acceptable because it
+            likely represents an extra carriage return / line feed.
+          </i>
+          <i *ngIf="file?.diff < 0">Some information may be missing in {{file?.name}}.</i>
+          <i *ngIf="file?.diff > 2">There may be extraneous information in {{file?.name}}.</i>
+        </div>
+      </ng-container>
+    </div>
+  </ng-template>
+
+  <div class="alert-success">
+    <h4>Files Found:</h4>
+    <div *ngFor="let file of validations?.foundFiles">
+      <i class="ma-icon success"></i>
+      {{file?.name}}, which is required in the map stream, was found in the directory.
+    </div>
+
+    <h4>File Size Matches:</h4>
+    <ng-container *ngFor="let file of validations?.sizeMatches">
+      <div *ngIf="file?.name !== 'DDPID'">
+        <i class="ma-icon success"></i>
+        {{file?.name}} was the same size ({{file?.reqSize | number}} bytes) as predicted in the map stream.
+      </div>
+      <div *ngIf="file?.name === 'DDPID'">
+        <i class="ma-icon success"></i>
+        {{file?.name}} was the size ({{file?.reqSize | number}} bytes) indicated by the DDP 2.0
+        specification (the id file is not referenced in the map stream).
+      </div>
+    </ng-container>
+  </div>
+</ng-container>

@@ -1,0 +1,50 @@
+<ng-container *ngIf="!parsedCdText; else cdText">
+  <div class="alert-danger">
+    <p>No CD text found</p>
+  </div>
+</ng-container>
+
+<ng-template #cdText>
+  <h4>Assembled CD Text Packs</h4>
+
+  <div class="ma-table-header">
+    <div>#</div>
+    <div>Level</div>
+    <div>Type</div>
+    <div>Text</div>
+  </div>
+
+  <ng-container *ngFor="let entry of parsedCdText">
+    <div class="ma-table-data">
+      <div>{{entry?.trackNo}}</div>
+      <div>
+        <span *ngIf="entry?.trackNo === 0">album</span>
+        <span *ngIf="entry?.trackNo !== 0">track</span>
+      </div>
+      <div>{{entry?.type}}</div>
+      <div>{{entry?.text}}</div>
+    </div>
+  </ng-container>
+
+  <h4>Raw CD Text Packs</h4>
+
+  <div class="ma-table-header">
+    <div>Counter</div>
+    <div>Type</div>
+    <div>Track</div>
+    <div>Character Position</div>
+    <div>Payload</div>
+    <div>CRC</div>
+  </div>
+
+  <ng-container *ngFor="let pack of parsedPackItems">
+    <div class="ma-table-data">
+      <div>{{pack?.counter}}</div>
+      <div>{{pack?.packType}}</div>
+      <div>{{pack?.packTrackNo}}</div>
+      <div>{{pack?.charPos}}</div>
+      <div>{{pack?.payload}}</div>
+      <div>{{pack?.crc}}</div>
+    </div>
+  </ng-container>
+</ng-template>

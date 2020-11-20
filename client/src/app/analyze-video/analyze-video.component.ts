@@ -7,7 +7,7 @@ import { LoggerService } from '../services/logger.service';
 import { VideoRulesConstants } from './video-rules.constants';
 
 @Component({
-  selector: 'analyze-video',
+  selector: 'app-analyze-video',
   templateUrl: './analyze-video.component.html',
 })
 export class AnalyzeVideoComponent {
@@ -25,15 +25,18 @@ export class AnalyzeVideoComponent {
 
   private destroy$: Subject<any> = new Subject<any>();
 
-  constructor(private extractMetadataService: ExtractMetadataService, private loggerService: LoggerService) {
-    this.extractMetadataService.metadataStarted.subscribe((value) => {
-      this.metadataStarted = value;
-    });
+  constructor(
+    private extractMetadataService: ExtractMetadataService,
+    private loggerService: LoggerService,
+  ) {
+    this.extractMetadataService.metadataStarted.subscribe((value) => this.metadataStarted = value);
 
-    this.extractMetadataService.metadataResult.pipe(takeUntil(this.destroy$)).subscribe((value) => {
-      this.metadataStarted = false;
-      this.validate(value);
-    });
+    this.extractMetadataService.metadataResult
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.metadataStarted = false;
+        this.validate(value);
+      });
   }
 
   validate(metadata: any): void {

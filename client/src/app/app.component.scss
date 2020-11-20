@@ -22,7 +22,6 @@ aside {
 article {
   section {
     position: relative;
-    padding: 5px;
     border: 1px solid $color-lightgray;
     background-color: rgba($color-codebg, 0.5);
 
@@ -53,6 +52,8 @@ article {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
           }
         }
 
@@ -105,6 +106,15 @@ article {
           text-align: right;
         }
       }
+
+      &-ddp {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+      }
     }
   }
 }
@@ -119,6 +129,7 @@ h4 {
   font-weight: 400;
   line-height: 1.1;
   color: $color-medium;
+  display: flex;
 }
 
 a {
@@ -139,6 +150,20 @@ a {
   width: 100%;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.badge {
+  font-size: 14px;
+  background-color: #eee;
+  padding: 4px 12px;
+  border-radius: 20px;
+  color: #777;
+  margin: 0 0 0 10px;
+
+  &.active {
+    color: #fff;
+    background-color: #492e7c;
+  }
 }
 
 // Main Logo
@@ -171,12 +196,10 @@ a {
       }
     }
 
-    span {
-      margin: -20px 0 0 10px;
-      padding: 4px;
+    .badge {
       font-size: 11px;
       text-transform: uppercase;
-      border-radius: 2px;
+      background-color: #492e7c;
     }
   }
 
@@ -213,6 +236,11 @@ a {
     position: relative;
     display: inline-block;
     margin: 0 0.3em;
+
+    button {
+      background-color: transparent;
+      padding: 0;
+    }
 
     @media #{$screen-medium} {
       margin: 0 0.6em;

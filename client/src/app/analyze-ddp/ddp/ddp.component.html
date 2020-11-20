@@ -1,0 +1,88 @@
+<app-accordion [isFirstOpened]="true">
+  <app-accordion-group title="Playback">
+    <div class="ddp-player">
+      <div class="ddp-player-actions">
+        <button (click)="playPause()">
+          <i class="ma-icon play" *ngIf="showPlay"></i>
+          <i class="ma-icon stop" *ngIf="!showPlay"></i>
+        </button>
+        <button (click)="playFrom(0)" [disabled]="!showPlay">
+          <i class="ma-icon play"></i>
+          <span>Play from file start</span>
+        </button>
+        <button (click)="playFromIdx1()" [disabled]="!showPlay">
+          <i class="ma-icon play"></i>
+          <span>Play from index 1</span>
+        </button>
+        <h3>{{timecode}}</h3>
+      </div>
+      <div *ngIf="playerAnnotation && !playbackStatus" class="ddp-player-annotation">
+        <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
+        <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
+        <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
+        <p>{{playbackStatus}}</p>
+      </div>
+    </div>
+
+    <div [hidden]="wavProgress <= 99" class="ddp-waveform">
+      <div id="waveform" class="ddp-waveform"></div>
+      <div id="waveform-timeline"></div>
+    </div>
+
+    <div class="ddp-controls">
+      <i class="ma-icon search-minus"></i>
+      <input id="slider" type="range" min="1" max="46" value="1" class="ddp-controls-slider" />
+      <i class="ma-icon search-plus"></i>
+    </div>
+
+    <div class="ddp-playlist">
+      <div class="ma-table-header">
+        <div>#</div>
+        <div>Track Name</div>
+        <div>ISRC</div>
+        <div>Pre Gap</div>
+        <div>Duration</div>
+      </div>
+
+      <ng-container *ngFor="let track of playList; let i = index">
+        <div (click)="queueTrack(i, $event)"
+             class="ma-table-data"
+             [class.selected]="isSelected(i)">
+          <div>{{i + 1}}</div>
+          <div>{{track?.file?.name}}</div>
+          <div>{{track?.isrc}}</div>
+          <div>{{track?.preGap}}</div>
+          <div>{{track?.dur}}</div>
+        </div>
+      </ng-container>
+    </div>
+  </app-accordion-group>
+
+  <app-accordion-group title="Validations" [resultValidation]="getResultValidation()">
+    <app-ddp-validations></app-ddp-validations>
+  </app-accordion-group>
+
+  <app-accordion-group title="DDP ID">
+    <app-ddp-ddpid></app-ddp-ddpid>
+  </app-accordion-group>
+
+  <app-accordion-group title="Map Stream">
+    <app-ddp-ddpms></app-ddp-ddpms>
+  </app-accordion-group>
+
+  <app-accordion-group title="PQ Subcode">
+    <app-ddp-ddppq></app-ddp-ddppq>
+  </app-accordion-group>
+
+  <app-accordion-group title="Hashes">
+    <app-ddp-hashes></app-ddp-hashes>
+  </app-accordion-group>
+
+  <app-accordion-group title="CD Text">
+    <app-ddp-cdtext></app-ddp-cdtext>
+  </app-accordion-group>
+
+  <app-accordion-group title="Gracenote">
+    <app-ddp-gracenote></app-ddp-gracenote>
+  </app-accordion-group>
+</app-accordion>

@@ -21,10 +21,17 @@ export class ExtractMetadataService {
   metadataStarted = new EventEmitter();
   metadataResult = new EventEmitter();
 
-  constructor(endpointService: EndpointService, qtService: QuicktimeService, private loggerService: LoggerService) {
+  constructor(
+    endpointService: EndpointService,
+    qtService: QuicktimeService,
+    private loggerService: LoggerService,
+  ) {
     this.endpoint = endpointService.getEndpoint();
     this.qtService = qtService;
-    this.loggerService.info(`EndpointService provided this base path: ${this.endpoint}`, 'color: lime');
+    this.loggerService.info(
+      `EndpointService provided this base path: ${this.endpoint}`,
+      'color: lime',
+    );
   }
 
   extract(mediaFile: any): void {
@@ -39,13 +46,19 @@ export class ExtractMetadataService {
         // TODOmc if extension is .mov, call QuicktimeService.getMoovStats() on header
         if (this.originalExtension === 'mov') {
           // TODO if moov not in head, check tail
-          this.loggerService.info(`This is a mov file, so we should call the qt service.`, 'color: grey');
+          this.loggerService.info(
+            `This is a mov file, so we should call the qt service.`,
+            'color: grey',
+          );
           const headerBuf: ArrayBuffer = evt.target.result;
           const moovStats: any = this.qtService.getMoovStats(headerBuf);
           if (moovStats.moovExists === true) {
             this.handleMov(moovStats, headerBuf);
           } else {
-            this.loggerService.info(`Don't send this to the backend, because we got no moov atom.`, 'color: orange');
+            this.loggerService.info(
+              `Don't send this to the backend, because we got no moov atom.`,
+              'color: orange',
+            );
             this.loggerService.info(
               `This is a mov file, but the moov atom wasn't found in the header. I really should look in the tail of the file now.`,
               'color: grey',
@@ -95,14 +108,21 @@ export class ExtractMetadataService {
 
     // this.mediaFile = file;
     this.originalExtension = mediaFile.name.split('.').pop();
-    this.loggerService.info(`Original file extension: ${this.originalExtension}`, 'color: lawngreen ');
+    this.loggerService.info(
+      `Original file extension: ${this.originalExtension}`,
+      'color: lawngreen ',
+    );
     this.blob = mediaFile.slice(0, SLICE_SIZE);
     reader.readAsArrayBuffer(this.blob);
   }
 
   // called if file extension is mov, check for moov atom in head, then tail
   handleMov(moovStats: IMoovStats, movBuf: ArrayBuffer): void {
-    const moov: ArrayBuffer = this.qtService.getMoov(moovStats.moovStart, moovStats.moovLength, movBuf);
+    const moov: ArrayBuffer = this.qtService.getMoov(
+      moovStats.moovStart,
+      moovStats.moovLength,
+      movBuf,
+    );
     this.loggerService.info(`HandleMov gave me this DataView:`, 'color: grey');
     console.dir(moov);
 

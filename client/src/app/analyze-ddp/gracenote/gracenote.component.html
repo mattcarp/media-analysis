@@ -1,0 +1,39 @@
+<ng-container *ngIf="!gracenoteData; else dataBlock">
+  <div class="alert-danger">
+    <p>No gracenote data found</p>
+  </div>
+</ng-container>
+
+<ng-template #dataBlock>
+  <dl>
+    <dt>Album Artist:</dt>
+    <dd>{{gracenoteData?.ALBUM.ARTIST}}</dd>
+    <dt>Album Title:</dt>
+    <dd>{{gracenoteData?.ALBUM.TITLE}}</dd>
+    <dt>Packaging Language:</dt>
+    <dd>{{gracenoteData?.ALBUM.PKG_LANG}}</dd>
+    <dt>Date:</dt>
+    <dd>{{gracenoteData?.ALBUM.DATE}}</dd>
+    <dt>Genre:</dt>
+    <dd>{{gracenoteData?.ALBUM.GENRE.__text}}</dd>
+    <dt>Track Count:</dt>
+    <dd>{{gracenoteData?.ALBUM.TRACK_COUNT}}</dd>
+  </dl>
+
+  <div class="ma-table-header">
+    <div>#</div>
+    <div>Title</div>
+  </div>
+
+  <ng-container *ngFor="let track of gracenoteData?.ALBUM.TRACK">
+    <div class="ma-table-data">
+      <div>{{track?.TRACK_NUM}}</div>
+      <div>{{track?.TITLE}}</div>
+    </div>
+  </ng-container>
+
+  <img src="{{gracenoteData?.ALBUM.URL}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
+  <span *ngIf="gracenoteData?.ALBUM.length === 1">
+    <img src="{{gracenoteData?.ALBUM.URL.__text}}" alt="{{gracenoteData?.ALBUM.URL._type}}">
+  </span>
+</ng-template>

@@ -1,0 +1,4 @@
+.ma-table-header,
+.ma-table-data {
+  grid-template-columns: 40px minmax(140px, 1fr);
+}
