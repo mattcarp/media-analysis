@@ -14,6 +14,16 @@ This project was generated using [Nx](https://nx.dev).
 
 [Interactive Tutorial](https://nx.dev/angular/tutorial/01-create-application)
 
+## Running locally in the docker container
+
+Build docker container run:
+
+`docker build -t media-analysis .`
+
+Run docker container run:
+
+`docker run -p 3000:3000 -d media-analysis`
+
 ## Adding capabilities to your workspace
 
 Nx supports many plugins which add capabilities for developing different types of applications and different tools.
