@@ -1,0 +1,56 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
+import { StoreModule } from '@ngrx/store';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
+
+import { DdpComponent } from './ddp/ddp.component';
+import {
+  ddpFilesFeatureKey,
+  reducer as ddpFilesReducer,
+} from './store/reducers/ddp.reducer';
+import { CdtextComponent } from './cdtext/cdtext.component';
+import { DdpIdComponent } from './ddpid/ddpid.component';
+import { DdpmsComponent } from './ddpms/ddpms.component';
+import { DdppqComponent } from './ddppq/ddppq.component';
+import { GracenoteComponent } from './gracenote/gracenote.component';
+import { HashesComponent } from './hashes/hashes.component';
+import { ValidationsComponent } from './validations/validations.component';
+import { AccordionComponent } from '../shared/accordion/accordion.component';
+import { AccordionGroupComponent } from '../shared/accordion/accordion-group.component';
+
+@NgModule({
+  declarations: [
+    DdpComponent,
+    CdtextComponent,
+    DdpIdComponent,
+    DdpmsComponent,
+    DdppqComponent,
+    GracenoteComponent,
+    HashesComponent,
+    ValidationsComponent,
+    AccordionComponent,
+    AccordionGroupComponent,
+  ],
+  imports: [
+    CommonModule,
+    HttpClientModule,
+    StoreModule.forFeature(ddpFilesFeatureKey, ddpFilesReducer),
+    LoggerModule.forRoot({
+      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
+      level: NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.ERROR,
+    }),
+  ],
+  exports: [
+    DdpComponent,
+    CdtextComponent,
+    DdpIdComponent,
+    DdpmsComponent,
+    DdppqComponent,
+    GracenoteComponent,
+    HashesComponent,
+    ValidationsComponent,
+  ],
+})
+export class AnalyzeDdpModule {}

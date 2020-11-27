@@ -1,137 +1,108 @@
+# MediaAnalysis
 
-### local server
+This project was generated using [Nx](https://nx.dev).
 
-start express server, from project root:
+<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
 
-    npm start
+🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
 
-the above will run the express file in ./bin/www in DEBUG mode
+## Quick Start & Documentation
 
-ffprobe on command line
+[Nx Documentation](https://nx.dev/angular)
 
-    ffprobe -of json -show_streams -show_format /path/to/file
+[10-minute video showing all Nx features](https://nx.dev/angular/getting-started/what-is-nx)
 
-### API TDD - test driven development
-write a test first - uses `jest`
-run all tests (from root):
+[Interactive Tutorial](https://nx.dev/angular/tutorial/01-create-application)
 
-    npm run test:watch
+## Running locally in the docker container
 
-### make a rest endpoint
+Build docker container run:
 
-in app.js, add the route, e.g.:
+`docker build -t media-analysis .`
 
-    app.use('/black', black);
+Run docker container run:
 
-    <!-- and in the declaration section (same file): -->
+`docker run -p 3000:3000 -d media-analysis`
 
-    var black = require('./routes/black');
+## Adding capabilities to your workspace
 
-make a file in the `routes` folder called `black.js`
-you'll need to manually restart the server to see the new endpoint
+Nx supports many plugins which add capabilities for developing different types of applications and different tools.
 
-demo hosting on aws http://18.213.229.220:3000/
+These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
 
-deployment:
-    this is now down via github actions
+Below are our core plugins:
 
-run expressjs locally, from root:
+- [Angular](https://angular.io)
+  - `ng add @nrwl/angular`
+- [React](https://reactjs.org)
+  - `ng add @nrwl/react`
+- Web (no framework frontends)
+  - `ng add @nrwl/web`
+- [Nest](https://nestjs.com)
+  - `ng add @nrwl/nest`
+- [Express](https://expressjs.com)
+  - `ng add @nrwl/express`
+- [Node](https://nodejs.org)
+  - `ng add @nrwl/node`
 
-    DEBUG=express:* node ./bin/www
-    // forever -f start ./bin/www
+There are also many [community plugins](https://nx.dev/nx-community) you could add.
 
-list the forver processes and get log file
+## Generate an application
 
-    forever list
+Run `ng g @nrwl/angular:app my-app` to generate an application.
 
-get log file location from the above, then
+> You can use any of the plugins above to generate applications as well.
 
-    tail -f  /home/centos/.forever/ZVT8.log | bunyan
+When using Nx, you can create multiple applications and libraries in the same workspace.
 
-    // or to debug, instead of last line:
-    nodemon DEBUG=media-analysis:* npm start | bunyan
+## Generate a library
 
-NOTE: you may have to run gulp on /client in order to compile to js
+Run `ng g @nrwl/angular:lib my-lib` to generate a library.
 
-debug if forever failing on prod server
-    nodemon DEBUG=media-analysis:* npm start | bunyan &
+> You can also use any of the plugins above to generate libraries as well.
 
-## nginx
+Libraries are sharable across libraries and applications. They can be imported from `@media-analysis/mylib`.
 
-tail logs on aws:
+## Development server
 
-    sudo tail -f sudo tail -f /var/log/nginx/error.log
+Run `ng serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
+## Code scaffolding
 
-    tail -f  /home/centos/.forever/ZVT8.log | bunyan
+Run `ng g component my-component --project=my-app` to generate a new component.
 
-restarted aws machine? getting 403 access denied?
+## Build
 
-    sudo setenforce Permissive
-    sudo nginx -s reload
+Run `ng build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Did your local IP address change? Add it in the ec2 inbound security rules
+## Running unit tests
 
+Run `ng test my-app` to execute the unit tests via [Jest](https://jestjs.io).
 
+Run `nx affected:test` to execute the unit tests affected by a change.
 
-## show git history
+## Running end-to-end tests
 
-    git log --pretty=format:"%h - %ar : %s"
+Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
 
-### black detection
-this will give you black_duration, but you'll have more text to filter out:
+Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
 
-    ffprobe -f lavfi -i "movie=mp4boxjs_issue_69_AitakuteIma_G010001894725Z_ProgramOnly.mov,blackdetect[out0]" -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1
+## Understand your workspace
 
-where d=0.1 expresses the minimum length of black to detect in seconds. Lower this if you want single frames.
-pix_th=.1 is the level of black to detect between 0 and 1. a setting of one will flag all frames, a setting of .01 should only grab black. tweak as needed.
+Run `nx dep-graph` to see a diagram of the dependencies of your projects.
 
-### mono detection
+## Further help
 
-first, demux to wav with ffmpeg
+Visit the [Nx Documentation](https://nx.dev/angular) to learn more.
 
-    ffmpeg -i my_video.mp4 output_audio.wav
+## ☁ Nx Cloud
 
-SoX mono detect: If Pk lev dB shows as -inf, channels 1 and 2 are identical.
-There's a file in /Volumes/Transcend/media_test_files/wav as below:
+### Computation Memoization in the Cloud
 
-    sox dual_mono_from_video.wav -n remix 1,2i stats
+<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
 
-### media metadata
-a good ffprobe line showing all metadata and suppressing header (single line):
+Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
 
-    ffprobe -v quiet -sexagesimal -of json -show_format -show_streams -show_chapters -show_programs -show_private_data -i MVD_000000326734_001.26.mpg
+Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
 
-bash extract header from file
-
-    head -c 150000 my_file.mov > header.txt
-
-and concat the header onto a binary slice
-
-    cat header.txt > out.mov
-
-### extract image at around 60 seconds (just for fun)
-
-    ffmpeg -ss 60 -i input.mp4 -qscale:v 2 -vframes 1 output.jpg
-
-### for testing, get first 2 megs of file (use `tail` for tail)
-
-    head -c 2000000 input_file.mov > prores_first_2_megs.mov
-
-then you stick header onto the end of the file
-
-    cat file1 file2 file3 file4 file5 file6 > out.txt
-
-### ProRes
-  Each ProRes 422 frame begins with a pattern of 8 bytes:
-  aabbccdd 69637066 ....icpf
-  where aabbccdd encodes the length of the frame (length includes those 8 header bytes).
-
-## Testing
-Use jasmine-node. Run server-side tests from project root:
-
-    jasmine-node . --
-
-Or to watch the whole project for changes:
-
-    jasmine-node spec --autotest --color --verbose --watch . | bunyan
+Visit [Nx Cloud](https://nx.app/) to learn more.
