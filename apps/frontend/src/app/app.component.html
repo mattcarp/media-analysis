@@ -47,8 +47,8 @@
   <article>
     <h2>
       Analysis:
-      <small class="badge" [class.active]="files.length && !isDDP(files)">Audio/Video/Image</small>
-      <small class="badge" [class.active]="files.length && isDDP(files)">DDP</small>
+      <small class="badge" [class.active]="files?.length && !isDDP(files)">Audio/Video/Image</small>
+      <small class="badge" [class.active]="files?.length && isDDP(files)">DDP</small>
     </h2>
 
     <section>

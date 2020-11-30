@@ -8,16 +8,16 @@
   <div *ngIf="format">
     <h4>Format</h4>
     <dl *ngFor="let item of format">
-      <dt>{{item.key}}</dt>
-      <dd>{{item.value}}</dd>
+      <dt>{{item?.key}}</dt>
+      <dd>{{item?.value}}</dd>
     </dl>
   </div>
 
   <div *ngIf="formatTags">
     <h4>Format Tags</h4>
     <dl *ngFor="let item of formatTags">
-      <dt>{{item.key}}</dt>
-      <dd>{{item.value}}</dd>
+      <dt>{{item?.key}}</dt>
+      <dd>{{item?.value}}</dd>
     </dl>
   </div>
 
@@ -27,8 +27,8 @@
       <div *ngFor="let item of stream" [ngClass]="{'stream': isItemWithLinearValue(item?.value)}">
         <ng-container *ngIf="isItemWithLinearValue(item?.value); else disposition">
           <dl>
-            <dt>{{item.key}}</dt>
-            <dd>{{item.value}}</dd>
+            <dt>{{item?.key}}</dt>
+            <dd>{{item?.value}}</dd>
           </dl>
         </ng-container>
 
