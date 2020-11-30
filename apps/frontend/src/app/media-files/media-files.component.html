@@ -1,0 +1,15 @@
+<app-detect-black></app-detect-black>
+
+<div *ngFor="let file of files" class="container">
+  <div class="ellipsis file-name">{{file.name}}</div>
+
+  <app-analyze-image *ngIf="getFileType(file).includes('image')" [file]=file></app-analyze-image>
+
+  <app-analyze-video *ngIf="getFileType(file).includes('video')" [file]=file></app-analyze-video>
+
+  <app-analyze-audio *ngIf="getFileType(file).includes('audio')" [file]=file></app-analyze-audio>
+
+  <div *ngIf="!getHasValidation(file.id)" class="alert-danger">
+    Analysis rules for files <b>{{getFileExtensionOrFileName(file?.name)}}</b> not yet set.
+  </div>
+</div>

@@ -1,0 +1,11 @@
+<div class="audio-actions">
+  <button (click)="togglePlay()">
+    <i class="ma-icon play" *ngIf="showPlay"></i>
+    <i class="ma-icon stop" *ngIf="!showPlay"></i>
+  </button>
+  <h3>{{timeCode}}</h3>
+</div>
+
+<div id="waveform" class="audio-waveform">
+  <i class="ma-icon loader"></i>
+</div>

@@ -1,7 +1,4 @@
 import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
-import { Store } from '@ngrx/store';
-
-import { UploaderService } from './uploader.service';
 
 @Component({
   selector: 'app-uploader',
@@ -9,15 +6,11 @@ import { UploaderService } from './uploader.service';
   styleUrls: ['./uploader.component.scss'],
 })
 export class UploaderComponent implements AfterViewInit {
-  @Output() addedFiles?: EventEmitter<any[]> = new EventEmitter();
-  fileID: string;
+  @Output() addedFilesEmit?: EventEmitter<any[]> = new EventEmitter();
+  @Output() removedFilesEmit?: EventEmitter<string> = new EventEmitter();
+  @Output() uploadedFilesChangedEmit?: EventEmitter<any[]> = new EventEmitter();
   successAnalysisIds: string[] = [];
   errorAnalysisIds: string[] = [];
-
-  constructor(
-    private uploaderService: UploaderService,
-    private store: Store<any>,
-  ) {}
 
   ngAfterViewInit(): void {
     const component = document.querySelector('sme-uploader');
@@ -26,30 +19,25 @@ export class UploaderComponent implements AfterViewInit {
       this.onAddedFiles(event);
     });
 
-    component.addEventListener('removedFile', (event) => {
+    component.addEventListener('removedFile', (event: Event) => {
       this.onRemovedFiles(event);
     });
 
-    component.addEventListener('uploadedFilesChanged', (event) => {
+    component.addEventListener('uploadedFilesChanged', (event: Event) => {
       this.onUploadedFilesChanged(event);
     });
   }
 
   onAddedFiles(event: any): void {
-    // let newFiles = [];
-    // newFiles = this.uploaderService.addFile(event.detail);
-    this.addedFiles.emit(event.detail);
+    this.addedFilesEmit.emit(event.detail);
   }
 
   onRemovedFiles(event: any): void {
-    this.uploaderService.removeFile(event.detail);
-
-    if (event.detail === 'all') {
-      this.uploaderService.clear();
-    }
+    this.removedFilesEmit.emit(event.detail);
   }
 
-  onUploadedFilesChanged(event: Event): void {
-    // this.logger.log('❌Need clear validations list');
+  onUploadedFilesChanged(event: any): void {
+    // TODO: (?)Need clear validations list
+    this.uploadedFilesChangedEmit.emit(event);
   }
 }
