@@ -30,73 +30,34 @@
 
 <main>
   <aside>
-    <h2>Uploader:</h2>
-    <app-uploader (addedFiles)="handleFilesListChange($event)"></app-uploader>
+    <h2>
+      Uploader:
+      <small class="badge">
+        <i class="sme-uploader-logo-icon"></i>
+        SME Uploader v.{{uploaderVer}}
+      </small>
+    </h2>
+    <app-uploader
+      (addedFilesEmit)="handleAddedFiles($event)"
+      (removedFilesEmit)="handleRemovedFiles($event)"
+      (uploadedFilesChangedEmit)="handleUploadedFilesChanged($event)">
+    </app-uploader>
   </aside>
 
   <article>
     <h2>
       Analysis:
-      <small class="badge" [class.active]="files.length && !isDDP">Audio/Video/Image</small>
-      <small class="badge" [class.active]="files.length && isDDP">DDP</small>
+      <small class="badge" [class.active]="files.length && !isDDP(files)">Audio/Video/Image</small>
+      <small class="badge" [class.active]="files.length && isDDP(files)">DDP</small>
     </h2>
 
     <section>
-      <app-detect-black></app-detect-black>
-
-      <ng-container *ngIf="!isDDP; else ddp">
-        <div *ngFor="let file of files" class="container">
-          <div class="file">
-            <div class="file-state">
-              <i class="ma-icon question"></i>
-              <i *ngIf="file.analysed === 'pass'" class="ma-icon pass"></i>
-              <i *ngIf="file.analysed === 'error'" class="ma-icon error"></i>
-            </div>
-            <div class="file-type" [ngClass]="setTypeClass(file.type)">
-              <i class="ma-icon files"></i>
-              <i class="ma-icon" [ngClass]="setTypeClass(file.type)"></i>
-            </div>
-            <div class="ellipsis file-name">{{file.name}}</div>
-            <div class="file-size">{{prettierBytes(file.size)}}</div>
-          </div>
-
-          <app-analyze-image
-            *ngIf="getFileType(file).includes('image')"
-            (validateResult)="handleResult($event, file.id)"
-            [file]=file>
-          </app-analyze-image>
-
-          <app-analyze-video
-            *ngIf="getFileType(file).includes('video')"
-            (validateResult)="handleResult($event, file.id)">
-          </app-analyze-video>
-
-          <app-analyze-audio *ngIf="getFileType(file).includes('audio')"></app-analyze-audio>
-
-          <div *ngIf="file.analysed === 'null'" class="alert-danger">
-            Analysis rules for files of type "<i><b>{{file.type}}</b></i>" not yet set.
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-template #ddp>
-        <app-analyze-ddp [files]="files"></app-analyze-ddp>
-      </ng-template>
+      <app-media-files *ngIf="!isDDP(files)" [files]="files"></app-media-files>
+      <app-ddp-files *ngIf="isDDP(files)" [files]="files"></app-ddp-files>
     </section>
   </article>
 </main>
 
-<app-modal modalId="aboutModal" modalTitle="About" closeBtn="true">
-  <p>Media Analysis | Client v.{{verUI}}</p>
-  <p>Analyzes file formats:</p>
-  <dl>
-    <dt>image</dt>
-    <dd>in developing</dd>
-    <dt>video</dt>
-    <dd>in developing</dd>
-    <dt>audio</dt>
-    <dd>in developing</dd>
-    <dt>DDP</dt>
-    <dd>✔</dd>
-  </dl>
+<app-modal modalId="aboutModal" modalTitle="Media Analysis v.{{verUI}}" closeBtn="true">
+  <app-modal-about></app-modal-about>
 </app-modal>

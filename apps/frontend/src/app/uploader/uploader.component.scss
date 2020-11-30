@@ -1,7 +1,4 @@
-@import '../../theming';
-
 :host {
   display: block;
-  // height: calc(100vh - #{$size-headerHeight} - #{$size-consoleHeight} - 37px);
   height: 400px;
 }

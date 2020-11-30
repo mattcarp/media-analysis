@@ -22,13 +22,11 @@
             "tsConfig": "apps/frontend/tsconfig.app.json",
             "aot": true,
             "assets": [
-              "apps/frontend/src/favicon.ico",
               "apps/frontend/src/assets"
             ],
             "styles": [
-              "apps/frontend/src/styles.scss",
-              "apps/frontend/src/global.scss",
-              "node_modules/fontsource-mulish/index.css"
+              "node_modules/fontsource-mulish/index.css",
+              "apps/frontend/src/global.scss"
             ],
             "scripts": [
               "apps/frontend/src/assets/lib/resumable.js",

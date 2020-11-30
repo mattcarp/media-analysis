@@ -1,0 +1,17 @@
+<app-accordion>
+  <app-accordion-group title="Validations" [resultValidation]="getResultValidation()">
+    <app-image-validations [file]="file" (outputEmit)="handleResultValidation($event)"></app-image-validations>
+  </app-accordion-group>
+
+  <app-accordion-group title="Viewer">
+    <img src="{{file.preview}}" alt="image" width="100%">
+  </app-accordion-group>
+
+  <app-accordion-group title="Exif" *ngIf="isExif">
+    <app-image-exif [file]="file" (outputEmit)="handleFileExif($event)"></app-image-exif>
+  </app-accordion-group>
+
+  <app-accordion-group title="Metadata">
+    <app-image-metadata [file]="file"></app-image-metadata>
+  </app-accordion-group>
+</app-accordion>

@@ -1,4 +1,5 @@
 import { Component, ContentChildren, QueryList, AfterContentInit, Input } from '@angular/core';
+
 import { AccordionGroupComponent } from './accordion-group.component';
 
 @Component({
@@ -9,21 +10,22 @@ import { AccordionGroupComponent } from './accordion-group.component';
 export class AccordionComponent implements AfterContentInit {
   @Input() isFirstOpened: boolean;
   @ContentChildren(AccordionGroupComponent)
-
   groups: QueryList<AccordionGroupComponent>;
 
   ngAfterContentInit(): void {
     // Set active to first element
     this.groups.toArray()[0].opened = this.isFirstOpened;
     this.groups.toArray().forEach((g: AccordionGroupComponent) => {
+      let isOpen = false;
       g.toggle.subscribe(() => {
-        this.openGroup(g);
+        isOpen = !isOpen;
+        this.toggleGroup(g, isOpen);
       });
     });
   }
 
-  openGroup(group): void {
+  toggleGroup(group: AccordionGroupComponent, isOpen: boolean): void {
     this.groups.toArray().forEach((g: AccordionGroupComponent) => g.opened = false);
-    group.opened = true;
+    group.opened = isOpen;
   }
 }

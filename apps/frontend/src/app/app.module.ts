@@ -1,87 +1,51 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {
-  InjectionToken,
-  CUSTOM_ELEMENTS_SCHEMA,
-  NgModule,
-} from '@angular/core';
-import { StoreModule } from '@ngrx/store';
+import { CUSTOM_ELEMENTS_SCHEMA, InjectionToken, NgModule } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
-import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { environment } from '../environments/environment';
-import { reducers } from './shared/store/reducers';
-import { AppRoutingModule } from './app-routing.module';
-import { LoggerService } from './services/logger.service';
-import { HelperService } from './services/helper.service';
+import { reducers } from './store/reducers';
 import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { MediaFilesModule } from './media-files/media-files.module';
+import { DdpFilesModule } from './ddp-files/ddp-files.module';
+import { ModalService } from './shared/modal/modal.service';
+import { HelperService } from './media-files/store/services';
+import { ModalComponent } from './shared/modal/modal.component';
 import { UploaderComponent } from './uploader/uploader.component';
-import { PlayerComponent } from './player/player.component';
-import { AnalyzeVideoComponent } from './analyze-video/analyze-video.component';
-import { AnalyzeAudioComponent } from './analyze-audio/analyze-audio.component';
-import { ExtractMetadataComponent } from './extract-metadata/extract-metadata.component';
-import { DetectBlackComponent } from './detect-black/detect-black.component';
-import { AnalyzeImageComponent } from './analyze-image/analyze-image.component';
-import { AnalyzeDdpModule } from './analyze-ddp/analyze-ddp.module';
-import { ModalComponent } from './services/modal-service/modal.component';
-import { ModalService } from './services/modal-service/modal.service';
-import { LoggerMonitor } from './analyze-ddp/store/services';
+import { ModalAboutComponent } from './modal-about/modal-about.component';
 
-export const ReducerToken = new InjectionToken(
+export const reducerToken = new InjectionToken(
   'Media Analysis Registered Reducers',
 );
 
-export const getReducers = (): any => {
-  return reducers;
-};
+export const getReducers = (): any => reducers;
 
-export const ReducerProvider = [
-  { provide: ReducerToken, useFactory: getReducers },
+export const reducerProvider = [
+  { provide: reducerToken, useFactory: getReducers },
 ];
 
 @NgModule({
   declarations: [
     AppComponent,
-    UploaderComponent,
-    DetectBlackComponent,
-    ExtractMetadataComponent,
-    AnalyzeAudioComponent,
-    AnalyzeVideoComponent,
-    PlayerComponent,
-    AnalyzeImageComponent,
     ModalComponent,
+    UploaderComponent,
+    ModalAboutComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    StoreModule.forRoot(ReducerToken, {}),
-    AnalyzeDdpModule,
+    MediaFilesModule,
+    DdpFilesModule,
     NoopAnimationsModule,
+    StoreModule.forRoot(reducerToken, {}),
     StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production,
+      maxAge: 25, logOnly: environment.production,
     }),
-    LoggerModule.forRoot({
-      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
-      level: NgxLoggerLevel.DEBUG,
-      serverLogLevel: NgxLoggerLevel.ERROR,
-    }),
-    StoreModule.forRoot({}, {}),
   ],
-  providers: [
-    LoggerService,
-    HelperService,
-    ModalService,
-    ReducerProvider,
-  ],
+  providers: [HelperService, ModalService, reducerProvider],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-})
-export class AppModule {
-  constructor(private logger: NGXLogger) {
-    this.logger.registerMonitor(new LoggerMonitor());
-    this.logger.error('ERROR');
-    this.logger.debug('DEBUG');
-    this.logger.log('LOG');
-  }
-}
+  })
+export class AppModule {}

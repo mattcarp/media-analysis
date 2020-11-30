@@ -1,47 +1,104 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { takeUntil } from 'rxjs/operators';
 
-import { File } from './models/file.model';
-import { ExtractMetadataService } from './extract-metadata/extract-metadata.service';
-import { LoggerService } from './services/logger.service';
-import { PrettierBytesService } from './services/prettier-bytes.service';
-import { UploaderService } from './uploader/uploader.service';
-import { FileTypeService } from './services/file-type.service';
-import { ModalService } from './services/modal-service/modal.service';
+import { version } from '../../../../package.json';
+import { selectMediaFiles } from './media-files/store/selectors/media-files.selectors';
+import { ModalService } from './shared/modal/modal.service';
+import { MediaFilesService } from './media-files/store/services';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  title = 'client';
-  metadataStarted: boolean;
-  verUI = `version`;
-  logger = '';
-  files: File[] = [];
-  audioValidations: any[] = [];
-  videoValidations: any[] = [];
-  isDDP = false;
-  isDDPPQ = false;
-  isDDPMS = false;
-  isDDPID = false;
+export class AppComponent implements OnInit, OnDestroy {
+  verUI = version;
+  uploaderVer = '0.0.15';
+  files: any[] = [];
+
+  private destroy$: Subject<any> = new Subject<any>();
 
   constructor(
-    private extractMetadataService: ExtractMetadataService,
-    private loggerService: LoggerService,
-    private cdr: ChangeDetectorRef,
-    private prettierBytesService: PrettierBytesService,
-    private fileHandlerService: UploaderService,
-    private fileTypeService: FileTypeService,
     private modalService: ModalService,
+    private mediaFilesService: MediaFilesService,
+    private store: Store<any>,
   ) {
-    loggerService.loggerResult.subscribe((res) => {
-      this.logger += `\n${res}`;
-      this.cdr.detectChanges();
-    });
+    this.store.pipe(
+      select(selectMediaFiles),
+      takeUntil(this.destroy$),
+    ).subscribe((files: any[]) => this.files = files);
   }
 
   ngOnInit(): void {
+    this.consoleInfo();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  handleAddedFiles(files: any[]): void {
+    const newFiles: File[] = [];
+
+    files.forEach((file: File) => {
+      newFiles.push(file);
+    });
+
+    this.files = this.files.concat(newFiles);
+    this.mediaFilesService.handleFiles(this.files);
+  }
+
+  handleRemovedFiles(fileId: string): void {
+    let removedFile;
+    this.files = this.files.filter((file) => {
+      if (file.id === fileId) {
+        removedFile = file;
+      }
+
+      return file.id !== fileId;
+    });
+
+    if (fileId === 'all') {
+      this.files = [];
+    }
+
+    this.mediaFilesService.handleFiles(this.files);
+  }
+
+  handleUploadedFilesChanged(event): void {}
+
+  handleUploaderVer(event): void {
+    this.uploaderVer = event;
+  }
+
+  isDDP(files: any[]): boolean {
+    let isDDPPQ = false;
+    let isDDPMS = false;
+    let isDDPID = false;
+
+    files.forEach((file: File) => {
+      if (file.name === 'DDPPQ') {
+        isDDPPQ = true;
+      }
+      if (file.name === 'DDPMS') {
+        isDDPMS = true;
+      }
+      if (file.name === 'DDPID') {
+        isDDPID = true;
+      }
+    });
+
+    return isDDPPQ && isDDPMS && isDDPID;
+  }
+
+  onAboutClick(): void {
+    this.modalService.openModal('aboutModal');
+  }
+
+  consoleInfo(): void {
     const style1 = [
       'padding: 0.4rem 0.8rem;',
       'background: linear-gradient(#4560ad, #1139ad);',
@@ -61,47 +118,5 @@ export class AppComponent implements OnInit {
       style2,
       '',
     );
-
-    this.logger = `👉 Media Analysis, client UI v.${this.verUI} ─ is ready`;
-  }
-
-  handleFilesListChange(files: File[]): void {
-    this.files.push(...files);
-
-    this.files.forEach((file: File) => {
-      if (file.name === 'DDPPQ') {
-        this.isDDPPQ = true;
-      }
-      if (file.name === 'DDPMS') {
-        this.isDDPMS = true;
-      }
-      if (file.name === 'DDPID') {
-        this.isDDPID = true;
-      }
-      this.isDDP = this.isDDPPQ && this.isDDPMS && this.isDDPID;
-
-      this.fileHandlerService.setMediaFile(file);
-      this.extractMetadataService.extract(file);
-    });
-  }
-
-  prettierBytes(size: number): string {
-    return this.prettierBytesService.prettierBytes(size);
-  }
-
-  setTypeClass(type: string): string {
-    return type.split('/')[0];
-  }
-
-  getFileType(file: any): string {
-    return this.fileTypeService.getFileType(file);
-  }
-
-  handleResult(res: string, fileID: string): void {
-    this.files.find((file) => file.id === fileID).analysed = res;
-  }
-
-  onAboutClick(): void {
-    this.modalService.openModal('aboutModal');
   }
 }

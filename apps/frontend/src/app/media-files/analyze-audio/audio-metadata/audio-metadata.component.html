@@ -1,0 +1,53 @@
+<div class="alert-danger" *ngIf="ffprobeErr">
+  <h3>Bummer</h3>
+  <p>The analyzer returned the following error:</p>
+  <p>{{ffprobeErr}}</p>
+</div>
+
+<ng-container *ngIf="isMetadata; else noDataBlock">
+  <div *ngIf="format">
+    <h4>Format</h4>
+    <dl *ngFor="let item of format">
+      <dt>{{item.key}}</dt>
+      <dd>{{item.value}}</dd>
+    </dl>
+  </div>
+
+  <div *ngIf="formatTags">
+    <h4>Format Tags</h4>
+    <dl *ngFor="let item of formatTags">
+      <dt>{{item.key}}</dt>
+      <dd>{{item.value}}</dd>
+    </dl>
+  </div>
+
+  <div *ngIf="streams?.length">
+    <div *ngFor="let stream of streams; let id = index">
+      <h4>Stream {{id}}</h4>
+      <div *ngFor="let item of stream" [ngClass]="{'stream': isItemWithLinearValue(item?.value)}">
+        <ng-container *ngIf="isItemWithLinearValue(item?.value); else disposition">
+          <dl>
+            <dt>{{item.key}}</dt>
+            <dd>{{item.value}}</dd>
+          </dl>
+        </ng-container>
+
+        <ng-template #disposition>
+          <div *ngFor="let childItem of processObject(item.value); let first = first" class="disposition">
+            <h4 *ngIf="first">Stream {{id}} ─ {{item?.key}}</h4>
+            <dl>
+              <dt>{{childItem?.key}}</dt>
+              <dd>{{childItem?.value}}</dd>
+            </dl>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #noDataBlock>
+  <div class="alert-danger">
+    <p>The analyzer returned the following error: metadata not set</p>
+  </div>
+</ng-template>
