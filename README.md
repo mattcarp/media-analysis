@@ -6,7 +6,7 @@ Build docker container run:
 
 `docker build -t media-analysis .`
 
-Run docker container run:
+Run docker container:
 
 `docker run -p 3000:3000 -d media-analysis`
 
