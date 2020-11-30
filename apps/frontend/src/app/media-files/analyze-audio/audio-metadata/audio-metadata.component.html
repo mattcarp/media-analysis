@@ -33,7 +33,7 @@
         </ng-container>
 
         <ng-template #disposition>
-          <div *ngFor="let childItem of processObject(item.value); let first = first" class="disposition">
+          <div *ngFor="let childItem of processObject(item?.value); let first = first" class="disposition">
             <h4 *ngIf="first">Stream {{id}} ─ {{item?.key}}</h4>
             <dl>
               <dt>{{childItem?.key}}</dt>

@@ -19,13 +19,13 @@
   <div *ngIf="headBlackResult">
     <div *ngFor="let item of headBlackResult">
       <h5>
-        <i *ngIf="item.duration < 3" class="fas fa-times-circle"></i>
-        <span *ngIf="item.duration < 3">
+        <i *ngIf="item?.duration < 3" class="fas fa-times-circle"></i>
+        <span *ngIf="item?.duration < 3">
         less than 3 seconds of black found in head
         ({{item?.duration}} seconds found)
       </span>
-        <i *ngIf="item.duration >= 3" class="fas fa-check-circle"></i>
-        <span *ngIf="item.duration >= 3">3 seconds or more found in head</span>
+        <i *ngIf="item?.duration >= 3" class="fas fa-check-circle"></i>
+        <span *ngIf="item?.duration >= 3">3 seconds or more found in head</span>
       </h5>
     </div>
   </div>
@@ -44,11 +44,11 @@
   <ng-container *ngIf="tailBlackResult">
     <div *ngFor="let item of tailBlackResult">
       <h5>
-        <i *ngIf="item.duration < 3" class="fas fa-times-circle"></i>
-        <span *ngIf="item.duration < 3">less than 3 seconds of black found in tail
+        <i *ngIf="item?.duration < 3" class="fas fa-times-circle"></i>
+        <span *ngIf="item?.duration < 3">less than 3 seconds of black found in tail
             ({{item?.duration}} seconds found)</span>
-        <i *ngIf="item.duration >= 3" class="fas fa-check-circle"></i>
-        <span *ngIf="item.duration >= 3">3 seconds or more found in tail</span>
+        <i *ngIf="item?.duration >= 3" class="fas fa-check-circle"></i>
+        <span *ngIf="item?.duration >= 3">3 seconds or more found in tail</span>
       </h5>
     </div>
   </ng-container>
