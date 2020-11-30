@@ -39,7 +39,7 @@ export class VideoValidationsComponent implements OnInit, OnDestroy {
     this.store.pipe(
       select(selectValidations),
       map((validations: ValidationState[]) =>
-        validations.filter((item: ValidationState) => item.fileId === this.file.id)),
+        validations.filter((item: ValidationState) => item.fileId === this.file?.id)),
       takeUntil(this.destroy$),
     ).subscribe((validations: ValidationState[]) => {
       if (validations[0]) {
