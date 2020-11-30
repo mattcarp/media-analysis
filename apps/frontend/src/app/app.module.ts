@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, InjectionToken, NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -10,28 +10,16 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MediaFilesModule } from './media-files/media-files.module';
 import { DdpFilesModule } from './ddp-files/ddp-files.module';
-import { ModalService } from './shared/modal/modal.service';
-import { HelperService } from './media-files/store/services';
 import { ModalComponent } from './shared/modal/modal.component';
 import { UploaderComponent } from './uploader/uploader.component';
 import { ModalAboutComponent } from './modal-about/modal-about.component';
-
-export const reducerToken = new InjectionToken(
-  'Media Analysis Registered Reducers',
-);
-
-export const getReducers = (): any => reducers;
-
-export const reducerProvider = [
-  { provide: reducerToken, useFactory: getReducers },
-];
 
 @NgModule({
   declarations: [
     AppComponent,
     ModalComponent,
     UploaderComponent,
-    ModalAboutComponent,
+    ModalAboutComponent
   ],
   imports: [
     BrowserModule,
@@ -39,13 +27,13 @@ export const reducerProvider = [
     MediaFilesModule,
     DdpFilesModule,
     NoopAnimationsModule,
-    StoreModule.forRoot(reducerToken, {}),
+    StoreModule.forRoot(reducers, {}),
     StoreDevtoolsModule.instrument({
-      maxAge: 25, logOnly: environment.production,
-    }),
+      maxAge: 25, logOnly: environment.production
+    })
   ],
-  providers: [HelperService, ModalService, reducerProvider],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  })
-export class AppModule {}
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+export class AppModule {
+}
