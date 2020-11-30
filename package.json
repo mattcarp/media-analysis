@@ -9,6 +9,8 @@
     "start": "ng serve",
     "build": "ng build",
     "build:all": "nx build backend && nx build frontend",
+    "docker:build": "docker build -t media-analysis .",
+    "docker:run": "docker run -p 3000:3000 -d media-analysis",
     "test": "ng test",
     "lint": "nx workspace-lint && ng lint",
     "e2e": "ng e2e",
