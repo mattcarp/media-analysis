@@ -10,7 +10,7 @@
     "start:be": "nx serve backend",
     "start:fe": "nx serve frontend",
     "build": "ng build",
-    "build:all": "nx build backend && nx build frontend",
+    "build:all": "nx build backend && nx build frontend && nx build sme-uploader --base-href sme-uploader",
     "docker:build": "docker build -t media-analysis .",
     "docker:run": "docker run -p 3000:3000 -d media-analysis",
     "test": "ng test",

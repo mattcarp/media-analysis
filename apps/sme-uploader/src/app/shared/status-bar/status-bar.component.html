@@ -1,0 +1,56 @@
+<div class="smeu-status-bar">
+  <div
+    #progress
+    class="smeu-status-bar-progress"
+    [class.complete]="isUploadedFinish"
+    [class.ready]="!isUploadedFinish && !isUploading">
+  </div>
+
+  <div class="smeu-status-bar-status">
+    <ng-container *ngIf="state === 'loading' || isUploading && state !== 'paused'">
+      <i class="smeu-icon spinner"></i>
+      <div>
+        <div class="smeu-status-bar-status-primary">
+          Uploading: {{totalProgress}}%
+        </div>
+
+        <div class="smeu-status-bar-status-secondary">
+          {{uploadedFiles}} of {{totalFiles}} files uploaded
+          <span class="smeu-status-bar-status-additional-info">
+            • {{uploadedSize | prettierBytes }} of {{ totalSize | prettierBytes }}
+            • {{uploadSpeed | prettierBytes}}/sec speed
+            • {{timeLeft}} left
+        </span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="state === 'paused'">
+      <div class="smeu-status-bar-status-primary">
+        Paused: {{totalProgress}}%
+      </div>
+
+      <div class="smeu-status-bar-status-secondary"></div>
+    </ng-container>
+
+    <ng-container *ngIf="getCompleteState()">
+      <i class="smeu-icon ok"></i>
+      <div class="smeu-status-bar-status-primary">
+        Complete
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="getErrorState()">
+      <i class="smeu-icon warn"></i>
+      <div class="smeu-status-bar-status-primary">
+        Upload failed
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="getReadyState()">
+      <div class="smeu-status-bar-status-primary">
+        Ready to upload
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+@mixin before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  content: '';
+}
+
+@mixin ellipsis {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin top50 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin button-promo {
+  height: 32px;
+  margin: 0 4px 0 0;
+  padding: 5px 10px;
+  color: black;
+  border: 1px solid #93979a;
+  border-radius: 4px;
+  background: rgb(231, 230, 220);
+  background: linear-gradient(0deg, rgba(231, 230, 220, 1) 0%, rgba(248, 246, 243, 1) 100%);
+
+  .smeu-icon {
+    background-color: transparent;
+  }
+}

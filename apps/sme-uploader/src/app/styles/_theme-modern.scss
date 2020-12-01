@@ -1,0 +1,338 @@
+@import 'mixins';
+
+.smeu-theme-modern {
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+    background-color: #eee;
+    -webkit-appearance: none;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #adbdbe;
+    box-shadow: 0 0 1px hsla(0, 0%, 100%, 0.5);
+  }
+
+  .smeu {
+    // Main Grid
+    // -------------------------------
+    grid-template-rows: [row1] 40px [row2] minmax(40px, 1fr) [row3] 50px [row4];
+    grid-template-areas: 'header' 'files' 'status';
+    border: 1px solid #eaeaea;
+    background-color: #fafafa;
+
+    &-header {
+      grid-row: row1 / row2;
+    }
+
+    &-files {
+      grid-row: row2 / row3;
+    }
+
+    &-status {
+      grid-row: row3 / row4;
+    }
+
+    // Layout's Style
+    // -------------------------------
+    &-drop {
+      &-zone {
+        @include flex-center;
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        bottom: 7px;
+        left: 7px;
+        color: #757575;
+        border-color: red;
+        border-radius: 3px;
+      }
+
+      &-files-here,
+      &-active-files-here {
+        @include top50;
+        width: 100%;
+        font-size: 20px;
+        text-align: center;
+
+        .smeu-button {
+          display: inline-block;
+          margin: 0 0 0 -7px;
+          font-size: 20px;
+        }
+      }
+
+      &-files-here {
+        display: block;
+      }
+
+      &-active-files-here {
+        display: none;
+      }
+    }
+
+    &-header {
+      align-items: center;
+      height: 40px;
+      padding: 0 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border-bottom: 1px solid #eaeaea;
+      background-color: #fafafa;
+
+      &-title {
+        @include ellipsis;
+        max-width: 170px;
+        text-align: center;
+
+        &-failed {
+          position: absolute;
+          top: 4px;
+          left: 50%;
+          margin: 0 0 0 30px;
+          padding: 10px;
+          transform: translateX(-50%);
+          background-color: #fafafa;
+        }
+      }
+
+      &-buttons {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    &-files {
+      color: #777;
+
+      .smeu-file {
+        &-name {
+          font-size: 14px;
+        }
+
+        &-size {
+          color: #a2a2a2;
+        }
+      }
+    }
+
+    &-list {
+      .smeu-file {
+        grid-template-rows: 30px;
+        grid-column-gap: 5px;
+        border-bottom-color: #eaeaea;
+      }
+    }
+
+    &-thumb {
+      .smeu-file {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 60px;
+        padding: 0;
+        border-bottom: 1px solid #eaeaea;
+
+        &-state {
+          margin: 10px 0 0 4px;
+        }
+
+        &-name {
+          padding: 0 34px 0 84px;
+        }
+
+        &-size {
+          padding: 0 34px 0 84px;
+          text-align: left;
+        }
+
+        &-delete {
+          position: absolute;
+          top: 0;
+          right: 0;
+        }
+
+        &-analysed {
+          right: 8px;
+          bottom: 6px;
+          width: 72px;
+        }
+
+        .smeu-preview-img {
+          width: 50px;
+          height: 50px;
+          margin: 0 0 0 26px;
+        }
+      }
+    }
+
+    &-status {
+      align-items: center;
+      padding: 0 68px 0 14px;
+    }
+  }
+
+  &.smeu-files-added {
+    .smeu {
+      &-drop {
+        &-zone {
+          top: 40px;
+          cursor: initial;
+          border-color: transparent;
+        }
+
+        &-files-here,
+        &-active-files-here {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &.smeu-drop-zone-active {
+    .smeu {
+      &-drop {
+        &-zone {
+          z-index: 500;
+          top: 7px;
+          border-color: #2275d7;
+        }
+
+        &-files-here {
+          display: none;
+        }
+
+        &-active-files-here {
+          display: block;
+        }
+      }
+
+      &-header,
+      &-files,
+      &-status-bar {
+        opacity: 0.15;
+      }
+    }
+
+    &.smeu-files-added {
+      .smeu {
+        &-drop-active-files-here {
+          display: block;
+        }
+      }
+    }
+  }
+
+  // Media Queries -> Size: sm-576, md-768, lg-1024, xl-1200
+  // -------------------------------
+  &.smeu-size-sm,
+  &.smeu-size-md,
+  &.smeu-size-lg,
+  &.smeu-size-xl {
+    .smeu {
+      &-thumb {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: 150px;
+        grid-gap: 10px 20px;
+        margin: 10px 0;
+        padding: 0 14px;
+
+        .smeu-file {
+          display: block;
+          align-items: center;
+          flex-direction: row;
+          height: 150px;
+          margin: 10px 10px 0 0;
+          padding: 0;
+          border: none;
+
+          &:hover {
+            .smeu-file {
+              &-delete {
+                z-index: 4;
+              }
+            }
+          }
+
+          &-link {
+            position: absolute;
+            z-index: 50;
+            top: 14px;
+            right: 0;
+            bottom: 38px;
+            left: 0;
+          }
+
+          &-state {
+            margin: 0;
+
+            .smeu-icon {
+              top: -7px;
+              right: -7px;
+            }
+          }
+
+          &-name {
+            position: absolute;
+            right: 0;
+            bottom: 18px;
+            left: 0;
+            padding: 0;
+          }
+
+          &-size {
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            padding: 0;
+          }
+
+          &-delete {
+            top: -14px;
+            right: -14px;
+            transform: unset;
+          }
+
+          &-copy-link {
+            position: absolute;
+            right: -7px;
+            bottom: 10px;
+          }
+
+          &-analysed {
+            right: 3px;
+            bottom: 40px;
+            width: 100%;
+          }
+
+          .smeu-preview-img {
+            width: 100%;
+            height: 100%;
+            max-height: 112px;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+
+  &.smeu-size-md {
+    .smeu-thumb {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  &.smeu-size-lg {
+    .smeu-thumb {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  &.smeu-size-xl {
+    .smeu-thumb {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+}

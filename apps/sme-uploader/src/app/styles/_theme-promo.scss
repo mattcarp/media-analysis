@@ -1,0 +1,177 @@
+@import 'animations';
+@import 'mixins';
+
+.smeu-theme-promo {
+  .smeu {
+    // Main Grid
+    // -------------------------------
+    grid-template-rows: [row1] 100px [row2] 38px [row3] 1fr [row4] 50px [row5];
+    grid-template-areas: 'section' 'header' 'files' 'status';
+    min-width: 405px;
+    background-color: white;
+
+    &-drop-zone {
+      grid-area: section;
+      grid-row: row1 / row2;
+    }
+
+    &-header {
+      grid-row: row2 / row3;
+    }
+
+    &-files {
+      grid-row: row3 / row4;
+    }
+
+    &-status {
+      grid-row: row4 / row5;
+    }
+
+    // Layout's Style
+    // -------------------------------
+    &-drop {
+      &-zone {
+        position: relative;
+        overflow: hidden;
+        margin: 0 0 6px;
+        cursor: pointer;
+        border-color: #93979a;
+        background: linear-gradient(0deg, rgba(231, 230, 220, 1) 0%, rgba(248, 246, 243, 1) 100%);
+
+        &-files-here {
+          @include top50;
+          margin: 0;
+        }
+
+        &-uploading,
+        &[disabled='true'] {
+          opacity: 0.3;
+        }
+      }
+
+      &-files-here,
+      &-active-files-here {
+        display: none;
+      }
+    }
+
+    &-header {
+      &-buttons {
+        display: flex;
+      }
+
+      &-title {
+        display: none;
+      }
+
+      .smeu-button {
+        &.add {
+          display: none;
+        }
+
+        &.clear {
+          margin: 0;
+        }
+      }
+    }
+
+    &-files {
+      border: 1px solid #cfcfcf;
+    }
+
+    &-list {
+      .smeu-file {
+        position: relative;
+        grid-template-rows: 26px;
+        grid-column-gap: 5px;
+        border-bottom-color: #cfcfcf;
+
+        &-delete {
+          display: flex;
+          justify-content: center;
+
+          .smeu-button {
+            padding: 0;
+          }
+        }
+      }
+    }
+
+    &-thumb {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, 116px);
+      grid-template-rows: auto;
+      grid-gap: 10px;
+      padding: 10px;
+
+      .smeu-file {
+        position: relative;
+        display: block;
+        width: 116px;
+        height: 146px;
+        border: none;
+
+        &-link {
+          display: none;
+        }
+
+        &-state {
+          position: absolute;
+          top: -6px;
+          right: 10px;
+        }
+
+        &-name {
+          position: absolute;
+          right: 0;
+          bottom: 14px;
+          left: 0;
+          font-size: 14px;
+        }
+
+        &-size {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          text-align: left;
+        }
+
+        &-analysed {
+          bottom: 36px;
+        }
+
+        &-delete {
+          position: absolute;
+          top: -12px;
+          right: -15px;
+        }
+
+        .smeu-preview-img {
+          width: 100%;
+          height: 100%;
+          max-height: 112px;
+        }
+      }
+    }
+
+    &-status {
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 7px;
+      border: 1px solid #cfcfcf;
+    }
+  }
+
+  &.smeu-drop-zone-active {
+    .smeu-drop-zone {
+      opacity: 0.7;
+      border-color: red;
+    }
+  }
+
+  &.smeu-drop-zone-uploading {
+    .smeu-drop-zone {
+      opacity: 0.7;
+    }
+  }
+}

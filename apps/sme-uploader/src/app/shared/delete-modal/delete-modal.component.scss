@@ -1,0 +1,43 @@
+.delete-modal{
+  color: #fff;
+  border-radius: 10px;
+  background-color: #757575;
+  opacity: 0.9;
+  width: 300px;
+  height: 130px;
+  padding: 10px;
+  position: absolute;
+  left: calc(50% - 150px);
+  top: calc(50% - 65px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .delete-modal-title{
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 5px 0 10px;
+  }
+
+  .delete-modal-body-text{
+    height: 35px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .button-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 10px
+  }
+  .btn {
+      border: 1px solid white;
+      margin: 0 5px;
+      outline: none;
+      border-radius: 5px;
+  }
+}

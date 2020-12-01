@@ -1,0 +1,28 @@
+<div class="smeu-dropdown">
+  <button
+    id="btn-sort"
+    [disabled]="disabledSort"
+    (click)="showList()"
+    class="smeu-button">
+    <i class="smeu-icon sort"></i>
+  </button>
+
+  <ul
+    id="dropdown"
+    *ngIf="isOpen"
+    (click)="closeList()"
+    class="smeu-dropdown-content">
+
+    <li (click)="setSortedBy('name')" class="smeu-dropdown-content-li">
+      By name <span *ngIf="sortedBy('name')">&#10003;</span>
+    </li>
+
+    <li (click)="setSortedBy('size')" class="smeu-dropdown-content-li">
+      By size <span *ngIf="sortedBy('size')">&#10003;</span>
+    </li>
+
+    <li (click)="setSortedBy('lastModified')" class="smeu-dropdown-content-li">
+      By date <span *ngIf="sortedBy('lastModified')">&#10003;</span>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,216 @@
+<div
+  id="smeu-root"
+  #smeuRoot
+  [class.smeu-files-added]="isFileAdded"
+  [class.smeu-drop-zone-uploading]="isUploading"
+  [class.smeu-analysis-active]="isAnalysis"
+  class="smeu-root smeu-theme-{{theme}}">
+
+  <app-delete-modal
+    (canDeleteEvent)="triggerDelete($event)"
+    *ngIf="deleteModalOptions.showDeleteModal"
+    [options]="deleteModalOptions"></app-delete-modal>
+
+  <div class="smeu">
+    <div
+      appDragDrop
+      (fileDropped)="onUploadFile($event)"
+      [attr.isUploading]="isUploading"
+      class="smeu-drop-zone">
+
+      <p *ngIf="theme === 'promo'"
+         [attr.isUploading]="isUploading"
+         class="smeu-drop-zone-files-here"
+         [class.smeu-drop-zone-uploading]="isUploading">
+        <i class="smeu-icon folder"></i>
+        Drop files here or click here
+      </p>
+    </div>
+
+    <div class="smeu-drop-files-here">
+      <i class="smeu-icon folder"></i>
+      Drop files here or
+      <button
+        appBrowseFile
+        (fileBrowse)="onUploadFile($event)"
+        class="smeu-button">
+        browse files
+      </button>
+    </div>
+
+    <div class="smeu-drop-active-files-here">
+      <i class="smeu-icon arrow-up"></i>
+      Drop your files here
+    </div>
+
+    <input
+      id="file-select"
+      type="file"
+      name="file-drop"
+      multiple
+      hidden
+      (filesChosen)="onUploadFile($event)"
+      appInputUploader
+      class="smeu-input">
+
+    <ng-container *ngIf="isFileAdded || theme === 'promo'">
+      <div class="smeu-header">
+        <div class="smeu-header-buttons">
+          <button
+            appBrowseFile
+            [disabled]="!files?.length || isUploading"
+            (fileBrowse)="onUploadFile($event)"
+            class="smeu-button add">
+            <i class="smeu-icon plus"></i>
+            <span>Add more</span>
+          </button>
+
+          <button
+            *ngIf="showUploadBtn"
+            [disabled]="isUploading || isErrorAnalysis || !hasNewFiles"
+            (click)="startUpload()"
+            class="smeu-button upload">
+            <i *ngIf="theme !== 'modern'" class="smeu-icon upload"></i>
+            <span>Upload
+              <span *ngIf="!isUploadStart() && theme !== 'promo'">
+                {{numFilesToUpload}} file{{getPlural()}}
+              </span>
+            </span>
+          </button>
+
+          <button
+            *ngIf="(isUploading && uploadingState !== 'paused') && !isPauseDisabled"
+            (click)="pause()"
+            class="smeu-button pause">
+            <i class="smeu-icon pause"></i>
+            <span>Pause</span>
+          </button>
+
+          <button
+            *ngIf="uploadingState === 'paused'"
+            (click)="unPause()"
+            class="smeu-button unpause">
+            <i class="smeu-icon" [ngClass]="getClassUpload()"></i>
+            <span>Unpause</span>
+          </button>
+
+          <button
+            *ngIf="(isUploading || uploadingState === 'paused') && !isStopUploadingDisabled"
+            (click)="cancel()"
+            class="smeu-button stop">
+            <i class="smeu-icon stop"></i>
+            <span>Stop</span>
+          </button>
+
+          <app-list-view
+            *ngIf="!isThumbnailBtnDisalbed"
+            (listStyle)="setClassListView($event)"
+            class="smeu-theme-{{theme}}">
+          </app-list-view>
+
+          <app-sort-list
+            *ngIf="!isUploading && !isSortBtnHidden"
+            [disabledSort]="!files?.length || isSortBtnDisalbed || isUploading"
+            class="smeu-theme-{{theme}}">
+          </app-sort-list>
+        </div>
+
+        <div class="smeu-header-title">
+          <ng-container *ngIf="numFilesToUpload; else complete">
+            {{numFilesToUpload}} file{{getPlural()}} selected
+          </ng-container>
+
+          <ng-template #complete>
+            Upload complete
+          </ng-template>
+
+          <div *ngIf="isErrorUpload" class="smeu-header-title-failed">
+            Upload failed
+          </div>
+        </div>
+
+        <button
+          id='btn-clear'
+          [disabled]="!files?.length || isUploading || isClearAllDisabled"
+          (click)="onClearAllClick()"
+          class="smeu-button clear">
+          <i class="smeu-icon delete"></i>
+          <span>Clear All</span>
+        </button>
+        <button id="smeu-soft-clear-btn" class="smeu-button" (click)="softClearList()">Soft clear list</button>
+
+      </div>
+
+      <div class="smeu-files" [ngClass]="getClassListView()">
+        <div *ngFor="let file of files" class="smeu-file smeu-analysed-{{file.analysed}}">
+          <a *ngIf="file.status === 'success'"
+             href="{{file?.uploadUrl}}"
+             target="_blank"
+             class="smeu-file-link">
+          </a>
+
+          <ng-container *ngIf="isThumbView">
+            <ng-container *ngIf="file.preview; else notImageTemplate">
+              <img src="{{file.preview}}" alt="{{file.name}}"
+                   class="smeu-preview-img" />
+            </ng-container>
+
+            <ng-template #notImageTemplate>
+              <div class="smeu-preview-icon-inner-wrap"
+                   [ngStyle]="{'background-color': getFileTypeColor(file.type)}">
+                <div class="smeu-preview-icon-wrap">
+                  <span class="smeu-preview-icon">
+                    <i class="smeu-icon" [ngClass]="getFileTypeIcon(file.type)"></i>
+                  </span>
+                  <i class="smeu-preview-icon-bg"></i>
+                </div>
+              </div>
+            </ng-template>
+          </ng-container>
+
+          <div class="smeu-file-state">
+            <i *ngIf="file.status === 'loading'" class="smeu-icon spinner"></i>
+            <i *ngIf="uploadingState === 'paused'" class="smeu-icon pause border"></i>
+            <i *ngIf="file.status === 'success'" class="smeu-icon success border"></i>
+            <i *ngIf="file.status === 'error'" class="smeu-icon warn border"></i>
+            <i *ngIf="file.status === 'verify'" class="smeu-icon verify border"></i>
+          </div>
+
+          <div class="smeu-file-name">{{file.name}}</div>
+
+          <div class="smeu-file-size">{{file.size | prettierBytes}}</div>
+
+          <div *ngIf="isAnalysis" class="smeu-file-analysed">
+            <i *ngIf="file.analysed === 'null'" class="smeu-icon question"></i>
+            <i *ngIf="file.analysed === 'success'" class="smeu-icon success"></i>
+            <i *ngIf="file.analysed === 'error'" class="smeu-icon warn"></i>
+          </div>
+
+          <div class="smeu-file-delete">
+            <button
+              *ngIf="!isUploading || theme === 'promo'"
+              [disabled]="isUploading"
+              (click)="onDeleteFileClick(file?.id, file?.name)"
+              class="smeu-button">
+              <i class="smeu-icon delete border"
+                 [class.cancel-disabled]="isUploading">
+              </i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="smeu-status">
+        <app-status-bar
+          [theme]="theme"
+          [state]="uploadingState"
+          class="smeu-theme-{{theme}}">
+        </app-status-bar>
+      </div>
+    </ng-container>
+
+    <div id="smeu-informer" class="smeu-informer">
+      <p id="smeu-informer-text"></p>
+    </div>
+  </div>
+</div>
