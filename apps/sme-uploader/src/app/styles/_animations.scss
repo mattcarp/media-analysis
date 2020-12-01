@@ -1,0 +1,11 @@
+@keyframes animate-stripes {
+  100% {
+    background-position: -100px 0;
+  }
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}

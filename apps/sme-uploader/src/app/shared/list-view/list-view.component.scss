@@ -1,0 +1,9 @@
+@import 'mixins';
+
+:host {
+  &.smeu-theme-promo {
+    .smeu-button {
+      @include button-promo;
+    }
+  }
+}

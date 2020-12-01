@@ -1,0 +1,14 @@
+<button
+  *ngIf="listViewStyle === 'list'"
+  [disabled]="isDisabled"
+  (click)="setViewStyle('thumb')"
+  class="smeu-button">
+  <i class="smeu-icon list"></i>
+</button>
+
+<button
+  *ngIf="listViewStyle === 'thumb'"
+  (click)="setViewStyle('list')"
+  class="smeu-button">
+  <i class="smeu-icon thumb"></i>
+</button>

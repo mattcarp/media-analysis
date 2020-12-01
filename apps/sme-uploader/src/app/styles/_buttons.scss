@@ -1,0 +1,102 @@
+@import 'mixins';
+
+.smeu-button {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  margin: 0;
+  padding: 7px;
+  cursor: pointer;
+  transition: background 0.3s linear;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: #2275d7;
+  border: 0;
+  border-radius: 3px;
+  outline: none;
+  background: none;
+  -webkit-appearance: none;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.3;
+  }
+
+  &:hover {
+    color: #1b5dab;
+  }
+
+  .smeu-icon {
+    & + span {
+      margin: 0 0 0 5px;
+    }
+  }
+}
+
+.smeu-theme-modern {
+  .smeu-button {
+    &.upload {
+      position: absolute;
+      z-index: 2;
+      bottom: 12px;
+      left: 14px;
+      padding: 8px 20px;
+      color: white;
+      background-color: #1cae68;
+
+      &:hover {
+        color: white;
+        background-color: darken(#1cae68, 5%);
+      }
+    }
+
+    &.pause,
+    &.unpause,
+    &.stop {
+      position: absolute;
+      right: 30px;
+      bottom: 8px;
+
+      span {
+        display: none;
+      }
+    }
+
+    &.stop {
+      right: 7px;
+    }
+
+    &.retry {
+      position: absolute;
+      z-index: 5;
+      right: 9px;
+      bottom: 9px;
+      color: white;
+      background-color: #e25149;
+    }
+  }
+}
+
+.smeu-theme-promo {
+  .smeu-button {
+    font-size: 14px;
+
+    &:disabled {
+      border-color: #cfcfcf;
+    }
+
+    &.upload,
+    &.pause,
+    &.unpause,
+    &.stop {
+      min-width: 106px;
+    }
+  }
+
+  .smeu-header {
+    .smeu-button {
+      @include button-promo;
+    }
+  }
+}

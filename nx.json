@@ -32,6 +32,16 @@
     },
     "backend": {
       "tags": []
+    },
+    "sme-uploader": {
+      "tags": []
+    },
+    "sme-uploader-e2e": {
+      "tags": [],
+      "implicitDependencies": ["sme-uploader"]
+    },
+    "models": {
+      "tags": []
     }
   }
 }
