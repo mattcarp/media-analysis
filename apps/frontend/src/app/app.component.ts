@@ -3,10 +3,10 @@ import { Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { takeUntil } from 'rxjs/operators';
 
-import { version } from '../../../../package.json';
 import { selectMediaFiles } from './media-files/store/selectors/media-files.selectors';
 import { ModalService } from './shared/modal/modal.service';
 import { MediaFilesService } from './media-files/store/services';
+import { version } from '../../../../package.json';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +15,7 @@ import { MediaFilesService } from './media-files/store/services';
 })
 export class AppComponent implements OnInit, OnDestroy {
   verUI = version;
-  uploaderVer = '0.0.15';
+  uploaderVer = version;
   files: any[] = [];
 
   private destroy$: Subject<any> = new Subject<any>();

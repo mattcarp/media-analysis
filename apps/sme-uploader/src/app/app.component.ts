@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { version } from '../../../../package.json';
 
 import { AnalysisService } from './services/analysis.service';
 import { HelperService } from './services/helper.service';
@@ -136,8 +137,7 @@ export class AppComponent
     private analysisService: AnalysisService,
     private storeService: UploaderStoreService,
   ) {
-    // todo fix it
-    // this.verApp = require('../../package.json').version;
+    this.verApp = version;
   }
 
   ngOnInit(): void {
