@@ -1,41 +1,41 @@
-#name: CI
-#on:
-#  push:
-#    branches:
-#      - master
-#jobs:
-#  build:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@master
-#      - name: use Node.js
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: '12.18.4'
-#      - name: install node modules for angular
-#        run: cd client && npm install --unsafe-perm
-#      - run: pwd && ls -la
-#      - name: build angular app for dev
-#        run: cd client && npm run build
-#      - name: install node modules for express
-#        run: npm install
-#      - name: Deploy to DEV server
-#        uses: easingthemes/ssh-deploy@v2.0.7
-#        env:
-#          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-#          ARGS: "-rltgoDzvO --delete"
-#          SOURCE: ""
-#          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-#          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-#          TARGET: ${{ secrets.REMOTE_TARGET }}/media-analysis
-#      - name: Run forever
-#        uses: fifsky/ssh-action@master
-#        with:
-#          command: |
-#            cd ${{ secrets.REMOTE_TARGET }}
-#            forever stopall
-#            forever start media-analysis/bin/www
-#            forever list
-#          host: ${{ secrets.REMOTE_HOST }}
-#          user: ${{ secrets.REMOTE_USER }}
-#          key: ${{ secrets.SERVER_SSH_KEY }}
+name: CI
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: tool3/bump@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.18.4'
+      - name: install node modules
+        run: npm install
+      - name: build all apps
+        run: npm run build:all
+      - name: Deploy to DEV server
+        uses: easingthemes/ssh-deploy@v2.0.7
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: ""
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}/media-analysis
+      - name: Run forever
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            forever stopall
+            forever start media-analysis/dist/apps/backend/main.js
+            forever list
+          host: ${{ secrets.REMOTE_HOST }}
+          user: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
