@@ -29,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.pipe(
       select(selectMediaFiles),
       takeUntil(this.destroy$),
-    ).subscribe((files: FileEntry[]) => this.files = files);
+    ).subscribe((files: FileEntry[]) => this.files = files.slice());
   }
 
   ngOnInit(): void {
@@ -49,7 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.files = this.files.concat(newFiles);
-    this.mediaFilesService.handleFiles(this.files);
   }
 
   handleRemovedFiles(fileId: string): void {
@@ -65,8 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
     if (fileId === 'all') {
       this.files = [];
     }
-
-    this.mediaFilesService.handleFiles(this.files);
   }
 
   handleUploadedFilesChanged(event): void {}

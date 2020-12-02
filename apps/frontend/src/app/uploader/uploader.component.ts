@@ -75,6 +75,6 @@ export class UploaderComponent implements AfterViewInit, OnDestroy {
 
   onUploadedFilesChanged(event: any): void {
     // TODO: (?)Need clear validations list
-    this.uploadedFilesChangedEmit.emit(event);
+    this.uploadedFilesChangedEmit.emit(event.detail);
   }
 }
