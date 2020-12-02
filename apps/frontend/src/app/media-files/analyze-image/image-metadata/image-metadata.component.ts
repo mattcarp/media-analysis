@@ -69,7 +69,7 @@ export class ImageMetadataComponent implements OnInit {
     reader.readAsArrayBuffer(this.blob);
   }
 
-  renderResult(data: {analysis; error}) {
+  renderResult(data: { analysis; error }) {
     if (data.error) {
       if (!data.error.includes('Error splitting the input into NAL units')) {
         this.ffprobeErr = data.error;
@@ -97,7 +97,7 @@ export class ImageMetadataComponent implements OnInit {
         }
       }
 
-      if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
+      if (analysisObj.streams && !!Object.keys(analysisObj.streams).length) {
         const collectedStreams = [];
         const inputStreams = analysisObj.streams;
 
