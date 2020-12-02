@@ -13,7 +13,7 @@ import { FileTypeService, MediaFilesService } from './store/services';
   styleUrls: ['./media-files.component.scss'],
 })
 export class MediaFilesComponent implements OnDestroy {
-  @Input() files: FileEntry;
+  @Input() files: FileEntry[];
 
   private destroy$: Subject<any> = new Subject<any>();
 

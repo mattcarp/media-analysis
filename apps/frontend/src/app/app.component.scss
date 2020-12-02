@@ -10,6 +10,8 @@ header {
 }
 
 aside {
+  position: relative;
+
   h3 {
     display: flex;
     align-items: center;
@@ -148,13 +150,68 @@ article {
 }
 
 .sme-uploader-logo-icon {
+  display: inline-block;
   width: 14px;
   height: 14px;
   margin: 0 5px 0 0;
   background-image: url('../assets/images/sme-uploader.png');
-  display: inline-block;
   background-repeat: no-repeat;
   background-position-x: center;
   background-position-y: center;
   background-size: contain;
+}
+
+.curved-arrow {
+  position: absolute;
+  z-index: 2;
+  top: 188px;
+  right: -60px;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  opacity: 0;
+
+  &.input {
+    transform: rotate(200deg);
+  }
+
+  &.output {
+    top: 230px;
+    transform: rotate(18deg);
+  }
+
+  .triangle {
+    box-sizing: border-box;
+    width: 25px;
+    height: 50px;
+    margin-top: 24px;
+    border-top: 25px solid transparent;
+    border-right: 50px solid #509804;
+    border-bottom: 25px solid transparent;
+  }
+
+  .curve {
+    box-sizing: border-box;
+    width: 60px;
+    height: 60px;
+    border-top: 10px solid transparent;
+    border-right: transparent 20px solid;
+    border-bottom: #509804 solid 20px;
+    border-radius: 0 10px 60px 0;
+  }
+
+  &.animation-fadeOut {
+    animation-name: fadeOut;
+    animation-fill-mode: both;
+    animation-duration: 1.5s;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
