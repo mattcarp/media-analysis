@@ -80,4 +80,8 @@ export class ValidationsComponent implements OnInit, OnDestroy {
       ? this.validations.isValid ? 'success' : 'error'
       : 'question';
   }
+
+  getPlural(arr: any): string {
+    return arr.length > 1 ? 's' : '';
+  }
 }
