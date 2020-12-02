@@ -1,12 +1,12 @@
 import { Action, createReducer, on } from '@ngrx/store';
 
 import * as fromActions from '../actions/media-files.actions';
-import { ValidationState } from '../models';
+import { FileEntry, ValidationState } from '../models';
 
 export const mediaFilesFeatureKey = 'media-files';
 
 export interface MediaFilesState {
-  files: any[];
+  files: FileEntry[];
   validations: ValidationState[];
   successAnalysisIds: string[];
   errorAnalysisIds: string[];

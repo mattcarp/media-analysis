@@ -1,13 +1,14 @@
 import { AfterViewInit, Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { ModalService } from '../shared/modal/modal.service';
 import { MediaFilesService } from '../media-files/store/services';
-import { select, Store } from '@ngrx/store';
 import {
   selectErrorAnalysisIds,
   selectSuccessAnalysisIds
 } from '../media-files/store/selectors/media-files.selectors';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-uploader',
