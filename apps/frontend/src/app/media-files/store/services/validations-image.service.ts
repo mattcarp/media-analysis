@@ -1,26 +1,54 @@
-import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 import { NGXLogger } from 'ngx-logger';
 
 import { validationsRules } from './validations-rules.constants';
 import { ValidationState } from '../models';
+import {
+  setErrorAnalysisIds,
+  setSuccessAnalysisIds,
+  setValidationsState, } from '../actions/media-files.actions';
+import {
+  selectErrorAnalysisIds,
+  selectSuccessAnalysisIds,
+} from '../selectors/media-files.selectors';
 import { MediaFilesState } from '../reducers/media-files.reducer';
 import { MediaFilesService } from './media-files.service';
-import { setValidationsState } from '../actions/media-files.actions';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ValidationsImageService {
+export class ValidationsImageService implements OnDestroy {
   validations: any[] = [];
   validationsRules = validationsRules.imageStream[0];
   validationState: ValidationState[] = [];
+  successAnalysisIds: string[] = [];
+  errorAnalysisIds: string[] = [];
+
+  private destroy$: Subject<any> = new Subject<any>();
 
   constructor(
     private mediaFileService: MediaFilesService,
     private store: Store<MediaFilesState>,
     private logger: NGXLogger,
-  ) {}
+  ) {
+    this.store.pipe(
+      select(selectSuccessAnalysisIds),
+      takeUntil(this.destroy$),
+    ).subscribe((successAnalysisIds: []) => this.successAnalysisIds = successAnalysisIds);
+
+    this.store.pipe(
+      select(selectErrorAnalysisIds),
+      takeUntil(this.destroy$),
+    ).subscribe((errorAnalysisIds: []) => this.errorAnalysisIds = errorAnalysisIds);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   validate(fileId: string, data: {analysis; error}): void {
     const analysisObj = JSON.parse(data.analysis);
@@ -82,7 +110,13 @@ export class ValidationsImageService {
       entries: JSON.stringify(this.validations),
     };
 
+    isValid
+      ? this.successAnalysisIds = this.successAnalysisIds.concat(fileId)
+      : this.errorAnalysisIds = this.errorAnalysisIds.concat(fileId);
+
     this.validationState = this.validationState.concat(parsed);
     this.store.dispatch(setValidationsState({ validations: this.validationState }));
+    this.store.dispatch(setSuccessAnalysisIds({ successAnalysisIds: this.successAnalysisIds }));
+    this.store.dispatch(setErrorAnalysisIds({ errorAnalysisIds: this.errorAnalysisIds }));
   }
 }

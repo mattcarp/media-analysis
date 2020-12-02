@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { takeUntil } from 'rxjs/operators';
 
+import { FileEntry } from './media-files/store/models';
 import { selectMediaFiles } from './media-files/store/selectors/media-files.selectors';
 import { ModalService } from './shared/modal/modal.service';
 import { MediaFilesService } from './media-files/store/services';
@@ -15,8 +16,8 @@ import { version } from '../../../../package.json';
 })
 export class AppComponent implements OnInit, OnDestroy {
   verUI = version;
-  uploaderVer = version;
-  files: any[] = [];
+  verUploader = '0.0.16';
+  files: FileEntry[] = [];
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -28,7 +29,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.pipe(
       select(selectMediaFiles),
       takeUntil(this.destroy$),
-    ).subscribe((files: any[]) => this.files = files);
+    ).subscribe((files: FileEntry[]) => this.files = files.slice());
   }
 
   ngOnInit(): void {
@@ -40,15 +41,14 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  handleAddedFiles(files: any[]): void {
-    const newFiles: File[] = [];
+  handleAddedFiles(files: FileEntry[]): void {
+    const newFiles: FileEntry[] = [];
 
     files.forEach((file: File) => {
       newFiles.push(file);
     });
 
     this.files = this.files.concat(newFiles);
-    this.mediaFilesService.handleFiles(this.files);
   }
 
   handleRemovedFiles(fileId: string): void {
@@ -64,15 +64,9 @@ export class AppComponent implements OnInit, OnDestroy {
     if (fileId === 'all') {
       this.files = [];
     }
-
-    this.mediaFilesService.handleFiles(this.files);
   }
 
   handleUploadedFilesChanged(event): void {}
-
-  handleUploaderVer(event): void {
-    this.uploaderVer = event;
-  }
 
   isDDP(files: any[]): boolean {
     let isDDPPQ = false;

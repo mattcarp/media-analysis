@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { map, takeUntil } from 'rxjs/operators';
 
-import { ValidationState } from './store/models';
+import { FileEntry, ValidationState } from './store/models';
 import { selectValidations } from './store/selectors/media-files.selectors';
 import { FileTypeService, MediaFilesService } from './store/services';
 
@@ -13,7 +13,7 @@ import { FileTypeService, MediaFilesService } from './store/services';
   styleUrls: ['./media-files.component.scss'],
 })
 export class MediaFilesComponent implements OnDestroy {
-  @Input() files: any;
+  @Input() files: FileEntry;
 
   private destroy$: Subject<any> = new Subject<any>();
 

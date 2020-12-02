@@ -7,8 +7,8 @@
     <img src="{{file.preview}}" alt="image" width="100%">
   </app-accordion-group>
 
-  <app-accordion-group title="Exif" *ngIf="isExif">
-    <app-image-exif [file]="file" (outputEmit)="handleFileExif($event)"></app-image-exif>
+  <app-accordion-group title="Exif">
+    <app-image-exif [file]="file"></app-image-exif>
   </app-accordion-group>
 
   <app-accordion-group title="Metadata">

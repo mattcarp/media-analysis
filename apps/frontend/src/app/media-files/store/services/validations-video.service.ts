@@ -6,7 +6,11 @@ import { validationsRules } from './validations-rules.constants';
 import { ValidationState } from '../models';
 import { MediaFilesState } from '../reducers/media-files.reducer';
 import { MediaFilesService } from './media-files.service';
-import { setValidationsState } from '../actions/media-files.actions';
+import {
+  setErrorAnalysisIds,
+  setSuccessAnalysisIds,
+  setValidationsState,
+} from '../actions/media-files.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +21,8 @@ export class ValidationsVideoService {
   videoRules = validationsRules.videoStream[0];
   audioRules = validationsRules.audioStream[0];
   validationState: ValidationState[] = [];
+  successAnalysisIds: string[] = [];
+  errorAnalysisIds: string[] = [];
 
   constructor(
     private mediaFileService: MediaFilesService,
@@ -153,7 +159,13 @@ export class ValidationsVideoService {
       entries: JSON.stringify(validations),
     };
 
+    isValid
+      ? this.successAnalysisIds = this.successAnalysisIds.concat(fileId)
+      : this.errorAnalysisIds = this.errorAnalysisIds.concat(fileId);
+
     this.validationState = this.validationState.concat(parsed);
     this.store.dispatch(setValidationsState({ validations: this.validationState }));
+    this.store.dispatch(setSuccessAnalysisIds({ successAnalysisIds: this.successAnalysisIds }));
+    this.store.dispatch(setErrorAnalysisIds({ errorAnalysisIds: this.errorAnalysisIds }));
   }
 }

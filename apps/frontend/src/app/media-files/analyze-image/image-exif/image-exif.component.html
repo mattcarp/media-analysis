@@ -1,1 +1,9 @@
-<pre>{{output}}</pre>
+<ng-container *ngIf="output; else noExif">
+  <pre>{{output}}</pre>
+</ng-container>
+
+<ng-template #noExif>
+  <div class="alert-danger">
+    The analyzer returned the following message: EXIF is missing.
+  </div>
+</ng-template>

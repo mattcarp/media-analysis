@@ -12,12 +12,10 @@ import { AccordionModule } from '../shared/accordion/accordion.module';
 import { AnalyzeImageModule } from './analyze-image/analyze-image.module';
 import { AnalyzeAudioModule } from './analyze-audio/analyze-audio.module';
 import { AnalyzeVideoModule } from './analyze-video/analyze-video.module';
-import { DetectBlackComponent } from './detect-black/detect-black.component';
 import { MediaFilesComponent } from './media-files.component';
 
 @NgModule({
   declarations: [
-    DetectBlackComponent,
     MediaFilesComponent,
   ],
   imports: [
@@ -35,7 +33,6 @@ import { MediaFilesComponent } from './media-files.component';
     AnalyzeVideoModule,
   ],
   exports: [
-    DetectBlackComponent,
     MediaFilesComponent,
     AnalyzeImageModule,
     AnalyzeAudioModule,

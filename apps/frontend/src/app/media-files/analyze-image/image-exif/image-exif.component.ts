@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { FileEntry } from '../../store/models';
 
@@ -10,7 +10,6 @@ declare let EXIF: any;
 })
 export class ImageExifComponent implements OnInit {
   @Input() file: FileEntry;
-  @Output() outputEmit?: EventEmitter<string> = new EventEmitter();
   output: string;
 
   ngOnInit(): void {
@@ -35,7 +34,6 @@ export class ImageExifComponent implements OnInit {
       });
 
       this.output = text.substring(1,text.length-1);
-      this.outputEmit.emit(this.output);
     };
   }
 }

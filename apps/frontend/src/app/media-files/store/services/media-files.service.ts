@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { NGXLogger } from 'ngx-logger';
 
+import { FileEntry } from '../models';
 import { MediaFilesState } from '../reducers/media-files.reducer';
 import { setMediaFiles } from '../actions/media-files.actions';
 
@@ -12,7 +13,7 @@ import { setMediaFiles } from '../actions/media-files.actions';
 export class MediaFilesService implements OnDestroy {
   parseStartTime: Date = new Date();
   parsedId: any[];
-  files: any[];
+  files: FileEntry[];
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -26,7 +27,7 @@ export class MediaFilesService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  handleFiles(files: any[]): void {
+  handleFiles(files: FileEntry[]): void {
     this.logger.log(`All media files have been added`);
     setTimeout(() => {
       this.store.dispatch(setMediaFiles({ files }));
