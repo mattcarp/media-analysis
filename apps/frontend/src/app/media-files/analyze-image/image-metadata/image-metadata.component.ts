@@ -58,12 +58,8 @@ export class ImageMetadataComponent implements OnInit {
             // error handling
             console.log(`%c This is what I got from ffprobe metadata:`, 'color: darkgrey');
 
-            // this.metadataStarted.emit(false);
-            // this.metadataResult.emit(data);
             this.renderResult(data);
-            // this.imageValidationsService.validate(JSON.stringify(data));
             this.imageValidationsService.validate(file.id, data);
-            // this.imageValidationsService.validate(data);
           },
         });
       }

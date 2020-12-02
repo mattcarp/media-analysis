@@ -14,3 +14,13 @@ export const selectValidations = createSelector(
   selectFiles,
   (state: fromReducer.MediaFilesState) => state.validations,
 );
+
+export const selectSuccessAnalysisIds = createSelector(
+  selectFiles,
+  (state: fromReducer.MediaFilesState) => state.successAnalysisIds,
+);
+
+export const selectErrorAnalysisIds = createSelector(
+  selectFiles,
+  (state: fromReducer.MediaFilesState) => state.errorAnalysisIds,
+);

@@ -15,7 +15,7 @@ import { version } from '../../../../package.json';
 })
 export class AppComponent implements OnInit, OnDestroy {
   verUI = version;
-  uploaderVer = version;
+  verUploader = '0.0.16';
   files: any[] = [];
 
   private destroy$: Subject<any> = new Subject<any>();
@@ -69,10 +69,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   handleUploadedFilesChanged(event): void {}
-
-  handleUploaderVer(event): void {
-    this.uploaderVer = event;
-  }
 
   isDDP(files: any[]): boolean {
     let isDDPPQ = false;
