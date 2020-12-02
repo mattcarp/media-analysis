@@ -1,5 +1,5 @@
 <ng-container *ngIf="hasValidations">
-  <p>Passed {{validations?.totalPasses}} tests.</p>
+  <p>Passed {{validations?.totalPasses}} test{{getPlural(validations?.totalPasses)}}.</p>
 
   <ng-container *ngIf="validations?.totalFails === 0; else failedBlock">
     <div class="alert-success">
@@ -10,14 +10,14 @@
   <ng-template #failedBlock>
     <div class="alert-danger">
       <p>
-        <strong>This DDP failed {{validations?.totalFails}} test.</strong>
+        <strong>This DDP failed {{validations?.totalFails}} test{{getPlural(validations?.missingFiles)}}.</strong>
         <span *ngIf="validations?.missingFiles?.length > 1">
           Most likely because not all required files were submitted.
         </span>
       </p>
 
       <ng-container *ngIf="validations?.missingFiles?.length">
-        <h4>Missing Files:</h4>
+        <h4>Missing File{{getPlural(validations?.missingFiles)}}:</h4>
         <div *ngFor="let file of validations?.missingFiles">
           <i class="ma-icon error"></i>
           {{file?.name}}, which is required in the map stream and should be
