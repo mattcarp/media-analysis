@@ -27,8 +27,7 @@ analysisRouter.post('/', (req, res) => {
     }
 
     console.log('call ffprobe with exec:');
-    // exec(`/usr/local/bin/ffmpeg/ffprobe -of json -show_streams -v error -show_format ${tempName}`,
-    exec(`ffprobe -of json -show_streams -v error -show_format ${tempName}`,
+    exec(`/usr/local/bin/ffmpeg/ffprobe -of json -show_streams -v error -show_format ${tempName}`,
 
       (error, stdout, stderr) => {
         const result: any = {};
