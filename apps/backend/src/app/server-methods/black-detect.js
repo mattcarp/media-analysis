@@ -13,7 +13,8 @@ module.exports = {
     let start;
     let end;
     let duration;
-    const ffprobeCmd = `/usr/local/bin/ffmpeg/ffprobe -f lavfi -i 'movie=${fileToProcess},blackdetect[out0]'`
+    // const ffprobeCmd = `/usr/local/bin/ffmpeg/ffprobe -f lavfi -i 'movie=${fileToProcess},blackdetect[out0]'`
+    const ffprobeCmd = `ffprobe -f lavfi -i 'movie=${fileToProcess},blackdetect[out0]'`
       + ' -show_entries tags=lavfi.black_start,lavfi.black_end,lavfi.black_duration -of default=nw=1';
 
     log.info('from processBlack, calling ffprobe black detection:');

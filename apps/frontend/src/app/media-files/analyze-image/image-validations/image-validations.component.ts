@@ -64,4 +64,8 @@ export class ImageValidationsComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  getPlural(arr: []): string {
+    return arr.length > 1 ? 's' : '';
+  }
 }

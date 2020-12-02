@@ -28,7 +28,7 @@ export class HelperService {
     const p = document.getElementById('informer-text');
     info.classList.add('show');
     p.innerText = message;
-    setTimeout(() => info.classList.remove('show'), 3000);
+    setTimeout(() => info.classList.remove('show'), 5000);
   }
 
   prettierBytes(num: number): string {

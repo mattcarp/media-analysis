@@ -69,41 +69,47 @@ export class ImageMetadataComponent implements OnInit {
     reader.readAsArrayBuffer(this.blob);
   }
 
-  renderResult(data) {
+  renderResult(data: {analysis; error}) {
     if (data.error) {
       if (!data.error.includes('Error splitting the input into NAL units')) {
         this.ffprobeErr = data.error;
       }
+
+      this.helperService.informer(data.error);
     }
-    const analysisObj = JSON.parse(data.analysis);
-    console.log(`%c Analysis object, and number of keys:`, 'color: grey');
-    console.log(analysisObj);
-    console.log(Object.keys(analysisObj).length);
 
-    if (analysisObj && Object.keys(analysisObj).length !== 0) {
-      const formatObj = analysisObj.format;
-      this.format = this.processObject(formatObj);
-      console.log(`%c Format object, from which we can filter extraneous keys: ${this.format}`,
-        'color: green',
-      );
 
-      if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
-        this.formatTags = this.processObject(formatObj.tags);
+    if (data.analysis) {
+      const analysisObj = JSON.parse(data.analysis);
+      console.log(`%c Analysis object, and number of keys:`, 'color: grey');
+      console.log(analysisObj);
+      console.log(Object.keys(analysisObj).length);
+
+      if (analysisObj && Object.keys(analysisObj).length !== 0) {
+        const formatObj = analysisObj.format;
+        this.format = this.processObject(formatObj);
+        console.log(`%c Format object, from which we can filter extraneous keys: ${this.format}`,
+          'color: green',
+        );
+
+        if (formatObj.tags && Object.keys(formatObj.tags).length !== 0) {
+          this.formatTags = this.processObject(formatObj.tags);
+        }
       }
-    }
 
-    if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
-      const collectedStreams = [];
-      const inputStreams = analysisObj.streams;
+      if (analysisObj.streams && Object.keys(analysisObj.streams).length !== 0) {
+        const collectedStreams = [];
+        const inputStreams = analysisObj.streams;
 
-      inputStreams.forEach((currentStream) => {
-        console.log(`%c I'm a stream`, 'color: green');
-        collectedStreams.push(this.processObject(currentStream));
-      });
+        inputStreams.forEach((currentStream) => {
+          console.log(`%c I'm a stream`, 'color: green');
+          collectedStreams.push(this.processObject(currentStream));
+        });
 
-      this.streams = collectedStreams;
-      // show the panel
-      this.isMetadata = true;
+        this.streams = collectedStreams;
+        // show the panel
+        this.isMetadata = true;
+      }
     }
   }
 
