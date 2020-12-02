@@ -4,7 +4,7 @@ import { select, Store } from '@ngrx/store';
 import { map, takeUntil } from 'rxjs/operators';
 
 import { FileEntry, ValidationState } from './store/models';
-import { selectValidations } from './store/selectors/media-files.selectors';
+import { selectValidations } from './store/media-files.selectors';
 import { FileTypeService, MediaFilesService } from './store/services';
 
 @Component({

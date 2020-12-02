@@ -10,6 +10,7 @@ export interface MediaFilesState {
   validations: ValidationState[];
   successAnalysisIds: string[];
   errorAnalysisIds: string[];
+  analysisResponse: any;
 }
 
 const initialState: MediaFilesState = {
@@ -17,6 +18,7 @@ const initialState: MediaFilesState = {
   validations: [],
   successAnalysisIds: [],
   errorAnalysisIds: [],
+  analysisResponse: null,
 };
 
 const mediaFilesReducer = createReducer(
@@ -36,6 +38,14 @@ const mediaFilesReducer = createReducer(
   on(fromActions.setErrorAnalysisIds, (state: MediaFilesState, { errorAnalysisIds }) => ({
     ...state,
     errorAnalysisIds,
+  })),
+  on(fromActions.getAnalysisResponse, (state: MediaFilesState) => ({
+    ...state,
+    analysisResponse: null,
+  })),
+  on(fromActions.setAnalysisResponse, (state: MediaFilesState, { analysisResponse }) => ({
+    ...state,
+    analysisResponse,
   })),
 );
 

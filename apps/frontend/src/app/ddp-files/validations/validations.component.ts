@@ -42,32 +42,40 @@ export class ValidationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.store.pipe(select(selectMs), takeUntil(this.destroy$))
-      .subscribe((ms: MsState) => this.parsedMs = ms);
+    this.store.pipe(
+      select(selectMs),
+      takeUntil(this.destroy$),
+    ).subscribe((ms: MsState) => this.parsedMs = ms);
 
-    this.store.pipe(select(selectId), takeUntil(this.destroy$))
-      .subscribe((id: IdState) => this.parsedId = id);
+    this.store.pipe(
+      select(selectId),
+      takeUntil(this.destroy$),
+    ).subscribe((id: IdState) => this.parsedId = id);
 
-    this.store.pipe(select(selectPq), takeUntil(this.destroy$))
-      .subscribe(() => {
-        // if the pq is parsed, it means we already have the ms and the files
-        this.validationsService.validate(
-          this.ddpFileService.files,
-          this.parsedMs,
-          this.parsedId,
-        );
+    this.store.pipe(
+      select(selectPq),
+      takeUntil(this.destroy$),
+    ).subscribe(() => {
+      // if the pq is parsed, it means we already have the ms and the files
+      this.validationsService.validate(
+        this.ddpFileService.files,
+        this.parsedMs,
+        this.parsedId,
+      );
 
-        this.store.pipe(select(selectValidation), takeUntil(this.destroy$))
-          .subscribe((validations: ValidationState) => {
-            this.hasValidations = true;
-            this.validations = validations;
-          });
-        // TODO validations are null
-        this.logger.log('got these validations', this.validations);
-        this.logger.log('in return for ', this.parsedMs, this.parsedId);
-        const end = new Date().getTime();
-        this.totalValidationTime = end - this.ddpFileService.parseStartTime.getTime();
+      this.store.pipe(
+        select(selectValidation),
+        takeUntil(this.destroy$),
+      ).subscribe((validations: ValidationState) => {
+        this.hasValidations = true;
+        this.validations = validations;
       });
+      // TODO validations are null
+      this.logger.log('got these validations', this.validations);
+      this.logger.log('in return for ', this.parsedMs, this.parsedId);
+      const end = new Date().getTime();
+      this.totalValidationTime = end - this.ddpFileService.parseStartTime.getTime();
+    });
   }
 
   ngOnDestroy(): void {
