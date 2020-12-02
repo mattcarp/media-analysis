@@ -42,6 +42,15 @@
       (removedFilesEmit)="handleRemovedFiles($event)"
       (uploadedFilesChangedEmit)="handleUploadedFilesChanged($event)">
     </app-uploader>
+
+    <div class="curved-arrow input" [class.animation-fadeOut]="isAddedFiles">
+      <i class="triangle"></i>
+      <i class="curve"></i>
+    </div>
+    <div class="curved-arrow output" [class.animation-fadeOut]="isAnalysedFiles">
+      <i class="triangle"></i>
+      <i class="curve"></i>
+    </div>
   </aside>
 
   <article>

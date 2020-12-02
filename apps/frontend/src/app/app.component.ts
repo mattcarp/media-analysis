@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { select, Store } from '@ngrx/store';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
-import { FileEntry } from './media-files/store/models';
-import { selectMediaFiles } from './media-files/store/selectors/media-files.selectors';
+import { FileEntry, ValidationState } from './media-files/store/models';
+import { selectMediaFiles, selectValidations } from './media-files/store/selectors/media-files.selectors';
 import { ModalService } from './shared/modal/modal.service';
 import { MediaFilesService } from './media-files/store/services';
 import { version } from '../../../../package.json';
@@ -18,6 +18,8 @@ export class AppComponent implements OnInit, OnDestroy {
   verUI = version;
   verUploader = '0.0.16';
   files: FileEntry[] = [];
+  isAddedFiles = false;
+  isAnalysedFiles = false;
 
   private destroy$: Subject<any> = new Subject<any>();
 
@@ -30,6 +32,15 @@ export class AppComponent implements OnInit, OnDestroy {
       select(selectMediaFiles),
       takeUntil(this.destroy$),
     ).subscribe((files: FileEntry[]) => this.files = files.slice());
+
+    this.store.pipe(
+      select(selectValidations),
+      takeUntil(this.destroy$),
+    ).subscribe((validations: ValidationState[]) => {
+      if (validations.length) {
+        this.changeAnimation('output');
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -49,6 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.files = this.files.concat(newFiles);
+    this.changeAnimation('input');
   }
 
   handleRemovedFiles(fileId: string): void {
@@ -112,5 +124,18 @@ export class AppComponent implements OnInit, OnDestroy {
       style2,
       '',
     );
+  }
+
+  changeAnimation(direction: string): void {
+    if (direction === 'input')  {
+      this.isAddedFiles = true;
+    }
+    if (direction === 'output')  {
+      this.isAnalysedFiles = true;
+    }
+    setTimeout(() => {
+      this.isAddedFiles = false;
+      this.isAnalysedFiles = false;
+    }, 1500);
   }
 }
