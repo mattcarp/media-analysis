@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 
-import * as fromActions from '../actions/media-files.actions';
-import { ValidationState } from '../models';
+import * as fromActions from './media-files.actions';
+import { FileEntry, ValidationState } from './models';
 
 export const mediaFilesFeatureKey = 'media-files';
 

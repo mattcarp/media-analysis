@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { MediaFilesService } from './media-files.service';
 import { MediaFilesState } from '../media-files.reducer';
 import { ValidationState } from '../models';
-import { setValidationsState } from '../media-files.actions';
+import { setErrorAnalysisIds, setSuccessAnalysisIds, setValidationsState } from '../media-files.actions';
 import { validationRules } from './validation-rules.constants';
 import { HelperService } from './helper.service';
 
