@@ -29,8 +29,6 @@ export class MediaFilesService implements OnDestroy {
 
   handleFiles(files: FileEntry[]): void {
     this.logger.log(`All media files have been added`);
-    setTimeout(() => {
-      this.store.dispatch(setMediaFiles({ files }));
-    }, 100);
+    this.store.dispatch(setMediaFiles({ files }));
   }
 }

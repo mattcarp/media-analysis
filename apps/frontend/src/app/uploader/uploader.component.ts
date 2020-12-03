@@ -6,9 +6,11 @@ import { takeUntil } from 'rxjs/operators';
 import { ModalService } from '../shared/modal/modal.service';
 import { MediaFilesService } from '../media-files/store/services';
 import {
-  selectErrorAnalysisIds,
+  selectErrorAnalysisIds, selectMediaFiles,
   selectSuccessAnalysisIds
 } from '../media-files/store/selectors/media-files.selectors';
+import { setMediaFiles } from '../media-files/store/actions/media-files.actions';
+import { FileEntry } from '../media-files/store/models';
 
 @Component({
   selector: 'app-uploader',
@@ -16,9 +18,7 @@ import {
   styleUrls: ['./uploader.component.scss'],
 })
 export class UploaderComponent implements AfterViewInit, OnDestroy {
-  @Output() addedFilesEmit?: EventEmitter<any[]> = new EventEmitter();
-  @Output() removedFilesEmit?: EventEmitter<string> = new EventEmitter();
-  @Output() uploadedFilesChangedEmit?: EventEmitter<any[]> = new EventEmitter();
+  files: FileEntry[] = [];
   successAnalysisIds: string;
   errorAnalysisIds: string;
 
@@ -29,6 +29,11 @@ export class UploaderComponent implements AfterViewInit, OnDestroy {
     private mediaFilesService: MediaFilesService,
     private store: Store<any>,
   ) {
+    this.store.pipe(
+      select(selectMediaFiles),
+      takeUntil(this.destroy$),
+    ).subscribe((files: FileEntry[]) => this.files = files.slice());
+
     this.store.pipe(
       select(selectSuccessAnalysisIds),
       takeUntil(this.destroy$),
@@ -47,16 +52,12 @@ export class UploaderComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     const component = document.querySelector('sme-uploader');
 
-    component.addEventListener('addedFiles', (event: Event) => {
+    component.addEventListener('addedFiles', (event: any) => {
       this.onAddedFiles(event);
     });
 
-    component.addEventListener('removedFile', (event: Event) => {
+    component.addEventListener('removedFile', (event: any) => {
       this.onRemovedFiles(event);
-    });
-
-    component.addEventListener('uploadedFilesChanged', (event: Event) => {
-      this.onUploadedFilesChanged(event);
     });
   }
 
@@ -66,15 +67,39 @@ export class UploaderComponent implements AfterViewInit, OnDestroy {
   }
 
   onAddedFiles(event: any): void {
-    this.addedFilesEmit.emit(event.detail);
+    setTimeout(() => {
+      const newFiles = event.detail.map((item) => {
+        const newFile: any = new File([item], item.name, { type: item.type });
+
+        newFile.id = item.id;
+        newFile.status = item.status;
+        newFile.analysed = item.analysed;
+        newFile.preview = item.preview;
+
+        return newFile;
+      });
+
+      this.files = this.files.concat(newFiles);
+      this.mediaFilesService.handleFiles(this.files);
+    }, 100);
   }
 
   onRemovedFiles(event: any): void {
-    this.removedFilesEmit.emit(event.detail);
-  }
+    const fileId = event.detail;
+    let removedFile;
 
-  onUploadedFilesChanged(event: any): void {
-    // TODO: (?)Need clear validations list
-    this.uploadedFilesChangedEmit.emit(event.detail);
+    this.files = this.files.filter((file) => {
+      if (file.id === fileId) {
+        removedFile = file;
+      }
+
+      return file.id !== fileId;
+    });
+
+    if (fileId === 'all') {
+      this.files = [];
+    }
+
+    this.mediaFilesService.handleFiles(this.files);
   }
 }

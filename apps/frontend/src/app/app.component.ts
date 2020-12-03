@@ -1,12 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
-import { map, takeUntil } from 'rxjs/operators';
 
 import { FileEntry, ValidationState } from './media-files/store/models';
 import { selectMediaFiles, selectValidations } from './media-files/store/selectors/media-files.selectors';
 import { ModalService } from './shared/modal/modal.service';
-import { MediaFilesService } from './media-files/store/services';
 import { version } from '../../../../package.json';
 
 @Component({
@@ -18,6 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
   verUI = version;
   verUploader = '0.0.16';
   files: FileEntry[] = [];
+  filesCount = 0;
   isAddedFiles = false;
   isAnalysedFiles = false;
 
@@ -25,20 +25,28 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private modalService: ModalService,
-    private mediaFilesService: MediaFilesService,
     private store: Store<any>,
   ) {
     this.store.pipe(
       select(selectMediaFiles),
       takeUntil(this.destroy$),
-    ).subscribe((files: FileEntry[]) => this.files = files.slice());
+    ).subscribe((files: FileEntry[]) => {
+      this.files = files.slice();
+
+      if (this.files.length > this.filesCount) {
+        this.changeAnimation('input');
+      }
+      this.filesCount = this.files.length;
+    });
 
     this.store.pipe(
       select(selectValidations),
       takeUntil(this.destroy$),
     ).subscribe((validations: ValidationState[]) => {
       if (validations.length) {
-        this.changeAnimation('output');
+        setTimeout(() => {
+          this.changeAnimation('output');
+        }, 100);
       }
     });
   }
@@ -51,34 +59,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
-
-  handleAddedFiles(files: FileEntry[]): void {
-    const newFiles: FileEntry[] = [];
-
-    files.forEach((file: File) => {
-      newFiles.push(file);
-    });
-
-    this.files = this.files.concat(newFiles);
-    this.changeAnimation('input');
-  }
-
-  handleRemovedFiles(fileId: string): void {
-    let removedFile;
-    this.files = this.files.filter((file) => {
-      if (file.id === fileId) {
-        removedFile = file;
-      }
-
-      return file.id !== fileId;
-    });
-
-    if (fileId === 'all') {
-      this.files = [];
-    }
-  }
-
-  handleUploadedFilesChanged(event): void {}
 
   isDDP(files: any[]): boolean {
     let isDDPPQ = false;

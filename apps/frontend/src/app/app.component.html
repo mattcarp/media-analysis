@@ -37,11 +37,7 @@
         SME Uploader v.{{verUploader}}
       </small>
     </h2>
-    <app-uploader
-      (addedFilesEmit)="handleAddedFiles($event)"
-      (removedFilesEmit)="handleRemovedFiles($event)"
-      (uploadedFilesChangedEmit)="handleUploadedFilesChanged($event)">
-    </app-uploader>
+    <app-uploader></app-uploader>
 
     <div class="curved-arrow input" [class.animation-fadeOut]="isAddedFiles">
       <i class="triangle"></i>
@@ -56,8 +52,12 @@
   <article>
     <h2>
       Analysis:
-      <small class="badge" [class.active]="files?.length && !isDDP(files)">Audio/Video/Image</small>
-      <small class="badge" [class.active]="files?.length && isDDP(files)">DDP</small>
+      <small class="badge" [class.active]="files?.length && !isDDP(files)">
+        Audio/Video/Image
+      </small>
+      <small class="badge" [class.active]="files?.length && isDDP(files)">
+        DDP
+      </small>
     </h2>
 
     <section>
