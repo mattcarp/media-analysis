@@ -21,12 +21,10 @@ const initialState: MediaFilesState = {
 
 const mediaFilesReducer = createReducer(
   initialState,
-  on(fromActions.setMediaFiles, (state: MediaFilesState, { files }) => {
-    return {
-      ...state,
-      files,
-    };
-  }),
+  on(fromActions.setMediaFiles, (state: MediaFilesState, { files }) => ({
+    ...state,
+    files,
+  })),
   on(fromActions.setValidationsState, (state: MediaFilesState, { validations }) => ({
     ...state,
     validations,
