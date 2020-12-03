@@ -1,6 +1,6 @@
 import { ValidationEntry } from './validation-entry';
 
-interface FileItem {
+export interface FileItem {
   name?: string;
   reqSize?: number;
   actualSize?: number;
