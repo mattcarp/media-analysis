@@ -88,7 +88,8 @@ export class DdpFileService implements OnDestroy {
         ).subscribe((pq: PqState) => {
           this.parsedPq = pq;
           const toc = this.ddpService.createToc(pq.entries);
-          this.gracenoteService.queryByToc(toc);
+          // todo uncomment after new api key is available
+          // this.gracenoteService.queryByToc(toc);
         });
       }
     });
