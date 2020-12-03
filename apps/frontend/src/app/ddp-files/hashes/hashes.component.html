@@ -22,7 +22,14 @@
       <div #b1>{{hashEntry?.targetFileName}}</div>
       <div #b2>{{hashEntry?.lastModified}}</div>
       <div #b3 class="ellipsis">{{hashEntry?.hash}}</div>
-      <div #b4 class="ellipsis">{{hashEntry?.computedHash}}</div>
+      <div #b4 class="ellipsis">
+        <ng-container *ngIf="!isMissingFile(hashEntry?.targetFileName); else missingFile">
+          {{hashEntry?.computedHash}}
+        </ng-container>
+        <ng-template #missingFile>
+          Original file not found
+        </ng-template>
+      </div>
       <div #b5>
         <progress
           *ngIf="hashEntry?.progress < 100"
