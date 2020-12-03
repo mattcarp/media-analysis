@@ -1,10 +1,10 @@
 import { createAction, props } from '@ngrx/store';
 
-import { FileEntry, ValidationState } from '../models';
+import { ValidationState } from '../models';
 
 export const setMediaFiles = createAction(
   '[Media File] Set Files',
-  props<{ files: FileEntry[] }>(),
+  props<{ files: any[] }>(),
 );
 
 export const setValidationsState = createAction(

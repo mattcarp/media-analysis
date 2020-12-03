@@ -13,12 +13,10 @@ export class ImageExifComponent implements OnInit {
   output: string;
 
   ngOnInit(): void {
-    setTimeout(() => {
-      this.getExif(this.file);
-    }, 100);
+    this.getExif(this.file);
   }
 
-  private getExif(file) {
+  private getExif(file: FileEntry): void {
     const img = new Image();
     let text: string;
 
