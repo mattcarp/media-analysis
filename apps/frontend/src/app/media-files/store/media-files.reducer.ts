@@ -1,7 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 
-import * as fromActions from '../actions/media-files.actions';
-import { ValidationState } from '../models';
+import * as fromActions from './media-files.actions';
+import { FileEntry, ValidationState } from './models';
 
 export const mediaFilesFeatureKey = 'media-files';
 
@@ -10,6 +10,7 @@ export interface MediaFilesState {
   validations: ValidationState[];
   successAnalysisIds: string[];
   errorAnalysisIds: string[];
+  analysisResponse: any;
 }
 
 const initialState: MediaFilesState = {
@@ -17,6 +18,7 @@ const initialState: MediaFilesState = {
   validations: [],
   successAnalysisIds: [],
   errorAnalysisIds: [],
+  analysisResponse: null,
 };
 
 const mediaFilesReducer = createReducer(
@@ -36,6 +38,14 @@ const mediaFilesReducer = createReducer(
   on(fromActions.setErrorAnalysisIds, (state: MediaFilesState, { errorAnalysisIds }) => ({
     ...state,
     errorAnalysisIds,
+  })),
+  on(fromActions.getAnalysisResponse, (state: MediaFilesState) => ({
+    ...state,
+    analysisResponse: null,
+  })),
+  on(fromActions.setAnalysisResponse, (state: MediaFilesState, { analysisResponse }) => ({
+    ...state,
+    analysisResponse,
   })),
 );
 

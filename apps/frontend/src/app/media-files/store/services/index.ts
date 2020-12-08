@@ -4,6 +4,4 @@ export * from './helper.service';
 export * from './logger-monitor';
 export * from './media-files.service';
 export * from './quicktime.service';
-export * from './validations-audio.service';
-export * from './validations-image.service';
-export * from './validations-video.service';
+export * from './validation.service';

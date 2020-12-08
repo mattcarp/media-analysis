@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { FileEntry, ValidationState } from './media-files/store/models';
-import { selectMediaFiles, selectValidations } from './media-files/store/selectors/media-files.selectors';
+import { selectMediaFiles, selectValidations } from './media-files/store/media-files.selectors';
 import { ModalService } from './shared/modal/modal.service';
 import { version } from '../../../../package.json';
 

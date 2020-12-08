@@ -1,17 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { FileEntry } from '../../store/models';
-import { HelperService } from '../../store/services';
-import { ValidationsAudioService } from '../../store/services';
+import { HelperService, ValidationService } from '../../store/services';
+import { MediaFilesState } from '../../store/media-files.reducer';
+import { getAnalysisResponse } from '../../store/media-files.actions';
+import { selectAnalysisResponse } from '../../store/media-files.selectors';
 
-declare let $: any;
 const SLICE_SIZE = 150000;
 
 @Component({
   selector: 'app-audio-metadata',
   templateUrl: './audio-metadata.component.html',
 })
-export class AudioMetadataComponent implements OnInit {
+export class AudioMetadataComponent implements OnInit, OnDestroy {
   @Input() file: FileEntry;
   ffprobeErr: string;
   isMetadata: boolean;
@@ -21,12 +25,20 @@ export class AudioMetadataComponent implements OnInit {
   endpoint: string;
   blob: Blob;
 
+  private destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private helperService: HelperService,
-    private validationsService: ValidationsAudioService,
+    private validationsService: ValidationService,
+    private store: Store<MediaFilesState>,
   ) {
     this.endpoint = this.helperService.getEndpoint();
     console.log(`%c Metadata extraction started`, 'color: darkgrey');
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   ngOnInit(): void {
@@ -39,28 +51,14 @@ export class AudioMetadataComponent implements OnInit {
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt: ProgressEvent<FileReader>) => {
       if (evt.target.readyState === FileReader.DONE) {
-        // angular Http doesn't yet support raw binary POSTs - aha! hey @sergei - this is why i used $.ajax!
-        // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-        $.ajax({
-          type: 'POST',
-          url: this.endpoint + 'analysis',
-          // TODOmc isn't this.blob just an empty slice?
-          data: this.blob,
-          // don't massage binary to JSON
-          processData: false,
-          // content type that we are sending
-          contentType: 'application/octet-stream',
-          error: (err) => {
-            console.log(`%c You have an error on the ajax request:`, 'color: red');
-            console.log(err);
-          },
-          success: (data) => {
-            // error handling
-            console.log(`%c This is what I got from ffprobe metadata:`, 'color: darkgrey');
-
-            this.renderResult(data);
-            this.validationsService.validate(file.id, data);
-          },
+        this.store.dispatch(getAnalysisResponse({ body: this.blob }));
+        this.store.pipe(
+          select(selectAnalysisResponse),
+          takeUntil(this.destroy$),
+        ).subscribe((response: any) => {
+          console.log('!response', response);
+          this.renderResult(response);
+          this.validationsService.validate(file.id, response);
         });
       }
     };
@@ -110,13 +108,12 @@ export class AudioMetadataComponent implements OnInit {
   // takes an object, removes any keys with array values, and returns
   // an array of objects: {key: value}
   // this is handy for ffprobe's format and tags objects
-  processObject(formatObj): Object[] {
+  processObject(formatObj): any[] {
     if (Array.isArray(formatObj)) {
       const newObj: any = {};
       formatObj.map(item => Object.keys(item).map((key: string) => {
-          newObj[key] = item[key];
-        }),
-      );
+        newObj[key] = item[key];
+      }));
       formatObj = newObj;
     }
     const keysArr: string[] = Object.keys(formatObj);

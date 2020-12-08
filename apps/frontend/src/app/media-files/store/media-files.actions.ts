@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 
-import { ValidationState } from '../models';
+import { ValidationState } from './models';
 
 export const setMediaFiles = createAction(
   '[Media File] Set Files',
@@ -20,4 +20,14 @@ export const setSuccessAnalysisIds = createAction(
 export const setErrorAnalysisIds = createAction(
   '[Media File] Set Error Analysis IDs',
   props<{ errorAnalysisIds: string[] }>(),
+);
+
+export const getAnalysisResponse = createAction(
+  '[Media File] Get Analysis Response',
+  props<{ body: Blob }>(),
+);
+
+export const setAnalysisResponse = createAction(
+  '[Media File] Set Analysis Response',
+  props<{ analysisResponse: any }>(),
 );

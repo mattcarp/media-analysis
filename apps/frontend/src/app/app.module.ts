@@ -20,7 +20,7 @@ import { ModalAboutComponent } from './modal-about/modal-about.component';
     AppComponent,
     ModalComponent,
     UploaderComponent,
-    ModalAboutComponent
+    ModalAboutComponent,
   ],
   imports: [
     BrowserModule,
@@ -29,13 +29,13 @@ import { ModalAboutComponent } from './modal-about/modal-about.component';
     DdpFilesModule,
     NoopAnimationsModule,
     StoreModule.forRoot(reducers, {}),
+    EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, logOnly: environment.production
     }),
     EffectsModule.forRoot([]),
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {
-}
+export class AppModule {}

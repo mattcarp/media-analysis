@@ -5,10 +5,10 @@ import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 
 import { ValidationState } from '../../store/models';
-import { validationsRules } from '../../store/services/validations-rules.constants';
-import { MediaFilesState } from '../../store/reducers/media-files.reducer';
-import { MediaFilesService, ValidationsVideoService } from '../../store/services';
-import { selectValidations } from '../../store/selectors/media-files.selectors';
+import { validationRules } from '../../store/services/validation-rules.constants';
+import { MediaFilesState } from '../../store/media-files.reducer';
+import { MediaFilesService, ValidationService } from '../../store/services';
+import { selectValidations } from '../../store/media-files.selectors';
 
 @Component({
   selector: 'app-video-validations',
@@ -23,7 +23,7 @@ export class VideoValidationsComponent implements OnInit, OnDestroy {
   passes: any[] = [];
   fails: any[] = [];
   imageValidations: any[] = [];
-  validationsRules = validationsRules.imageStream[0];
+  validationsRules = validationRules.imageStream[0];
   isValidationCompleted = false;
   resultValidation = 'question';
   detailsValidation: any[] = [];
@@ -32,7 +32,7 @@ export class VideoValidationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private mediaFileService: MediaFilesService,
-    private validationsService: ValidationsVideoService,
+    private validationsService: ValidationService,
     private store: Store<MediaFilesState>,
     private logger: NGXLogger
   ) {

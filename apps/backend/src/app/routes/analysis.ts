@@ -21,7 +21,7 @@ analysisRouter.post('/', (req, res) => {
   console.log('the temp name:');
   console.log(tempName);
 
-  fs.writeFile(tempName, req.body, function (err) {
+  fs.writeFile(tempName, req.body, (err) => {
     if (err) {
       return console.log(err);
     }

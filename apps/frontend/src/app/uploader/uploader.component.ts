@@ -6,10 +6,11 @@ import { takeUntil } from 'rxjs/operators';
 import { ModalService } from '../shared/modal/modal.service';
 import { MediaFilesService } from '../media-files/store/services';
 import {
-  selectErrorAnalysisIds, selectMediaFiles,
-  selectSuccessAnalysisIds
-} from '../media-files/store/selectors/media-files.selectors';
-import { setMediaFiles } from '../media-files/store/actions/media-files.actions';
+  selectErrorAnalysisIds,
+  selectMediaFiles,
+  selectSuccessAnalysisIds,
+} from '../media-files/store/media-files.selectors';
+import { setMediaFiles } from '../media-files/store/media-files.actions';
 import { FileEntry } from '../media-files/store/models';
 
 @Component({

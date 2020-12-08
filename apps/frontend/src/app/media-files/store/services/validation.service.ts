@@ -1,25 +1,23 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { NGXLogger } from 'ngx-logger';
+import { Observable } from 'rxjs';
 
-import { validationsRules } from './validations-rules.constants';
-import { ValidationState } from '../models';
-import { MediaFilesState } from '../reducers/media-files.reducer';
 import { MediaFilesService } from './media-files.service';
-import {
-  setErrorAnalysisIds,
-  setSuccessAnalysisIds,
-  setValidationsState,
-} from '../actions/media-files.actions';
+import { MediaFilesState } from '../media-files.reducer';
+import { ValidationState } from '../models';
+import { setErrorAnalysisIds, setSuccessAnalysisIds, setValidationsState } from '../media-files.actions';
+import { validationRules } from './validation-rules.constants';
+import { HelperService } from './helper.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ValidationsVideoService {
+export class ValidationService {
   videoValidations: any[] = [];
   audioValidations: any[] = [];
-  videoRules = validationsRules.videoStream[0];
-  audioRules = validationsRules.audioStream[0];
+  videoRules = validationRules.videoStream;
+  audioRules = validationRules.audioStream;
   validationState: ValidationState[] = [];
   successAnalysisIds: string[] = [];
   errorAnalysisIds: string[] = [];
@@ -27,10 +25,11 @@ export class ValidationsVideoService {
   constructor(
     private mediaFileService: MediaFilesService,
     private store: Store<MediaFilesState>,
-    private logger: NGXLogger,
+    private http: HttpClient,
+    private helperService: HelperService,
   ) {}
 
-  validate(fileId: string, data: {analysis; error}, err): void {
+  validate(fileId: string, data: { analysis; error }, err?): void {
     if (data.analysis) {
       const analysisObj = JSON.parse(data.analysis);
       const streams: any = analysisObj.streams;
@@ -38,18 +37,16 @@ export class ValidationsVideoService {
       let videoStream: any;
       let audioStream: any;
 
-      // this.videoValidations = [];
-
-      if (streams && streams.length) {
-        streams.forEach((stream) => {
-          if (stream.codec_type === 'video') {
-            videoStream = stream;
-          }
-          if (stream.codec_type === 'audio') {
-            audioStream = stream;
-          }
-        });
-      }
+    if (streams && streams.length) {
+      streams.forEach((stream) => {
+        if (stream.codec_type === 'video') {
+          videoStream = stream;
+        }
+        if (stream.codec_type === 'audio') {
+          audioStream = stream;
+        }
+      });
+    }
 
       console.log(
         `%c Hey what's the video stream in image?`,
@@ -79,26 +76,17 @@ export class ValidationsVideoService {
           message: this.videoRules.widthMessage,
         });
 
-        // if (this.isProRes) {
-        //   this.videoValidations.push({
-        //     name: 'Encoder',
-        //     value: videoStream.tags.encoder,
-        //     success: videoStream.tags.encoder === this.videoRules.tagsEncoder,
-        //     message: this.videoRules.tagsEncoderMessage,
-        //   });
-        // }
-
-        const operands = videoStream.r_frame_rate.split('/');
-        const framerate =
-          Math.round((operands[0] / operands[1] + Number.EPSILON) * 1000) / 1000;
-        console.log('valide-fomate: computed framerate:', framerate);
-        this.videoValidations.push({
-          name: 'Frame Rate',
-          value: framerate,
-          success: this.videoRules.frameRates.indexOf(framerate) > -1,
-          message: this.videoRules.frameRatesMessage,
-        });
-      }
+      const operands = videoStream.r_frame_rate.split('/');
+      const framerate =
+        Math.round((operands[0] / operands[1] + Number.EPSILON) * 1000) / 1000;
+      console.log('valide-fomate: computed framerate:', framerate);
+      this.videoValidations.push({
+        name: 'Frame Rate',
+        value: framerate,
+        success: this.videoRules.frameRates.indexOf(framerate) > -1,
+        message: this.videoRules.frameRatesMessage,
+      });
+    }
 
       if (audioStream) {
         this.audioValidations.push({
@@ -169,5 +157,13 @@ export class ValidationsVideoService {
       this.store.dispatch(setSuccessAnalysisIds({ successAnalysisIds: this.successAnalysisIds }));
       this.store.dispatch(setErrorAnalysisIds({ errorAnalysisIds: this.errorAnalysisIds }));
     }
+  }
+
+  getAnalysis(body: Blob): Observable<any> {
+    const url = `${this.helperService.getEndpoint()}analysis`;
+    const headers: HttpHeaders = new HttpHeaders({
+      'Content-Type':  'application/octet-stream',
+    });
+    return this.http.post(url, body, { headers });
   }
 }

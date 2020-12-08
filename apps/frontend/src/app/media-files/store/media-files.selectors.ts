@@ -1,6 +1,6 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 
-import * as fromReducer from '../reducers/media-files.reducer';
+import * as fromReducer from './media-files.reducer';
 
 export const selectFiles
   = createFeatureSelector<fromReducer.MediaFilesState>(fromReducer.mediaFilesFeatureKey);
@@ -23,4 +23,9 @@ export const selectSuccessAnalysisIds = createSelector(
 export const selectErrorAnalysisIds = createSelector(
   selectFiles,
   (state: fromReducer.MediaFilesState) => state.errorAnalysisIds,
+);
+
+export const selectAnalysisResponse = createSelector(
+  selectFiles,
+  (state: fromReducer.MediaFilesState) => state.analysisResponse,
 );
