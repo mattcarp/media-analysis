@@ -37,6 +37,7 @@ app.use('/extract-frame', extractFrameRouter);
 app.use('/sme-uploader', smeUploaderRouter);
 // static files
 app.get('*.*', express.static(path.join(__dirname, '../frontend/')));
+app.get('*.*', express.static(path.join(__dirname, '../../../extracted/')));
 // main route (angular app)
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));

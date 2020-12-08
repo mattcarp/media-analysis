@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { environment } from '../environments/environment';
@@ -30,7 +31,8 @@ import { ModalAboutComponent } from './modal-about/modal-about.component';
     StoreModule.forRoot(reducers, {}),
     StoreDevtoolsModule.instrument({
       maxAge: 25, logOnly: environment.production
-    })
+    }),
+    EffectsModule.forRoot([]),
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
