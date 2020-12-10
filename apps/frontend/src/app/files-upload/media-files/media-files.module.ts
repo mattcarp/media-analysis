@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 import {
   mediaFilesFeatureKey,
@@ -12,6 +13,7 @@ import {
 import { AnalyzeImageModule } from './analyze-image/analyze-image.module';
 import { AnalyzeAudioModule } from './analyze-audio/analyze-audio.module';
 import { AnalyzeVideoModule } from './analyze-video/analyze-video.module';
+import { MediaFilesEffects } from './store/media-files.effects';
 import { MediaFilesComponent } from './media-files.component';
 
 @NgModule({
@@ -22,6 +24,7 @@ import { MediaFilesComponent } from './media-files.component';
     CommonModule,
     HttpClientModule,
     StoreModule.forFeature(mediaFilesFeatureKey, mediaFilesReducer),
+    EffectsModule.forFeature([MediaFilesEffects]),
     MatButtonModule,
     MatExpansionModule,
     AnalyzeImageModule,

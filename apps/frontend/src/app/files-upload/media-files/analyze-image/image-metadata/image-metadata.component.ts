@@ -1,17 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { FileEntry } from '../../store/models';
-import { HelperService } from '../../store/services';
-import { ValidationService } from '../../store/services';
+import { HelperService, ValidationService } from '../../store/services';
+import { getAnalysisResponse } from '../../store/media-files.actions';
+import { selectAnalysisResponse } from '../../store/media-files.selectors';
+import { MediaFilesState } from '../../store/media-files.reducer';
 
-declare let $: any;
 const SLICE_SIZE = 150000;
 
 @Component({
   selector: 'app-image-metadata',
   templateUrl: './image-metadata.component.html',
 })
-export class ImageMetadataComponent implements OnInit {
+export class ImageMetadataComponent implements OnInit, OnDestroy {
   @Input() file: FileEntry;
   ffprobeErr: string;
   isMetadata: boolean;
@@ -21,9 +25,12 @@ export class ImageMetadataComponent implements OnInit {
   endpoint: string;
   blob: Blob;
 
+  private destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private helperService: HelperService,
-    private validationService: ValidationService,
+    private validationsService: ValidationService,
+    private store: Store<MediaFilesState>,
   ) {
     this.endpoint = this.helperService.getEndpoint();
     console.log(`%c Metadata extraction started`, 'color: darkgrey');
@@ -33,34 +40,25 @@ export class ImageMetadataComponent implements OnInit {
     this.extract(this.file);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   extract(file: any): void {
     const reader = new FileReader();
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt: ProgressEvent<FileReader>) => {
       if (evt.target.readyState === FileReader.DONE) {
-        // angular Http doesn't yet support raw binary POSTs - aha! hey @sergei - this is why i used $.ajax!
-        // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-        $.ajax({
-          type: 'POST',
-          url: this.endpoint + 'analysis',
-          // TODOmc isn't this.blob just an empty slice?
-          data: this.blob,
-          // don't massage binary to JSON
-          processData: false,
-          // content type that we are sending
-          contentType: 'application/octet-stream',
-          error: (err) => {
-            console.log(`%c You have an error on the ajax request:`, 'color: red');
-            console.log(err);
-          },
-          success: (data) => {
-            // error handling
-            console.log(`%c This is what I got from ffprobe metadata:`, 'color: darkgrey');
-
-            this.renderResult(data);
-            this.validationService.validate(file.id, data, null, 'image');
-          },
+        this.store.dispatch(getAnalysisResponse({ body: this.blob }));
+        this.store.pipe(
+          select(selectAnalysisResponse),
+          filter((response: any) => !!response),
+          takeUntil(this.destroy$),
+        ).subscribe((response: any) => {
+          this.renderResult(response);
+          this.validationsService.validate(file.id, response, null, 'image');
         });
       }
     };
@@ -127,20 +125,20 @@ export class ImageMetadataComponent implements OnInit {
     }
     const keysArr: string[] = Object.keys(formatObj);
     return keysArr
-        // TODO filter if value for key is object or array, rather than not 'tags'
-        .filter((formatKey) => formatKey !== 'tags')
-        .map((formatKey) => {
-          const item: any = {};
-          // replace underscores and format with initial caps
-          item.key = formatKey
-            .replace(/_/g, ' ')
-            .replace(/(?:^|\s)[a-z]/g, (m: string) => {
-              return m.toUpperCase();
-            })
-            .replace('Nb ', 'Number of ');
-          item.value = formatObj[formatKey];
-          return item;
-        });
+      // TODO filter if value for key is object or array, rather than not 'tags'
+      .filter((formatKey) => formatKey !== 'tags')
+      .map((formatKey) => {
+        const item: any = {};
+        // replace underscores and format with initial caps
+        item.key = formatKey
+          .replace(/_/g, ' ')
+          .replace(/(?:^|\s)[a-z]/g, (m: string) => {
+            return m.toUpperCase();
+          })
+          .replace('Nb ', 'Number of ');
+        item.value = formatObj[formatKey];
+        return item;
+      });
   }
 
   isItemWithLinearValue(value: any): boolean {

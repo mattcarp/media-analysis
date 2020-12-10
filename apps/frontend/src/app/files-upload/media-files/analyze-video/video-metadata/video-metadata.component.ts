@@ -1,17 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { select, Store } from '@ngrx/store';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { FileEntry } from '../../store/models';
-import { HelperService } from '../../store/services';
-import { ValidationService } from '../../store/services';
+import { HelperService, ValidationService } from '../../store/services';
+import { getAnalysisResponse } from '../../store/media-files.actions';
+import { selectAnalysisResponse } from '../../store/media-files.selectors';
+import { MediaFilesState } from '../../store/media-files.reducer';
 
-declare let $: any;
 const SLICE_SIZE = 150000;
 
 @Component({
   selector: 'app-video-metadata',
   templateUrl: './video-metadata.component.html',
 })
-export class VideoMetadataComponent implements OnInit {
+export class VideoMetadataComponent implements OnInit, OnDestroy {
   @Input() file: FileEntry;
   ffprobeErr: string;
   isMetadata: boolean;
@@ -21,9 +25,12 @@ export class VideoMetadataComponent implements OnInit {
   endpoint: string;
   blob: Blob;
 
+  private destroy$: Subject<any> = new Subject<any>();
+
   constructor(
     private helperService: HelperService,
-    private validationService: ValidationService,
+    private validationsService: ValidationService,
+    private store: Store<MediaFilesState>,
   ) {
     this.endpoint = this.helperService.getEndpoint();
   }
@@ -32,34 +39,25 @@ export class VideoMetadataComponent implements OnInit {
     this.extract(this.file);
   }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   extract(file: any): void {
     const reader = new FileReader();
 
     // if we use onloadend, we need to check the readyState.
     reader.onloadend = (evt: ProgressEvent<FileReader>) => {
       if (evt.target.readyState === FileReader.DONE) {
-        // angular Http doesn't yet support raw binary POSTs - aha! hey @sergei - this is why i used $.ajax!
-        // https://github.com/angular/angular/blob/2.0.0-beta.1/modules/angular2/src/http/static_request.ts
-        $.ajax({
-          type: 'POST',
-          url: this.endpoint + 'analysis',
-          // TODOmc isn't this.blob just an empty slice?
-          data: this.blob,
-          // don't massage binary to JSON
-          processData: false,
-          // content type that we are sending
-          contentType: 'application/octet-stream',
-          error: (err) => {
-            console.log(`%c You have an error on the ajax request:`, 'color: red');
-            console.log(err);
-          },
-          success: (data) => {
-            // error handling
-            console.log(`%c This is what I got from ffprobe metadata:`, 'color: darkgrey');
-
-            this.renderResult(data);
-            this.validationService.validate(file.id, data, this.ffprobeErr, 'video');
-          },
+        this.store.dispatch(getAnalysisResponse({ body: this.blob }));
+        this.store.pipe(
+          select(selectAnalysisResponse),
+          filter((response: any) => !!response),
+          takeUntil(this.destroy$),
+        ).subscribe((response: any) => {
+          this.renderResult(response);
+          this.validationsService.validate(file.id, response, this.ffprobeErr, 'video');
         });
       }
     };

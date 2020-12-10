@@ -15,7 +15,6 @@ import { FileTypeService, MediaFilesService } from './store/services';
 export class MediaFilesComponent implements OnInit, OnDestroy {
   @Input() files: FileEntry[];
   @ViewChild('accordion') accordion: ElementRef;
-  isHasValidation = false;
   resultValidation = [];
 
   private destroy$: Subject<any> = new Subject<any>();
@@ -29,7 +28,6 @@ export class MediaFilesComponent implements OnInit, OnDestroy {
       select(selectValidations),
       takeUntil(this.destroy$),
     ).subscribe((validations: ValidationState[]) => {
-      this.isHasValidation = !!validations.length;
       this.resultValidation = validations;
     });
   }

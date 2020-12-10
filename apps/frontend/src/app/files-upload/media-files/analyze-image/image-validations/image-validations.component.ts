@@ -6,7 +6,7 @@ import { map, takeUntil } from 'rxjs/operators';
 
 import { ValidationState } from '../../store/models';
 import { MediaFilesState } from '../../store/media-files.reducer';
-import { MediaFilesService, ValidationService } from '../../store/services';
+import { MediaFilesService } from '../../store/services';
 import { selectValidations } from '../../store/media-files.selectors';
 
 @Component({
@@ -30,7 +30,6 @@ export class ImageValidationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private mediaFileService: MediaFilesService,
-    private validationService: ValidationService,
     private store: Store<MediaFilesState>,
     private logger: NGXLogger
   ) {
