@@ -1,0 +1,46 @@
+.grid {
+  display: grid;
+  grid-template-columns: 30px 60px minmax(200px, 1fr) 300px;
+  grid-gap: 1px;
+  align-items: center;
+  width: 100%;
+  padding: 0;
+
+  & > div {
+    align-content: center;
+    padding: 8px 4px;
+
+    &:nth-child(1),
+    &:nth-child(2) {
+      text-align: center;
+    }
+
+    &:nth-child(3) {
+      color: white;
+    }
+
+    &:nth-child(4) {
+      color: red;
+    }
+
+    .las {
+      &.la-check-circle {
+        color: #1cae68;
+      }
+
+      &.la-exclamation-circle {
+        color: red;
+      }
+    }
+  }
+
+  &.header {
+    width: unset;
+    margin: 0 24px 10px;
+    border-bottom: 1px solid #777;
+
+    & > div {
+      color: #aaa;
+    }
+  }
+}

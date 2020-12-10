@@ -1,87 +1,18 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
-import { select, Store } from '@ngrx/store';
-import { map, takeUntil } from 'rxjs/operators';
+import { Component, HostBinding, OnInit } from '@angular/core';
 
-import { FileEntry, ValidationState } from './media-files/store/models';
-import { selectMediaFiles, selectValidations } from './media-files/store/media-files.selectors';
-import { ModalService } from './shared/modal/modal.service';
 import { version } from '../../../../package.json';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit {
+  @HostBinding('style.background') bgColor: string;
   verUI = version;
-  verUploader = '0.0.16';
-  files: FileEntry[] = [];
-  filesCount = 0;
-  isAddedFiles = false;
-  isAnalysedFiles = false;
-
-  private destroy$: Subject<any> = new Subject<any>();
-
-  constructor(
-    private modalService: ModalService,
-    private store: Store<any>,
-  ) {
-    this.store.pipe(
-      select(selectMediaFiles),
-      takeUntil(this.destroy$),
-    ).subscribe((files: FileEntry[]) => {
-      this.files = files.slice();
-
-      if (this.files.length > this.filesCount) {
-        this.changeAnimation('input');
-      }
-      this.filesCount = this.files.length;
-    });
-
-    this.store.pipe(
-      select(selectValidations),
-      takeUntil(this.destroy$),
-    ).subscribe((validations: ValidationState[]) => {
-      if (validations.length) {
-        setTimeout(() => {
-          this.changeAnimation('output');
-        }, 100);
-      }
-    });
-  }
 
   ngOnInit(): void {
     this.consoleInfo();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  isDDP(files: any[]): boolean {
-    let isDDPPQ = false;
-    let isDDPMS = false;
-    let isDDPID = false;
-
-    files.forEach((file: File) => {
-      if (file.name === 'DDPPQ') {
-        isDDPPQ = true;
-      }
-      if (file.name === 'DDPMS') {
-        isDDPMS = true;
-      }
-      if (file.name === 'DDPID') {
-        isDDPID = true;
-      }
-    });
-
-    return isDDPPQ && isDDPMS && isDDPID;
-  }
-
-  onAboutClick(): void {
-    this.modalService.openModal('aboutModal');
+    this.generateBackground();
   }
 
   consoleInfo(): void {
@@ -106,16 +37,18 @@ export class AppComponent implements OnInit, OnDestroy {
     );
   }
 
-  changeAnimation(direction: string): void {
-    if (direction === 'input')  {
-      this.isAddedFiles = true;
+  generateBackground() {
+    const hexValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'];
+    const populate = (a) => {
+      for (let i = 0; i < 6; i++) {
+        const x = Math.round(Math.random() * 14);
+        const y = hexValues[x];
+        a += y;
+      }
+      return a;
     }
-    if (direction === 'output')  {
-      this.isAnalysedFiles = true;
-    }
-    setTimeout(() => {
-      this.isAddedFiles = false;
-      this.isAnalysedFiles = false;
-    }, 1500);
+    const color = populate('#');
+
+    this.bgColor = `radial-gradient(circle at 46% top, ${color} -150%, #191919 75%)`;
   }
 }

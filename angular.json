@@ -25,7 +25,10 @@
               "apps/frontend/src/assets"
             ],
             "styles": [
+              "node_modules/@angular/material/prebuilt-themes/pink-bluegrey.css",
               "node_modules/fontsource-mulish/index.css",
+              "node_modules/line-awesome/dist/line-awesome/css/line-awesome.css",
+              "node_modules/plyr/dist/plyr.css",
               "apps/frontend/src/global.scss"
             ],
             "scripts": [

@@ -1,0 +1,32 @@
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Validations</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-video-validations [file]="file"></app-video-validations>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Playback</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-video-player [file]="file"></app-video-player>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Metadata</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-video-metadata [file]="file"></app-video-metadata>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<!--
+  <h3>Video
+    <i *ngIf="videoFormat === 'prores'" class="icon-prores">ProRes</i>
+    <i *ngIf="videoFormat === 'mpeg2video'" class="icon-mpeg2">MPEG-2</i>
+  </h3>
+-->

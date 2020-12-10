@@ -1,0 +1,37 @@
+<ng-container *ngIf="hasValidation; else noHasValidations">
+  <p>Passed {{detailsValidation.length}} test{{getPlural(detailsValidation)}}.</p>
+
+  <ng-container *ngIf="fails.length === 0; else failedBlock">
+    <div class="alert-success">
+      All file parsing and validations completed in {{totalValidationTime}} milliseconds.
+    </div>
+  </ng-container>
+
+  <ng-template #failedBlock>
+    <div class="alert-danger">
+      <p>
+        <strong>This audio failed {{fails.length}} test{{getPlural(fails)}}:</strong>
+      </p>
+
+      <div *ngFor="let fail of fails" class="row">
+        <i class="las la-exclamation-circle"></i>
+        {{fail.name}}="{{fail.value}}" → {{fail.message}}
+      </div>
+    </div>
+  </ng-template>
+
+  <div *ngIf="passes.length" class="alert-success">
+    <p>
+      <strong>This audio passes {{passes.length}} test{{getPlural(passes)}}:</strong>
+    </p>
+
+    <div *ngFor="let pass of passes" class="row">
+      <i class="las la-check-circle"></i>
+      {{pass.name}}="{{pass.value}}" → {{pass.message}}
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #noHasValidations>
+  Validation was not called.
+</ng-template>
