@@ -1,12 +1,5 @@
 @import '~fontsource-mulish/index.css';
 @import 'theming';
-@import 'icons';
-
-@mixin section() {
-  max-width: $size-sectionWidth;
-  height: 100%;
-  margin: 0 auto;
-}
 
 * {
   box-sizing: border-box;
@@ -28,7 +21,10 @@
 
 html,
 body,
-app-root {
+app-root,
+app-files-upload,
+app-file-actions,
+app-about {
   overflow: hidden;
   width: 100%;
   height: 100%;
@@ -48,64 +44,79 @@ body {
 
 // Main Layout
 // -------------------------------
-app-root {
+app-files-upload,
+app-file-actions,
+app-about {
   display: grid;
-  grid-template-columns: [line1] minmax(320px, auto) [line2];
-  grid-template-rows: [row1] $size-headerHeight [row2] 1fr [row3] $size-consoleHeight [row4];
+  grid-template-columns: [line1] $size-asideWidth [line2] $size-mainWidth [line3];
+  grid-template-rows: [row1] $size-headerHeight [row2] 1fr [row3] $size-footerHeight [row4];
+  grid-template-areas: "aside header" "aside main" ". footer";
 
-  header {
-    grid-column: line1 / line2;
-    grid-row: row1 / row2;
+  main {
+    grid-area: main;
+    grid-column: line2 / line3;
+    grid-row: row1 / row3;
+
+    header {
+      grid-area: header;
+      grid-column: line3 / line3;
+      grid-row: row1 / row2;
+      padding: 10px 10px 0;
+      height: $size-headerHeight;
+    }
 
     section {
-      @include section;
-
-      nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 100%;
-        padding: 0 10px;
-      }
+      overflow-y: scroll;
+      height: calc(100% - #{$size-headerHeight});
+      padding: 10px;
     }
   }
 
-  main {
-    display: grid;
-    overflow: hidden;
-    grid-template-columns: [line1] minmax(380px, $size-uploaderWidth) [line2] minmax(380px, $size-validationWidth) [line3];
-    grid-column-gap: $gridColumnGapWidth;
+  aside {
+    grid-area: aside;
     grid-column: line1 / line2;
-    grid-row: row2 / row3;
-    margin: 0 auto;
-    padding: 0 10px;
+    grid-row: row1 / row3;
+    display: flex;
+    flex-direction: column;
 
-    aside {
-      grid-column: line1 / line2;
+    nav {
+      padding: 10px 10px 0;
+      background-color: rgba(150, 150, 150, 0.1);
+      height: 100px;
     }
 
-    article {
-      grid-column: line2 / line3;
-
-      section {
-        overflow-y: auto;
-        height: calc(100vh - #{$size-headerHeight} - 50px);
-      }
+    section {
+      width: 580px;
+      height: 400px;
+      margin: 30px 10px 10px;
     }
   }
 
   footer {
-    grid-column: line1 / line2;
+    grid-area: footer;
+    grid-column: line1 / line3;
     grid-row: row3 / row4;
-
-    section {
-      @include section;
-    }
+    padding: 10px;
   }
 }
 
 // Elements
 // -------------------------------
+app-root {
+  display: block;
+  position: relative;
+
+  //&:before {
+  //  content: '';
+  //  position: absolute;
+  //  top: 0;
+  //  right: 0;
+  //  bottom: 0;
+  //  left: 0;
+  //  background-color: rgba(0,0,0,0.5);
+  //}
+}
+
 h1,
 h2,
 h3,
@@ -114,11 +125,15 @@ h4 {
   margin: 7px 0;
   font-weight: 400;
   line-height: 1.1;
-  color: $color-medium;
+  color: #aaa;
   align-items: center;
 }
 
-h2 {
+h1 {
+  font-size: 70px;
+  line-height: 0.8;
+  align-items: flex-end;
+
   small {
     font-size: 14px;
     display: flex;
@@ -141,7 +156,7 @@ h4 {
 a {
   text-decoration: none;
   word-break: break-word;
-  color: $color-blue;
+  color: #57a4ff;
 
   &.ext:after {
     padding-right: 14px;
@@ -168,27 +183,33 @@ p {
   margin: 0 0 10px;
 }
 
+.input {
+  padding: 4px 8px;
+  border: 1px solid #2375D7;
+  background-color: #E8F0FE;
+  margin: 0 8px;
+}
+
 .row {
   display: flex;
   line-height: 1.4;
 
-  .ma-icon {
+  .las {
     margin-right: 8px;
   }
 }
 
-.alert-danger {
-  margin: 0 0 10px;
-  padding: 10px;
-  color: red;
-  background-color: #ffecec;
-}
-
+.alert-danger,
 .alert-success {
   margin: 0 0 10px;
   padding: 10px;
+  color: red;
+  background-color: #3e0707;
+}
+
+.alert-success {
   color: #509804;
-  background-color: #d1f3d8;
+  background-color: #18271b;
 }
 
 .warn-message {
@@ -274,7 +295,47 @@ button {
 
   &[disabled] {
     cursor: initial;
-    background-color: #ddd;
+    background-color: #414d5a;
+  }
+}
+
+.loader {
+  width: 76px;
+  height: 76px;
+  display: inline-block;
+  border-width: 2px;
+  border-color: rgba(255,255,255, 0.1);
+  border-top-color: white;
+  animation: spin 1s infinite linear;
+  border-radius: 100%;
+  border-style: solid;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -38px 0 0 -38px;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.player-actions {
+  display: flex;
+  align-items: center;
+  margin: 0 0 10px;
+
+  & > * {
+    margin: 0 6px 0 0;
+  }
+
+  .spacer {
+    flex-grow: 1;
+  }
+
+  button {
+    padding: 2px 20px;
   }
 }
 
@@ -293,11 +354,11 @@ button {
     grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
     grid-template-rows: auto;
     grid-gap: 1px;
-    background-color: #9f9f9f;
 
     & > div {
       padding: 4px;
-      background-color: #f9f9f9;
+      background-color: rgba(255,255,255,0.1);
+      transition: background 0.4s linear;
     }
   }
 
@@ -305,13 +366,13 @@ button {
     margin: 0 0 1px;
     font-weight: 700;
     text-align: center;
-    border-bottom: 1px solid #9f9f9f;
+    border-bottom: 1px solid #aaa;
   }
 
   &-data {
     &:hover {
       & > div {
-        background-color: #e6e6e6;
+        background-color: rgba(255,255,255,0.2);
       }
     }
   }
@@ -329,12 +390,68 @@ button {
   margin: 0 0 0 10px;
   padding: 4px 12px;
   font-size: 14px;
-  color: #777;
+  color: #aaa;
   border-radius: 20px;
-  background-color: #eee;
+  background-color: #333;
 
   &.active {
     color: #fff;
     background-color: #492e7c;
+  }
+}
+
+
+.las,
+.lar,
+.lab {
+  font-size: 30px;
+
+  & + span {
+    margin-left: 10px;
+    user-select: none;
+    line-height: 1;
+    text-align: left;
+    white-space: normal;
+  }
+
+  &.la-question-circle {
+    color: #777;
+  }
+
+  &.la-check-circle {
+    color: #509804;
+  }
+
+  &.la-exclamation-circle {
+    color: red;
+  }
+}
+
+// Material Accordion
+// -------------------------------
+.mat-accordion {
+  .mat-expansion-panel {
+    box-shadow: none;
+    background: rgba(80, 80, 80, 0.1);
+
+    .mat-expansion-panel-header {
+      padding: 0 24px;
+      font: 300 15px/1 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+      .mat-content {
+        align-items: center;
+      }
+
+      .mat-expansion-panel-header-title {
+        color: #aaa;
+      }
+    }
+
+    .mat-expansion-panel-content {
+      .mat-expansion-panel-content {
+        font: 300 14px/20px 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+        padding: 0; // 0 24px 16px;
+      }
+    }
   }
 }

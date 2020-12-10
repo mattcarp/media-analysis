@@ -1,0 +1,38 @@
+<div *ngIf="files?.length" class="grid header">
+  <div>#</div>
+  <div>Valid.</div>
+  <div>File Name</div>
+  <div>Error Message</div>
+</div>
+
+<mat-accordion #accordion>
+  <ng-container *ngFor="let file of files; let id = index">
+    <mat-expansion-panel
+      hideToggle="{{getResultValidation(file?.id) === 'la-question-circle'}}"
+      [disabled]="getResultValidation(file?.id) === 'la-question-circle'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div *ngIf="files?.length" class="grid">
+            <div>{{id + 1}}</div>
+            <div>
+              <i class="las" [ngClass]="getResultValidation(file?.id)"></i>
+            </div>
+            <div class="ellipsis">{{file.name}}</div>
+            <div>
+              <span *ngIf="getResultValidation(file?.id) === 'la-question-circle'">
+                Analysis rules for files <b>{{getFileExtensionOrFileName(file?.name)}}</b> not yet set.
+              </span>
+            </div>
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <app-analyze-image *ngIf="getFileType(file).includes('image')" [file]=file></app-analyze-image>
+
+      <app-analyze-video *ngIf="getFileType(file).includes('video')" [file]=file></app-analyze-video>
+
+      <app-analyze-audio *ngIf="getFileType(file).includes('audio')" [file]=file></app-analyze-audio>
+
+    </mat-expansion-panel>
+  </ng-container>
+</mat-accordion>

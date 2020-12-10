@@ -1,0 +1,26 @@
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Validations</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-audio-validations [file]="file"></app-audio-validations>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Playback</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-audio-player [file]="file"></app-audio-player>
+  </mat-expansion-panel>
+
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Metadata</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-audio-metadata [file]="file"></app-audio-metadata>
+  </mat-expansion-panel>
+</mat-accordion>

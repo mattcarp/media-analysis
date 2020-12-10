@@ -1,0 +1,33 @@
+<mat-accordion>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Validations</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-image-validations [file]="file"></app-image-validations>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Viewer</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <img src="{{file.preview}}" alt="image" width="100%">
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Exif</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-image-exif [file]="file"></app-image-exif>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Metadata</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-image-metadata [file]="file"></app-image-metadata>
+  </mat-expansion-panel>
+</mat-accordion>

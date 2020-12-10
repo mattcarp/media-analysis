@@ -1,0 +1,52 @@
+.ddp {
+  &-player {
+    &-actions {
+      display: flex;
+      align-items: center;
+
+      & > * {
+        margin: 0 6px 0 0;
+      }
+    }
+  }
+
+  &-controls {
+    display: flex;
+    margin: 10px 0;
+
+    &-slider {
+      width: calc(100% - 52px);
+      margin: 0 10px;
+    }
+
+    & > * {
+      cursor: pointer;
+    }
+  }
+
+  &-playlist {
+    .ma-table-header,
+    .ma-table-data {
+      grid-template-columns: 40px minmax(120px, 1fr) 140px repeat(2, 86px);
+    }
+
+    .ma-table-data {
+      cursor: pointer;
+
+      &.selected {
+        & > div {
+          background-color: rgba(255,255,255,0.2);
+        }
+      }
+
+      & > div:nth-child(1) {
+        text-align: center;
+      }
+
+      & > div:nth-child(4),
+      & > div:nth-child(5) {
+        text-align: right;
+      }
+    }
+  }
+}

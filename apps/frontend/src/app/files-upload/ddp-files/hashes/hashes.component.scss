@@ -1,0 +1,32 @@
+button {
+  display: inline-flex;
+}
+
+.ma-table-header,
+.ma-table-data {
+  grid-template-columns: 72px minmax(40px, 1fr) repeat(2, 180px) 70px;
+}
+
+.ma-table-data {
+  & > div:last-child {
+    text-align: center;
+  }
+}
+
+.ddp-hash-match > div {
+  background-color: #18271b;
+}
+
+.ddp-hash-mismatch > div {
+  background-color: #3e0707;
+}
+
+.ddp-hash-status {
+  margin: auto;
+  padding-left: 20px;
+  text-align: center;
+}
+
+.progress {
+  width: 100%;
+}

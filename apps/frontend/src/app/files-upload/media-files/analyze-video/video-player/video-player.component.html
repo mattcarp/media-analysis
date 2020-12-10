@@ -1,0 +1,8 @@
+<div plyr
+     plyrTitle="Custom video"
+     [plyrPlaysInline]="true"
+     [plyrCrossOrigin]="true"
+     [plyrSources]="videoSources"
+     (plyrInit)="player = $event"
+     (plyrTimeUpdate)="videoTimeUpdate($event)">
+</div>

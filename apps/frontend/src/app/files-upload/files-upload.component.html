@@ -1,0 +1,36 @@
+<aside>
+  <nav>
+    <app-nav></app-nav>
+  </nav>
+
+  <section>
+    <app-uploader></app-uploader>
+  </section>
+</aside>
+
+<main>
+  <header>
+    <h1>
+      Analysis
+      <small class="badge" [class.active]="files?.length && !isDDP(files)">
+        Audio/Video/Image
+      </small>
+      <small class="badge" [class.active]="files?.length && isDDP(files)">
+        DDP
+      </small>
+    </h1>
+  </header>
+
+  <section>
+    <app-media-files *ngIf="!isDDP(files)" [files]="files"></app-media-files>
+    <app-ddp-files *ngIf="isDDP(files)" [files]="files"></app-ddp-files>
+
+    <div *ngIf="!files?.length" class="message">
+      There are no My Uploaded Files yet
+    </div>
+  </section>
+</main>
+
+<footer>
+
+</footer>

@@ -1,0 +1,121 @@
+<mat-accordion>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Validations</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-validations></app-ddp-validations>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Playback</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="ddp-player">
+      <div class="player-actions">
+        <button (click)="togglePlay()">
+          <i *ngIf="showPlay" class="las la-play"></i>
+          <i *ngIf="!showPlay" class="las la-pause"></i>
+        </button>
+        <button (click)="playFrom(0)" [disabled]="!showPlay">
+          <i class="las la-play"></i>
+          <span>Play from file start</span>
+        </button>
+        <button (click)="playFromIdx1()" [disabled]="!showPlay">
+          <i class="las la-play"></i>
+          <span>Play from index 1</span>
+        </button>
+        <h3>{{timecode}}</h3>
+      </div>
+      <div *ngIf="playerAnnotation && !playbackStatus" class="ddp-player-annotation">
+        <span>{{playerAnnotation?.msg}}</span>&nbsp;&nbsp;
+        <span><strong>in: </strong>{{playerAnnotation?.start}}</span>&nbsp;&nbsp;
+        <span><strong>out: </strong>{{playerAnnotation?.end}}</span>
+        <p>{{playbackStatus}}</p>
+      </div>
+    </div>
+
+    <div [hidden]="wavProgress <= 99" class="ddp-waveform">
+      <div id="waveform" class="ddp-waveform"></div>
+      <div id="waveform-timeline"></div>
+    </div>
+
+    <div class="ddp-controls">
+      <i class="las la-search-minus"></i>
+      <input id="slider" type="range" min="1" max="46" value="1" class="ddp-controls-slider" />
+      <i class="las la-search-plus"></i>
+    </div>
+
+    <div class="ddp-playlist">
+      <div class="ma-table-header">
+        <div>#</div>
+        <div>Track Name</div>
+        <div>ISRC</div>
+        <div>Pre Gap</div>
+        <div>Duration</div>
+      </div>
+
+      <ng-container *ngFor="let track of playList; let i = index">
+        <div (click)="queueTrack(i, $event)"
+             class="ma-table-data"
+             [class.selected]="isSelected(i)">
+          <div>{{i + 1}}</div>
+          <div>{{track?.file?.name}}</div>
+          <div>{{track?.isrc}}</div>
+          <div>{{track?.preGap}}</div>
+          <div>{{track?.dur}}</div>
+        </div>
+      </ng-container>
+    </div>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>DDP ID</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-ddpid></app-ddp-ddpid>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Map Stream</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-ddpms></app-ddp-ddpms>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>PQ Subcode</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-ddppq></app-ddp-ddppq>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Hashes</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-hashes></app-ddp-hashes>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>CD Text</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-cdtext></app-ddp-cdtext>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>Gracenote</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <app-ddp-gracenote></app-ddp-gracenote>
+  </mat-expansion-panel>
+</mat-accordion>

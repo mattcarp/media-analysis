@@ -1,0 +1,11 @@
+<div class="player-actions">
+  <button (click)="togglePlay()">
+    <i *ngIf="showPlay" class="las la-play"></i>
+    <i *ngIf="!showPlay" class="las la-pause"></i>
+  </button>
+  <h3>{{timeCode}}</h3>
+</div>
+
+<div id="waveform{{file.id}}" class="audio-waveform">
+  <i *ngIf="isLoaderVisible" class="loader"></i>
+</div>

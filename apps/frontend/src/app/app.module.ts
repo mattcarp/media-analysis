@@ -1,41 +1,33 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { LoggerModule, NgxLoggerLevel } from 'ngx-logger';
 
 import { environment } from '../environments/environment';
-import { reducers } from './store/reducers';
-import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { MediaFilesModule } from './media-files/media-files.module';
-import { DdpFilesModule } from './ddp-files/ddp-files.module';
-import { ModalComponent } from './shared/modal/modal.component';
-import { UploaderComponent } from './uploader/uploader.component';
-import { ModalAboutComponent } from './modal-about/modal-about.component';
+import { AppComponent } from './app.component';
+import { reducers } from './shared/store/reducers';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    ModalComponent,
-    UploaderComponent,
-    ModalAboutComponent,
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
     AppRoutingModule,
-    MediaFilesModule,
-    DdpFilesModule,
-    NoopAnimationsModule,
     StoreModule.forRoot(reducers, {}),
-    EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({
       maxAge: 25, logOnly: environment.production
     }),
-    EffectsModule.forRoot([]),
+    LoggerModule.forRoot({
+      colorScheme: ['purple', 'teal', 'gray', 'gray', 'red', 'red', 'red'],
+      level: NgxLoggerLevel.DEBUG,
+      serverLogLevel: NgxLoggerLevel.ERROR,
+    }),
   ],
   bootstrap: [AppComponent],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

@@ -1,0 +1,28 @@
+<div class="main-logo">
+  <a href="/" class="main-logo-link">
+    <i class="main-logo-icon"></i>
+    Pre-Flight Check
+  </a>
+</div>
+
+<ul class="nav">
+  <li>
+    <button (click)="goToPage('files-upload')" class="nav-link" [class.current]="isActiveItem('files-upload')">
+      <i class="las la-upload"></i>
+      <span>Upload Files</span>
+    </button>
+  </li>
+  <li>
+    <button (click)="goToPage('file-actions')" class="nav-link" [class.current]="isActiveItem('file-actions')">
+      <i class="las la-play"></i>
+      <span>File Actions</span>
+    </button>
+  </li>
+  <li>
+    <button (click)="goToPage('about')" class="nav-link" [class.current]="isActiveItem('about')">
+      <i class="las la-info"></i>
+      <span>About</span>
+    </button>
+  </li>
+</ul>
+

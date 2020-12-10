@@ -1,0 +1,100 @@
+@import '../../../theming';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+// Main Logo
+// -------------------------------
+.main-logo {
+  font-size: 24px;
+  font-weight: 700;
+
+  @media #{$screen-medium} {
+    margin-right: 15px;
+  }
+
+  &-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    font: 100 26px/1 'Mulish';
+    text-decoration: none;
+    color: $color-white;
+    outline: none;
+  }
+
+  &-icon {
+    position: relative;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    margin: 0 10px 0 0;
+    background-image: url('../../../assets/images/favicon.png');
+    background-repeat: no-repeat;
+    background-position-x: center;
+    background-position-y: center;
+    background-size: contain;
+
+    @media #{$screen-medium} {
+      width: 42px;
+      height: 42px;
+    }
+  }
+}
+
+// Main Menu
+// -------------------------------
+.nav {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+
+
+  li {
+    position: relative;
+    display: inline-block;
+    margin: 0 36px 0 0;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+
+  &-link {
+    margin: 0;
+    padding: 8px 0;
+    transition: color 0.4s linear;
+    font-size: 18px;
+    color: $color-gray;
+    background-color: transparent;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:hover,
+    &.current {
+      color: #cfcfcf;
+    }
+
+    &.current:after {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      content: '';
+      background-color: $color-primary;
+    }
+
+    .las {
+      font-size: 24px;
+    }
+  }
+}
